@@ -205,7 +205,7 @@ export async function getMovieDetail(tmdbId: number): Promise<TmdbMovieDetail> {
  * (ready to upsert into Prisma — minus M'Bari-specific fields)
  */
 export function tmdbToFilmShape(detail: TmdbMovieDetail) {
-  const year = detail.release_date ? Number(detail.release_date.slice(0, 4)) : 0;
+  const year = detail.release_date ? Number(detail.release_date.slice(0, 4)) : null;
   const runtime = detail.runtime ? `${detail.runtime} min` : null;
 
   // Primary country

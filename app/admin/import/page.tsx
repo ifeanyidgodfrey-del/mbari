@@ -27,6 +27,33 @@ const P = {
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
+interface NowPlayingMissing {
+  tmdbId: number;
+  title: string;
+  release_date: string;
+  poster_url: string | null;
+  overview: string;
+  vote_average: number;
+  original_language: string;
+  region: string;
+}
+
+interface NowPlayingInDb {
+  tmdbId: number;
+  title: string;
+  slug: string;
+  boxLive: boolean;
+  missingLiveFlag: boolean;
+}
+
+interface NowPlayingResult {
+  missing: NowPlayingMissing[];
+  inDb: NowPlayingInDb[];
+  total: number;
+  regions: string[];
+  checkedAt: string;
+}
+
 interface TmdbResult {
   id: number;
   title: string;
@@ -57,6 +84,7 @@ interface ImportOverrides {
   boxLive: boolean;
   rated: string;
   slugOverride: string;
+  yearOverride: string;
 }
 
 const EMPTY_OVERRIDES = (): ImportOverrides => ({
@@ -72,6 +100,7 @@ const EMPTY_OVERRIDES = (): ImportOverrides => ({
   boxLive: false,
   rated: "",
   slugOverride: "",
+  yearOverride: "",
 });
 
 const REGIONS = [
@@ -189,6 +218,182 @@ function Btn({
   );
 }
 
+// ─── Now Playing Check Panel ──────────────────────────────────────────────────
+
+function NowPlayingPanel({ onImport }: { onImport: (film: TmdbResult) => void }) {
+  const [result, setResult] = useState<NowPlayingResult | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [open, setOpen] = useState(false);
+
+  const check = async () => {
+    setLoading(true);
+    setError(null);
+    setOpen(true);
+    try {
+      const res = await fetch("/api/admin/now-playing?regions=NG,GH,ZA,KE");
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? "Check failed");
+      setResult(data);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Unknown error");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div style={{
+      background: result?.missing.length ? `${P.red}08` : P.parchLight,
+      border: `1px solid ${result?.missing.length ? P.red : P.border}`,
+      padding: "12px 16px",
+      marginBottom: 16,
+    }}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
+        <div>
+          <div style={{
+            fontFamily: "var(--font-sans, sans-serif)",
+            fontSize: 9,
+            fontWeight: 700,
+            letterSpacing: "0.12em",
+            color: P.gold,
+            marginBottom: 2,
+          }}>
+            NOW PLAYING CHECK
+          </div>
+          <div style={{ fontFamily: "var(--font-sans, sans-serif)", fontSize: 11, color: P.inkMuted }}>
+            Cross-reference TMDb&apos;s &quot;now playing&quot; list for NG, GH, ZA, KE against M&apos;Bari&apos;s database.
+            {result && (
+              <span style={{ marginLeft: 6, color: result.missing.length ? P.red : P.green, fontWeight: 700 }}>
+                {result.missing.length === 0
+                  ? `✓ All ${result.total} films in cinemas are imported`
+                  : `⚠ ${result.missing.length} film${result.missing.length !== 1 ? "s" : ""} in cinemas but NOT in M'Bari`}
+              </span>
+            )}
+          </div>
+        </div>
+        <Btn onClick={check} variant={result?.missing.length ? "danger" : "ghost"} small disabled={loading}>
+          {loading ? "Checking…" : result ? "Re-check" : "Check Now"}
+        </Btn>
+      </div>
+
+      {error && (
+        <div style={{ marginTop: 8, fontFamily: "var(--font-sans, sans-serif)", fontSize: 11, color: P.red }}>
+          {error}
+        </div>
+      )}
+
+      {open && result && (
+        <div style={{ marginTop: 12, display: "flex", flexDirection: "column", gap: 6 }}>
+          {/* Missing films */}
+          {result.missing.length > 0 && (
+            <div>
+              <div style={{
+                fontFamily: "var(--font-sans, sans-serif)",
+                fontSize: 8,
+                fontWeight: 700,
+                letterSpacing: "0.12em",
+                color: P.red,
+                marginBottom: 6,
+              }}>
+                MISSING FROM M&apos;BARI ({result.missing.length})
+              </div>
+              {result.missing.map((film) => (
+                <div key={film.tmdbId} style={{
+                  display: "flex",
+                  gap: 10,
+                  alignItems: "center",
+                  padding: "6px 10px",
+                  background: `${P.red}08`,
+                  border: `0.5px solid ${P.red}40`,
+                  marginBottom: 4,
+                }}>
+                  {film.poster_url && (
+                    <Image src={film.poster_url} alt={film.title} width={32} height={48}
+                      style={{ objectFit: "cover", flexShrink: 0 }} />
+                  )}
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontFamily: "var(--font-serif, Georgia, serif)", fontSize: 13, fontWeight: 700, color: P.ink }}>
+                      {film.title}
+                    </div>
+                    <div style={{ fontFamily: "var(--font-sans, sans-serif)", fontSize: 10, color: P.inkFaint }}>
+                      {film.release_date?.slice(0, 4)} · {film.original_language.toUpperCase()} · TMDb #{film.tmdbId} · Region: {film.region}
+                    </div>
+                  </div>
+                  <Btn
+                    small
+                    variant="primary"
+                    onClick={() => onImport({
+                      id: film.tmdbId,
+                      title: film.title,
+                      release_date: film.release_date,
+                      poster_url: film.poster_url,
+                      backdrop_url: null,
+                      overview: film.overview,
+                      vote_average: film.vote_average,
+                      vote_count: 0,
+                      genre_ids: [],
+                      original_language: film.original_language,
+                      already_imported: false,
+                    })}
+                  >
+                    Import
+                  </Btn>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* In DB but missing live flag */}
+          {result.inDb.filter((f) => f.missingLiveFlag).length > 0 && (
+            <div>
+              <div style={{
+                fontFamily: "var(--font-sans, sans-serif)",
+                fontSize: 8,
+                fontWeight: 700,
+                letterSpacing: "0.12em",
+                color: P.orange,
+                marginBottom: 6,
+                marginTop: 8,
+              }}>
+                IN DB BUT NOT MARKED LIVE ({result.inDb.filter((f) => f.missingLiveFlag).length})
+              </div>
+              {result.inDb.filter((f) => f.missingLiveFlag).map((film) => (
+                <div key={film.tmdbId} style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  padding: "6px 10px",
+                  background: `${P.orange}08`,
+                  border: `0.5px solid ${P.orange}40`,
+                  marginBottom: 4,
+                  fontFamily: "var(--font-sans, sans-serif)",
+                  fontSize: 11,
+                }}>
+                  <span style={{ color: P.ink }}>{film.title}</span>
+                  <Link href={`/film/${film.slug}`} style={{ color: P.gold, fontSize: 10, textDecoration: "none" }}>
+                    Edit film →
+                  </Link>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {result.missing.length === 0 && result.inDb.filter((f) => f.missingLiveFlag).length === 0 && (
+            <div style={{ fontFamily: "var(--font-sans, sans-serif)", fontSize: 11, color: P.green, padding: "6px 0" }}>
+              ✓ All {result.total} films currently in cinemas are imported and marked live.
+            </div>
+          )}
+
+          <div style={{ fontFamily: "var(--font-sans, sans-serif)", fontSize: 9, color: P.inkFaint, marginTop: 4 }}>
+            Last checked: {new Date(result.checkedAt).toLocaleString()} · Regions: {result.regions.join(", ")}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ─── Import modal ─────────────────────────────────────────────────────────────
 
 function ImportModal({
@@ -203,6 +408,7 @@ function ImportModal({
   const [overrides, setOverrides] = useState<ImportOverrides>(EMPTY_OVERRIDES);
   const [importing, setImporting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [validationErrors, setValidationErrors] = useState<{ field: string; message: string }[]>([]);
 
   const set = <K extends keyof ImportOverrides>(key: K, val: ImportOverrides[K]) =>
     setOverrides((o) => ({ ...o, [key]: val }));
@@ -232,6 +438,7 @@ function ImportModal({
   const doImport = async () => {
     setImporting(true);
     setError(null);
+    setValidationErrors([]);
     try {
       const body = {
         tmdbId: film.id,
@@ -247,6 +454,7 @@ function ImportModal({
         boxLive: overrides.boxLive,
         ...(overrides.rated && { rated: overrides.rated }),
         ...(overrides.slugOverride && { slugOverride: overrides.slugOverride }),
+        ...(overrides.yearOverride && { yearOverride: Number(overrides.yearOverride) }),
       };
 
       const res = await fetch("/api/admin/import", {
@@ -256,7 +464,13 @@ function ImportModal({
       });
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error ?? "Import failed");
+      if (!res.ok) {
+        // Surface individual validation errors if present
+        if (data.errors && Array.isArray(data.errors) && data.errors.length > 0) {
+          setValidationErrors(data.errors);
+        }
+        throw new Error(data.error ?? "Import failed");
+      }
       onSuccess(data.film.slug);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Unknown error");
@@ -458,11 +672,26 @@ function ImportModal({
             </div>
           </div>
 
-          {/* Rating + slug */}
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 2fr", gap: 12 }}>
+          {/* Rating + slug + year override */}
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12 }}>
             <div>
               <Label>RATING</Label>
               <Input value={overrides.rated} onChange={(v) => set("rated", v)} placeholder="e.g. 15+" />
+            </div>
+            <div>
+              <Label>
+                YEAR OVERRIDE
+                {!film.release_date && (
+                  <span style={{ marginLeft: 4, color: P.red, fontWeight: 700 }}>⚠ REQUIRED</span>
+                )}
+              </Label>
+              <Input
+                type="number"
+                value={overrides.yearOverride || (film.release_date?.slice(0, 4) ?? "")}
+                onChange={(v) => set("yearOverride", v)}
+                placeholder={film.release_date?.slice(0, 4) ?? "e.g. 2026"}
+                style={!film.release_date && !overrides.yearOverride ? { borderColor: P.red } : {}}
+              />
             </div>
             <div>
               <Label>SLUG OVERRIDE (only if conflict)</Label>
@@ -523,8 +752,8 @@ function ImportModal({
             </div>
           </div>
 
-          {/* Error */}
-          {error && (
+          {/* Errors */}
+          {(error || validationErrors.length > 0) && (
             <div style={{
               background: `${P.red}15`,
               border: `1px solid ${P.red}`,
@@ -533,7 +762,12 @@ function ImportModal({
               fontSize: 11,
               color: P.red,
             }}>
-              {error}
+              {error && <div style={{ fontWeight: 700, marginBottom: validationErrors.length > 0 ? 6 : 0 }}>{error}</div>}
+              {validationErrors.map((e, i) => (
+                <div key={i} style={{ marginTop: 3 }}>
+                  <span style={{ fontWeight: 700 }}>{e.field}:</span> {e.message}
+                </div>
+              ))}
             </div>
           )}
 
@@ -828,6 +1062,9 @@ export default function ImportPage() {
       </div>
 
       <div style={{ maxWidth: 900, margin: "0 auto", padding: "20px 16px" }}>
+        {/* Now Playing Check */}
+        <NowPlayingPanel onImport={(film) => setImportFilm(film)} />
+
         {/* Controls */}
         <div style={{
           background: P.parchLight,

@@ -12,7 +12,17 @@ export const dynamic = "force-dynamic";
 export default async function HomePage() {
   const [films, events] = await Promise.all([
     prisma.film.findMany({
-      orderBy: { boxCumulative: "desc" },
+      where: {
+        OR: [
+          { boxLive: true },
+          { year: { gte: new Date().getFullYear() - 1 } },
+        ],
+        boxCumulative: { not: null },
+      },
+      orderBy: [
+        { boxLive: "desc" },
+        { boxCumulative: "desc" },
+      ],
       include: {
         languages: { include: { language: true } },
         crew: { include: { crewMember: true }, take: 1 },

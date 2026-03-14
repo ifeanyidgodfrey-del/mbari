@@ -50,6 +50,8 @@ interface ImportBody {
   rated?: string;
   // allow admin to override slug if auto-generated one collides
   slugOverride?: string;
+  // allow admin to override year when TMDb has no release_date yet
+  yearOverride?: number;
 }
 
 export async function POST(req: NextRequest) {
@@ -65,12 +67,28 @@ export async function POST(req: NextRequest) {
     const detail = await getMovieDetail(tmdbId);
     const shape = tmdbToFilmShape(detail);
 
-    const slug = body.slugOverride ?? shape.slug;
+    // Use yearOverride when TMDb has no release_date (year will be null)
+    const filmYear = body.yearOverride ?? shape.year;
+    if (!filmYear) {
+      return NextResponse.json({
+        error: "Validation failed",
+        errors: [{
+          field: "year",
+          rule: "year_missing",
+          message: "TMDb has no release date for this film. Please provide a Year Override in the import form.",
+          severity: "error",
+        }],
+        warnings: [],
+      }, { status: 422 });
+    }
+
+    const slug = body.slugOverride ??
+      (shape.slug.includes(String(filmYear)) ? shape.slug : `${shape.slug}-${filmYear}`);
 
     // 1b. Validate film data before persisting
     const filmValidation = validateFilm({
       title: shape.title,
-      year: shape.year,
+      year: filmYear,
       country: shape.country,
       genres: shape.genres,
       criticScore: body.criticScore,
@@ -128,7 +146,7 @@ export async function POST(req: NextRequest) {
       create: {
         slug,
         title: shape.title,
-        year: shape.year,
+        year: filmYear,
         runtime: shape.runtime,
         rated: body.rated ?? null,
         tagline: shape.tagline,
@@ -152,7 +170,7 @@ export async function POST(req: NextRequest) {
       },
       update: {
         title: shape.title,
-        year: shape.year,
+        year: filmYear,
         runtime: shape.runtime,
         tagline: shape.tagline,
         synopsis: shape.synopsis,
