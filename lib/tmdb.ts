@@ -13,16 +13,23 @@ export const TMDB_BACKDROP_URL = (path: string, size: "w780" | "w1280" | "origin
   path ? `${IMG_BASE}/${size}${path}` : null;
 
 async function tmdbFetch<T>(path: string, params: Record<string, string> = {}): Promise<T> {
-  const key = process.env.TMDB_API_KEY;
-  if (!key) throw new Error("TMDB_API_KEY is not set");
+  const apiKey = process.env.TMDB_API_KEY;
+  const bearerToken = process.env.TMDB_API_TOKEN;
+
+  if (!apiKey && !bearerToken) throw new Error("TMDB_API_KEY or TMDB_API_TOKEN must be set");
 
   const url = new URL(`${BASE}${path}`);
-  url.searchParams.set("api_key", key);
+  if (apiKey) url.searchParams.set("api_key", apiKey);
   url.searchParams.set("language", "en-US");
   for (const [k, v] of Object.entries(params)) url.searchParams.set(k, v);
 
+  const headers: Record<string, string> = { Accept: "application/json" };
+  if (bearerToken && !apiKey) {
+    headers["Authorization"] = `Bearer ${bearerToken}`;
+  }
+
   const res = await fetch(url.toString(), {
-    headers: { Accept: "application/json" },
+    headers,
     next: { revalidate: 300 }, // cache 5 min in Next.js data cache
   });
 
