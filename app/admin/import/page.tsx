@@ -140,6 +140,16 @@ const SORT_OPTIONS = [
   { v: "release_date.desc", label: "Most recent" },
 ];
 
+// Map TMDb original_language codes to M'Bari language codes
+function defaultLanguages(originalLanguage: string): LangEntry[] {
+  const map: Record<string, string> = {
+    yo: "yo", ig: "ig", ha: "ha", pcm: "pcm",
+    fr: "fr", sw: "sw", am: "am", zu: "zu", xh: "xh", en: "en",
+  };
+  const code = map[originalLanguage] ?? "en";
+  return [{ code, percentage: 100 }];
+}
+
 // ─── Small UI atoms ───────────────────────────────────────────────────────────
 
 function Label({ children }: { children: React.ReactNode }) {
@@ -220,11 +230,12 @@ function Btn({
 
 // ─── Now Playing Check Panel ──────────────────────────────────────────────────
 
-function NowPlayingPanel({ onImport }: { onImport: (film: TmdbResult) => void }) {
+function NowPlayingPanel({ onImport }: { onImport: (film: TmdbResult, autoBoxLive: boolean) => void }) {
   const [result, setResult] = useState<NowPlayingResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
+  const [markingLive, setMarkingLive] = useState<string | null>(null);
 
   const check = async () => {
     setLoading(true);
@@ -239,6 +250,27 @@ function NowPlayingPanel({ onImport }: { onImport: (film: TmdbResult) => void })
       setError(e instanceof Error ? e.message : "Unknown error");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const markLive = async (slug: string) => {
+    setMarkingLive(slug);
+    try {
+      const res = await fetch("/api/admin/set-box-live", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ slug, boxLive: true }),
+      });
+      if (!res.ok) throw new Error("Failed to mark live");
+      // Update local state to reflect the change
+      setResult((r) => r ? {
+        ...r,
+        inDb: r.inDb.map((f) => f.slug === slug ? { ...f, boxLive: true, missingLiveFlag: false } : f),
+      } : r);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Unknown error");
+    } finally {
+      setMarkingLive(null);
     }
   };
 
@@ -335,7 +367,7 @@ function NowPlayingPanel({ onImport }: { onImport: (film: TmdbResult) => void })
                       genre_ids: [],
                       original_language: film.original_language,
                       already_imported: false,
-                    })}
+                    }, true)}
                   >
                     Import
                   </Btn>
@@ -363,17 +395,29 @@ function NowPlayingPanel({ onImport }: { onImport: (film: TmdbResult) => void })
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "space-between",
+                  gap: 8,
                   padding: "6px 10px",
                   background: `${P.orange}08`,
                   border: `0.5px solid ${P.orange}40`,
                   marginBottom: 4,
                   fontFamily: "var(--font-sans, sans-serif)",
                   fontSize: 11,
+                  flex: 1,
                 }}>
                   <span style={{ color: P.ink }}>{film.title}</span>
-                  <Link href={`/film/${film.slug}`} style={{ color: P.gold, fontSize: 10, textDecoration: "none" }}>
-                    Edit film →
+                </div>
+                <div style={{ display: "flex", gap: 6, alignItems: "center", flexShrink: 0 }}>
+                  <Link href={`/film/${film.slug}`} style={{ color: P.gold, fontSize: 10, textDecoration: "none", whiteSpace: "nowrap" }}>
+                    Edit →
                   </Link>
+                  <Btn
+                    small
+                    variant="success"
+                    disabled={markingLive === film.slug}
+                    onClick={() => markLive(film.slug)}
+                  >
+                    {markingLive === film.slug ? "…" : "Mark Live"}
+                  </Btn>
                 </div>
               ))}
             </div>
@@ -400,12 +444,30 @@ function ImportModal({
   film,
   onClose,
   onSuccess,
+  autoBoxLive = false,
 }: {
   film: TmdbResult;
   onClose: () => void;
   onSuccess: (slug: string) => void;
+  autoBoxLive?: boolean;
 }) {
-  const [overrides, setOverrides] = useState<ImportOverrides>(EMPTY_OVERRIDES);
+  const [overrides, setOverrides] = useState<ImportOverrides>(() => ({
+    languages: defaultLanguages(film.original_language),
+    availability: autoBoxLive
+      ? [{ countryCode: "NG", platform: "Cinema", accessType: "ticket", url: "" }]
+      : [],
+    criticScore: "",
+    audienceScore: "",
+    verifiedScore: "",
+    heatScore: "",
+    boxWeekend: "",
+    boxCumulative: "",
+    boxWeek: "",
+    boxLive: autoBoxLive,
+    rated: "",
+    slugOverride: "",
+    yearOverride: film.release_date?.slice(0, 4) ?? "",
+  }));
   const [importing, setImporting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [validationErrors, setValidationErrors] = useState<{ field: string; message: string }[]>([]);
@@ -687,10 +749,10 @@ function ImportModal({
               </Label>
               <Input
                 type="number"
-                value={overrides.yearOverride || (film.release_date?.slice(0, 4) ?? "")}
+                value={overrides.yearOverride}
                 onChange={(v) => set("yearOverride", v)}
                 placeholder={film.release_date?.slice(0, 4) ?? "e.g. 2026"}
-                style={!film.release_date && !overrides.yearOverride ? { borderColor: P.red } : {}}
+                style={!overrides.yearOverride ? { borderColor: P.red } : {}}
               />
             </div>
             <div>
@@ -967,6 +1029,7 @@ export default function ImportPage() {
   const [loadError, setLoadError] = useState<string | null>(null);
 
   const [importFilm, setImportFilm] = useState<TmdbResult | null>(null);
+  const [importAutoBoxLive, setImportAutoBoxLive] = useState(false);
   const [previewFilm, setPreviewFilm] = useState<TmdbResult | null>(null);
   const [successSlug, setSuccessSlug] = useState<string | null>(null);
 
@@ -1063,7 +1126,10 @@ export default function ImportPage() {
 
       <div style={{ maxWidth: 900, margin: "0 auto", padding: "20px 16px" }}>
         {/* Now Playing Check */}
-        <NowPlayingPanel onImport={(film) => setImportFilm(film)} />
+        <NowPlayingPanel onImport={(film, autoBoxLive) => {
+          setImportFilm(film);
+          setImportAutoBoxLive(autoBoxLive ?? false);
+        }} />
 
         {/* Controls */}
         <div style={{
@@ -1226,7 +1292,7 @@ export default function ImportPage() {
               <FilmCard
                 key={film.id}
                 film={film}
-                onImport={() => setImportFilm(film)}
+                onImport={() => { setImportFilm(film); setImportAutoBoxLive(false); }}
                 onView={() => setPreviewFilm(film)}
               />
             ))}
@@ -1249,8 +1315,9 @@ export default function ImportPage() {
       {importFilm && (
         <ImportModal
           film={importFilm}
-          onClose={() => setImportFilm(null)}
+          onClose={() => { setImportFilm(null); setImportAutoBoxLive(false); }}
           onSuccess={markImported}
+          autoBoxLive={importAutoBoxLive}
         />
       )}
 
