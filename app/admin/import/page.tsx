@@ -1,0 +1,1080 @@
+"use client";
+
+import { useState, useCallback, useEffect, useRef } from "react";
+import Link from "next/link";
+import Image from "next/image";
+
+// ─── Palette ──────────────────────────────────────────────────────────────────
+
+const P = {
+  parch: "#F5F0E4",
+  parchLight: "#FAF6ED",
+  parchDark: "#EDE5D0",
+  ink: "#1C1608",
+  inkSoft: "#3A2E18",
+  inkMuted: "#6B5D3F",
+  inkFaint: "#9C8B6E",
+  gold: "#8B7040",
+  goldLight: "#C4A862",
+  green: "#2D7A3A",
+  orange: "#D4882A",
+  red: "#B83232",
+  border: "#D8CDB4",
+  borderLight: "#E8DFCC",
+  navBg: "#1C1608",
+  white: "#FFFDF7",
+};
+
+// ─── Types ────────────────────────────────────────────────────────────────────
+
+interface TmdbResult {
+  id: number;
+  title: string;
+  release_date: string;
+  overview: string;
+  poster_url: string | null;
+  backdrop_url: string | null;
+  vote_average: number;
+  vote_count: number;
+  genre_ids: number[];
+  original_language: string;
+  already_imported: boolean;
+}
+
+interface LangEntry { code: string; percentage: number }
+interface AvailEntry { countryCode: string; platform: string; accessType: string; url: string }
+
+interface ImportOverrides {
+  languages: LangEntry[];
+  availability: AvailEntry[];
+  criticScore: string;
+  audienceScore: string;
+  verifiedScore: string;
+  heatScore: string;
+  boxWeekend: string;
+  boxCumulative: string;
+  boxWeek: string;
+  boxLive: boolean;
+  rated: string;
+  slugOverride: string;
+}
+
+const EMPTY_OVERRIDES = (): ImportOverrides => ({
+  languages: [{ code: "en", percentage: 100 }],
+  availability: [],
+  criticScore: "",
+  audienceScore: "",
+  verifiedScore: "",
+  heatScore: "",
+  boxWeekend: "",
+  boxCumulative: "",
+  boxWeek: "",
+  boxLive: false,
+  rated: "",
+  slugOverride: "",
+});
+
+const REGIONS = [
+  { code: "NG", label: "Nigeria", flag: "🇳🇬" },
+  { code: "GH", label: "Ghana", flag: "🇬🇭" },
+  { code: "ZA", label: "South Africa", flag: "🇿🇦" },
+  { code: "KE", label: "Kenya", flag: "🇰🇪" },
+  { code: "CI", label: "Côte d'Ivoire", flag: "🇨🇮" },
+  { code: "SN", label: "Senegal", flag: "🇸🇳" },
+  { code: "ET", label: "Ethiopia", flag: "🇪🇹" },
+  { code: "CM", label: "Cameroon", flag: "🇨🇲" },
+];
+
+const LANGUAGES = [
+  { code: "yo", name: "Yorùbá" },
+  { code: "ig", name: "Igbo" },
+  { code: "ha", name: "Hausa" },
+  { code: "pcm", name: "Naijá Pidgin" },
+  { code: "en", name: "English" },
+  { code: "fr", name: "French" },
+  { code: "zu", name: "Zulu" },
+  { code: "xh", name: "Xhosa" },
+  { code: "sw", name: "Swahili" },
+  { code: "am", name: "Amharic" },
+];
+
+const PLATFORMS = ["Netflix", "Prime Video", "Showmax", "iROKOtv", "YouTube", "Cinema", "Apple TV+", "Disney+", "Other"];
+const ACCESS_TYPES = [
+  { v: "sub", label: "Subscription" },
+  { v: "rent", label: "Rental" },
+  { v: "free", label: "Free" },
+  { v: "ticket", label: "Cinema ticket" },
+];
+const SORT_OPTIONS = [
+  { v: "popularity.desc", label: "Most popular" },
+  { v: "revenue.desc", label: "Highest revenue" },
+  { v: "release_date.desc", label: "Most recent" },
+];
+
+// ─── Small UI atoms ───────────────────────────────────────────────────────────
+
+function Label({ children }: { children: React.ReactNode }) {
+  return (
+    <div style={{
+      fontSize: 8,
+      fontFamily: "var(--font-sans, sans-serif)",
+      color: P.gold,
+      letterSpacing: "0.14em",
+      fontWeight: 700,
+      marginBottom: 4,
+    }}>
+      {children}
+    </div>
+  );
+}
+
+function Input({
+  value, onChange, placeholder, type = "text", style = {},
+}: {
+  value: string; onChange: (v: string) => void; placeholder?: string; type?: string; style?: React.CSSProperties;
+}) {
+  return (
+    <input
+      type={type}
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      placeholder={placeholder}
+      style={{
+        width: "100%",
+        border: `1px solid ${P.border}`,
+        background: P.white,
+        color: P.ink,
+        fontFamily: "var(--font-sans, sans-serif)",
+        fontSize: 12,
+        padding: "6px 8px",
+        outline: "none",
+        ...style,
+      }}
+    />
+  );
+}
+
+function Btn({
+  onClick, children, variant = "primary", disabled = false, small = false,
+}: {
+  onClick?: () => void; children: React.ReactNode;
+  variant?: "primary" | "ghost" | "danger" | "success";
+  disabled?: boolean; small?: boolean;
+}) {
+  const bg: Record<string, string> = {
+    primary: P.gold, ghost: "transparent", danger: P.red, success: P.green,
+  };
+  const col: Record<string, string> = {
+    primary: "#fff", ghost: P.inkMuted, danger: "#fff", success: "#fff",
+  };
+  return (
+    <button
+      onClick={onClick}
+      disabled={disabled}
+      style={{
+        background: disabled ? P.border : bg[variant],
+        color: disabled ? P.inkFaint : col[variant],
+        border: variant === "ghost" ? `1px solid ${P.border}` : "none",
+        fontFamily: "var(--font-sans, sans-serif)",
+        fontSize: small ? 10 : 11,
+        fontWeight: 700,
+        letterSpacing: "0.06em",
+        padding: small ? "4px 10px" : "7px 14px",
+        cursor: disabled ? "default" : "pointer",
+        whiteSpace: "nowrap",
+      }}
+    >
+      {children}
+    </button>
+  );
+}
+
+// ─── Import modal ─────────────────────────────────────────────────────────────
+
+function ImportModal({
+  film,
+  onClose,
+  onSuccess,
+}: {
+  film: TmdbResult;
+  onClose: () => void;
+  onSuccess: (slug: string) => void;
+}) {
+  const [overrides, setOverrides] = useState<ImportOverrides>(EMPTY_OVERRIDES);
+  const [importing, setImporting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const set = <K extends keyof ImportOverrides>(key: K, val: ImportOverrides[K]) =>
+    setOverrides((o) => ({ ...o, [key]: val }));
+
+  const addLang = () =>
+    set("languages", [...overrides.languages, { code: "yo", percentage: 0 }]);
+
+  const updateLang = (i: number, field: keyof LangEntry, val: string | number) =>
+    set("languages", overrides.languages.map((l, idx) =>
+      idx === i ? { ...l, [field]: field === "percentage" ? Number(val) : val } : l
+    ));
+
+  const removeLang = (i: number) =>
+    set("languages", overrides.languages.filter((_, idx) => idx !== i));
+
+  const addAvail = () =>
+    set("availability", [...overrides.availability, { countryCode: "NG", platform: "Netflix", accessType: "sub", url: "" }]);
+
+  const updateAvail = (i: number, field: keyof AvailEntry, val: string) =>
+    set("availability", overrides.availability.map((a, idx) =>
+      idx === i ? { ...a, [field]: val } : a
+    ));
+
+  const removeAvail = (i: number) =>
+    set("availability", overrides.availability.filter((_, idx) => idx !== i));
+
+  const doImport = async () => {
+    setImporting(true);
+    setError(null);
+    try {
+      const body = {
+        tmdbId: film.id,
+        languages: overrides.languages,
+        availability: overrides.availability.filter((a) => a.platform),
+        ...(overrides.criticScore && { criticScore: Number(overrides.criticScore) }),
+        ...(overrides.audienceScore && { audienceScore: Number(overrides.audienceScore) }),
+        ...(overrides.verifiedScore && { verifiedScore: Number(overrides.verifiedScore) }),
+        ...(overrides.heatScore && { heatScore: Number(overrides.heatScore) }),
+        ...(overrides.boxWeekend && { boxWeekend: Number(overrides.boxWeekend) }),
+        ...(overrides.boxCumulative && { boxCumulative: Number(overrides.boxCumulative) }),
+        ...(overrides.boxWeek && { boxWeek: Number(overrides.boxWeek) }),
+        boxLive: overrides.boxLive,
+        ...(overrides.rated && { rated: overrides.rated }),
+        ...(overrides.slugOverride && { slugOverride: overrides.slugOverride }),
+      };
+
+      const res = await fetch("/api/admin/import", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? "Import failed");
+      onSuccess(data.film.slug);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Unknown error");
+    } finally {
+      setImporting(false);
+    }
+  };
+
+  const year = film.release_date?.slice(0, 4);
+  const langPctTotal = overrides.languages.reduce((s, l) => s + l.percentage, 0);
+
+  return (
+    <div style={{
+      position: "fixed", inset: 0, zIndex: 200,
+      background: "rgba(28,22,8,0.7)",
+      display: "flex", alignItems: "flex-start", justifyContent: "center",
+      overflowY: "auto", padding: "20px 16px",
+    }}
+      onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
+    >
+      <div style={{
+        width: "100%", maxWidth: 600,
+        background: P.parch,
+        border: `1px solid ${P.inkSoft}`,
+        position: "relative",
+        padding: "24px 28px",
+        marginBottom: 20,
+      }}>
+        {/* Inner border */}
+        <div style={{ position: "absolute", inset: 4, border: `0.5px solid ${P.goldLight}`, pointerEvents: "none" }} />
+
+        {/* Header */}
+        <div style={{ display: "flex", gap: 16, marginBottom: 20 }}>
+          {film.poster_url && (
+            <div style={{ flexShrink: 0, width: 72, height: 108, overflow: "hidden", border: `0.5px solid ${P.border}` }}>
+              <Image
+                src={film.poster_url}
+                alt={film.title}
+                width={72}
+                height={108}
+                style={{ objectFit: "cover", width: "100%", height: "100%" }}
+              />
+            </div>
+          )}
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{
+              fontFamily: "var(--font-serif, Georgia, serif)",
+              fontSize: 20,
+              fontWeight: 700,
+              color: P.ink,
+              lineHeight: 1.2,
+              marginBottom: 4,
+            }}>
+              {film.title}
+            </div>
+            <div style={{ fontFamily: "var(--font-sans, sans-serif)", fontSize: 11, color: P.inkFaint }}>
+              {year} · TMDb #{film.id} · ⭐ {film.vote_average.toFixed(1)} ({film.vote_count.toLocaleString()} votes)
+            </div>
+            <p style={{
+              fontFamily: "var(--font-sans, sans-serif)",
+              fontSize: 11,
+              color: P.inkMuted,
+              lineHeight: 1.5,
+              margin: "6px 0 0",
+              display: "-webkit-box",
+              WebkitLineClamp: 3,
+              WebkitBoxOrient: "vertical",
+              overflow: "hidden",
+            }}>
+              {film.overview}
+            </p>
+          </div>
+        </div>
+
+        <div style={{ borderTop: `0.5px solid ${P.border}`, paddingTop: 16, display: "flex", flexDirection: "column", gap: 16 }}>
+
+          {/* Languages */}
+          <div>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+              <Label>LANGUAGE BREAKDOWN</Label>
+              <span style={{
+                fontSize: 9,
+                fontFamily: "var(--font-sans, sans-serif)",
+                color: langPctTotal === 100 ? P.green : P.red,
+                fontWeight: 700,
+              }}>
+                {langPctTotal}% {langPctTotal !== 100 && "(must sum to 100)"}
+              </span>
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+              {overrides.languages.map((l, i) => (
+                <div key={i} style={{ display: "flex", gap: 6, alignItems: "center" }}>
+                  <select
+                    value={l.code}
+                    onChange={(e) => updateLang(i, "code", e.target.value)}
+                    style={{
+                      flex: 1,
+                      border: `1px solid ${P.border}`,
+                      background: P.white,
+                      color: P.ink,
+                      fontFamily: "var(--font-sans, sans-serif)",
+                      fontSize: 12,
+                      padding: "5px 6px",
+                    }}
+                  >
+                    {LANGUAGES.map((lg) => (
+                      <option key={lg.code} value={lg.code}>{lg.name}</option>
+                    ))}
+                  </select>
+                  <input
+                    type="number"
+                    min={0}
+                    max={100}
+                    value={l.percentage}
+                    onChange={(e) => updateLang(i, "percentage", e.target.value)}
+                    style={{
+                      width: 60,
+                      border: `1px solid ${P.border}`,
+                      background: P.white,
+                      color: P.ink,
+                      fontFamily: "var(--font-sans, sans-serif)",
+                      fontSize: 12,
+                      padding: "5px 6px",
+                      textAlign: "center",
+                    }}
+                  />
+                  <span style={{ fontSize: 11, color: P.inkFaint }}>%</span>
+                  {overrides.languages.length > 1 && (
+                    <button
+                      onClick={() => removeLang(i)}
+                      style={{ background: "none", border: "none", color: P.red, cursor: "pointer", fontSize: 14, padding: "0 2px" }}
+                    >
+                      ×
+                    </button>
+                  )}
+                </div>
+              ))}
+            </div>
+            <div style={{ marginTop: 6 }}>
+              <Btn onClick={addLang} variant="ghost" small>+ Add language</Btn>
+            </div>
+          </div>
+
+          {/* Scores */}
+          <div>
+            <Label>SCORES (leave blank to fill in later)</Label>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: 6 }}>
+              {(["criticScore", "audienceScore", "verifiedScore", "heatScore"] as const).map((k) => (
+                <div key={k}>
+                  <div style={{ fontSize: 8, color: P.inkFaint, fontFamily: "var(--font-sans, sans-serif)", marginBottom: 3, letterSpacing: "0.08em" }}>
+                    {k === "criticScore" ? "CRITIC"
+                      : k === "audienceScore" ? "AUDIENCE"
+                        : k === "verifiedScore" ? "VERIFIED"
+                          : "HEAT"} (0–100)
+                  </div>
+                  <Input
+                    type="number"
+                    value={overrides[k]}
+                    onChange={(v) => set(k, v)}
+                    placeholder="—"
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Box office */}
+          <div>
+            <Label>BOX OFFICE (Naira)</Label>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 6 }}>
+              <div>
+                <div style={{ fontSize: 8, color: P.inkFaint, fontFamily: "var(--font-sans, sans-serif)", marginBottom: 3, letterSpacing: "0.08em" }}>WEEKEND</div>
+                <Input type="number" value={overrides.boxWeekend} onChange={(v) => set("boxWeekend", v)} placeholder="e.g. 82000000" />
+              </div>
+              <div>
+                <div style={{ fontSize: 8, color: P.inkFaint, fontFamily: "var(--font-sans, sans-serif)", marginBottom: 3, letterSpacing: "0.08em" }}>CUMULATIVE</div>
+                <Input type="number" value={overrides.boxCumulative} onChange={(v) => set("boxCumulative", v)} placeholder="e.g. 378000000" />
+              </div>
+              <div>
+                <div style={{ fontSize: 8, color: P.inkFaint, fontFamily: "var(--font-sans, sans-serif)", marginBottom: 3, letterSpacing: "0.08em" }}>WEEK #</div>
+                <Input type="number" value={overrides.boxWeek} onChange={(v) => set("boxWeek", v)} placeholder="e.g. 4" />
+              </div>
+            </div>
+            <div style={{ marginTop: 8, display: "flex", alignItems: "center", gap: 8 }}>
+              <input
+                type="checkbox"
+                id="boxLive"
+                checked={overrides.boxLive}
+                onChange={(e) => set("boxLive", e.target.checked)}
+              />
+              <label htmlFor="boxLive" style={{
+                fontFamily: "var(--font-sans, sans-serif)",
+                fontSize: 11,
+                color: P.inkMuted,
+                cursor: "pointer",
+              }}>
+                Cinema barcode partner — LIVE data
+              </label>
+            </div>
+          </div>
+
+          {/* Rating + slug */}
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 2fr", gap: 12 }}>
+            <div>
+              <Label>RATING</Label>
+              <Input value={overrides.rated} onChange={(v) => set("rated", v)} placeholder="e.g. 15+" />
+            </div>
+            <div>
+              <Label>SLUG OVERRIDE (only if conflict)</Label>
+              <Input value={overrides.slugOverride} onChange={(v) => set("slugOverride", v)} placeholder="auto-generated from title" />
+            </div>
+          </div>
+
+          {/* Availability */}
+          <div>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+              <Label>AVAILABILITY</Label>
+              <Btn onClick={addAvail} variant="ghost" small>+ Add</Btn>
+            </div>
+            {overrides.availability.length === 0 && (
+              <div style={{ fontFamily: "var(--font-sans, sans-serif)", fontSize: 11, color: P.inkFaint, fontStyle: "italic" }}>
+                No availability added — can be filled in later from the film page.
+              </div>
+            )}
+            <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+              {overrides.availability.map((a, i) => (
+                <div key={i} style={{ display: "grid", gridTemplateColumns: "60px 1fr 100px 1fr 20px", gap: 4, alignItems: "center" }}>
+                  <select
+                    value={a.countryCode}
+                    onChange={(e) => updateAvail(i, "countryCode", e.target.value)}
+                    style={{ border: `1px solid ${P.border}`, background: P.white, color: P.ink, fontFamily: "var(--font-sans, sans-serif)", fontSize: 11, padding: "4px 4px" }}
+                  >
+                    {["NG", "GH", "ZA", "KE", "US", "GB", "CM", "SN", "CI", "ET"].map((c) => (
+                      <option key={c} value={c}>{c}</option>
+                    ))}
+                  </select>
+                  <select
+                    value={a.platform}
+                    onChange={(e) => updateAvail(i, "platform", e.target.value)}
+                    style={{ border: `1px solid ${P.border}`, background: P.white, color: P.ink, fontFamily: "var(--font-sans, sans-serif)", fontSize: 11, padding: "4px 4px" }}
+                  >
+                    {PLATFORMS.map((p) => <option key={p}>{p}</option>)}
+                  </select>
+                  <select
+                    value={a.accessType}
+                    onChange={(e) => updateAvail(i, "accessType", e.target.value)}
+                    style={{ border: `1px solid ${P.border}`, background: P.white, color: P.ink, fontFamily: "var(--font-sans, sans-serif)", fontSize: 11, padding: "4px 4px" }}
+                  >
+                    {ACCESS_TYPES.map((t) => <option key={t.v} value={t.v}>{t.label}</option>)}
+                  </select>
+                  <input
+                    type="url"
+                    value={a.url}
+                    onChange={(e) => updateAvail(i, "url", e.target.value)}
+                    placeholder="https://..."
+                    style={{ border: `1px solid ${P.border}`, background: P.white, color: P.ink, fontFamily: "var(--font-sans, sans-serif)", fontSize: 11, padding: "4px 6px" }}
+                  />
+                  <button
+                    onClick={() => removeAvail(i)}
+                    style={{ background: "none", border: "none", color: P.red, cursor: "pointer", fontSize: 14 }}
+                  >×</button>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Error */}
+          {error && (
+            <div style={{
+              background: `${P.red}15`,
+              border: `1px solid ${P.red}`,
+              padding: "8px 12px",
+              fontFamily: "var(--font-sans, sans-serif)",
+              fontSize: 11,
+              color: P.red,
+            }}>
+              {error}
+            </div>
+          )}
+
+          {/* Actions */}
+          <div style={{ display: "flex", gap: 8, justifyContent: "flex-end", paddingTop: 4 }}>
+            <Btn onClick={onClose} variant="ghost">Cancel</Btn>
+            <Btn
+              onClick={doImport}
+              variant="success"
+              disabled={importing || langPctTotal !== 100}
+            >
+              {importing ? "Importing…" : `Import — ${film.title}`}
+            </Btn>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Film result card ─────────────────────────────────────────────────────────
+
+function FilmCard({
+  film,
+  onImport,
+  onView,
+}: {
+  film: TmdbResult;
+  onImport: () => void;
+  onView: () => void;
+}) {
+  const year = film.release_date?.slice(0, 4);
+
+  return (
+    <div style={{
+      border: `0.5px solid ${film.already_imported ? P.green : P.border}`,
+      background: film.already_imported ? `${P.green}08` : P.parchLight,
+      display: "flex",
+      gap: 0,
+      overflow: "hidden",
+      position: "relative",
+    }}>
+      {/* Poster */}
+      <div style={{
+        width: 64,
+        flexShrink: 0,
+        background: P.parchDark,
+        overflow: "hidden",
+        position: "relative",
+      }}>
+        {film.poster_url ? (
+          <Image
+            src={film.poster_url}
+            alt={film.title}
+            width={64}
+            height={96}
+            style={{ objectFit: "cover", width: "100%", height: "100%", display: "block" }}
+          />
+        ) : (
+          <div style={{
+            width: 64,
+            height: 96,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            fontSize: 20,
+            color: P.border,
+          }}>
+            🎬
+          </div>
+        )}
+      </div>
+
+      {/* Info */}
+      <div style={{ flex: 1, padding: "10px 12px", minWidth: 0 }}>
+        <div style={{
+          fontFamily: "var(--font-serif, Georgia, serif)",
+          fontSize: 14,
+          fontWeight: 700,
+          color: P.ink,
+          lineHeight: 1.2,
+          marginBottom: 2,
+          overflow: "hidden",
+          textOverflow: "ellipsis",
+          whiteSpace: "nowrap",
+        }}>
+          {film.title}
+        </div>
+        <div style={{
+          fontFamily: "var(--font-sans, sans-serif)",
+          fontSize: 10,
+          color: P.inkFaint,
+          marginBottom: 5,
+        }}>
+          {year} · ⭐ {film.vote_average.toFixed(1)} · {film.original_language.toUpperCase()}
+          {film.already_imported && (
+            <span style={{
+              marginLeft: 8,
+              background: P.green,
+              color: "#fff",
+              fontSize: 7,
+              fontWeight: 700,
+              letterSpacing: "0.1em",
+              padding: "1px 5px",
+            }}>
+              IMPORTED
+            </span>
+          )}
+        </div>
+        <p style={{
+          fontFamily: "var(--font-sans, sans-serif)",
+          fontSize: 11,
+          color: P.inkMuted,
+          lineHeight: 1.45,
+          margin: 0,
+          display: "-webkit-box",
+          WebkitLineClamp: 2,
+          WebkitBoxOrient: "vertical",
+          overflow: "hidden",
+        }}>
+          {film.overview || "No synopsis available."}
+        </p>
+      </div>
+
+      {/* Actions */}
+      <div style={{
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        gap: 5,
+        padding: "8px 10px",
+        borderLeft: `0.5px solid ${P.borderLight}`,
+        flexShrink: 0,
+      }}>
+        <Btn onClick={onView} variant="ghost" small>Preview</Btn>
+        {film.already_imported ? (
+          <Btn onClick={onImport} variant="ghost" small>Re-import</Btn>
+        ) : (
+          <Btn onClick={onImport} variant="primary" small>Import</Btn>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ─── Success toast ────────────────────────────────────────────────────────────
+
+function SuccessToast({ slug, onClose }: { slug: string; onClose: () => void }) {
+  useEffect(() => {
+    const t = setTimeout(onClose, 6000);
+    return () => clearTimeout(t);
+  }, [onClose]);
+
+  return (
+    <div style={{
+      position: "fixed",
+      bottom: 24,
+      right: 24,
+      zIndex: 300,
+      background: P.green,
+      color: "#fff",
+      padding: "12px 18px",
+      fontFamily: "var(--font-sans, sans-serif)",
+      fontSize: 12,
+      fontWeight: 600,
+      display: "flex",
+      alignItems: "center",
+      gap: 12,
+      boxShadow: "0 4px 20px rgba(0,0,0,0.2)",
+    }}>
+      <span>✓ Imported successfully</span>
+      <Link
+        href={`/film/${slug}`}
+        style={{ color: "#fff", textDecoration: "underline", fontSize: 11 }}
+      >
+        View film →
+      </Link>
+      <button onClick={onClose} style={{ background: "none", border: "none", color: "#fff", cursor: "pointer", fontSize: 16 }}>×</button>
+    </div>
+  );
+}
+
+// ─── Main page ────────────────────────────────────────────────────────────────
+
+export default function ImportPage() {
+  const [region, setRegion] = useState("NG");
+  const [sort, setSort] = useState("popularity.desc");
+  const [year, setYear] = useState("");
+  const [query, setQuery] = useState("");
+  const [mode, setMode] = useState<"discover" | "search">("discover");
+  const [page, setPage] = useState(1);
+
+  const [results, setResults] = useState<TmdbResult[]>([]);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalResults, setTotalResults] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
+
+  const [importFilm, setImportFilm] = useState<TmdbResult | null>(null);
+  const [previewFilm, setPreviewFilm] = useState<TmdbResult | null>(null);
+  const [successSlug, setSuccessSlug] = useState<string | null>(null);
+
+  const queryRef = useRef<NodeJS.Timeout | null>(null);
+
+  const fetchResults = useCallback(async (p = 1) => {
+    setLoading(true);
+    setLoadError(null);
+    try {
+      const params = new URLSearchParams({ mode, page: String(p) });
+      if (mode === "discover") {
+        params.set("region", region);
+        params.set("sort", sort);
+        if (year) params.set("year", year);
+      } else {
+        params.set("query", query);
+        params.set("region", region);
+      }
+
+      const res = await fetch(`/api/admin/tmdb?${params}`);
+      const data = await res.json();
+
+      if (!res.ok) throw new Error(data.error ?? "Fetch failed");
+
+      setResults(data.results ?? []);
+      setTotalPages(data.total_pages ?? 1);
+      setTotalResults(data.total_results ?? 0);
+      setPage(p);
+    } catch (e) {
+      setLoadError(e instanceof Error ? e.message : "Unknown error");
+      setResults([]);
+    } finally {
+      setLoading(false);
+    }
+  }, [mode, region, sort, year, query]);
+
+  // Auto-fetch on discover param changes
+  useEffect(() => {
+    if (mode === "discover") {
+      fetchResults(1);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mode, region, sort, year]);
+
+  // Debounce search
+  useEffect(() => {
+    if (mode !== "search") return;
+    if (queryRef.current) clearTimeout(queryRef.current);
+    if (!query.trim()) { setResults([]); return; }
+    queryRef.current = setTimeout(() => fetchResults(1), 400);
+    return () => { if (queryRef.current) clearTimeout(queryRef.current); };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [query, region, mode]);
+
+  const markImported = (slug: string) => {
+    setResults((r) => r.map((f) => f.id === importFilm?.id ? { ...f, already_imported: true } : f));
+    setImportFilm(null);
+    setSuccessSlug(slug);
+  };
+
+  return (
+    <div style={{ background: P.parch, minHeight: "100vh" }}>
+      {/* Header */}
+      <div style={{
+        borderBottom: `2px solid ${P.ink}`,
+        padding: "14px 20px",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        background: P.parchLight,
+      }}>
+        <div>
+          <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 2 }}>
+            <Link href="/admin" style={{ fontFamily: "var(--font-sans, sans-serif)", fontSize: 10, color: P.inkFaint, textDecoration: "none" }}>
+              ← Admin
+            </Link>
+            <span style={{ color: P.border, fontSize: 10 }}>/</span>
+            <span style={{ fontFamily: "var(--font-sans, sans-serif)", fontSize: 10, color: P.gold, letterSpacing: "0.1em", fontWeight: 700 }}>
+              TMDB IMPORT
+            </span>
+          </div>
+          <div style={{ fontFamily: "var(--font-serif, Georgia, serif)", fontSize: 22, fontWeight: 700, color: P.ink }}>
+            Import from TMDb
+          </div>
+          <div style={{ fontFamily: "var(--font-sans, sans-serif)", fontSize: 11, color: P.inkFaint, marginTop: 2 }}>
+            Browse African films by region. Click Import to create a M&apos;Bari record with TMDb metadata — then add local data.
+          </div>
+        </div>
+        <div style={{ textAlign: "right" }}>
+          <div style={{ fontSize: 9, color: P.inkFaint, fontFamily: "var(--font-sans, sans-serif)", letterSpacing: "0.1em" }}>IMAGES STORED TO</div>
+          <div style={{ fontSize: 11, color: P.gold, fontFamily: "var(--font-sans, sans-serif)", fontWeight: 700 }}>Cloudflare R2 · media.mbari.art</div>
+        </div>
+      </div>
+
+      <div style={{ maxWidth: 900, margin: "0 auto", padding: "20px 16px" }}>
+        {/* Controls */}
+        <div style={{
+          background: P.parchLight,
+          border: `0.5px solid ${P.border}`,
+          padding: "14px 16px",
+          marginBottom: 20,
+          display: "flex",
+          flexWrap: "wrap",
+          gap: 12,
+          alignItems: "flex-end",
+        }}>
+          {/* Mode toggle */}
+          <div>
+            <Label>MODE</Label>
+            <div style={{ display: "flex", gap: 0 }}>
+              {(["discover", "search"] as const).map((m) => (
+                <button
+                  key={m}
+                  onClick={() => { setMode(m); setResults([]); setPage(1); }}
+                  style={{
+                    padding: "6px 12px",
+                    fontFamily: "var(--font-sans, sans-serif)",
+                    fontSize: 10,
+                    fontWeight: 700,
+                    letterSpacing: "0.08em",
+                    border: `1px solid ${P.border}`,
+                    borderRight: m === "discover" ? "none" : undefined,
+                    background: mode === m ? P.gold : P.white,
+                    color: mode === m ? "#fff" : P.inkMuted,
+                    cursor: "pointer",
+                  }}
+                >
+                  {m === "discover" ? "DISCOVER" : "SEARCH"}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Region */}
+          <div>
+            <Label>REGION</Label>
+            <select
+              value={region}
+              onChange={(e) => { setRegion(e.target.value); setPage(1); }}
+              style={{
+                border: `1px solid ${P.border}`,
+                background: P.white,
+                color: P.ink,
+                fontFamily: "var(--font-sans, sans-serif)",
+                fontSize: 12,
+                padding: "6px 8px",
+              }}
+            >
+              {REGIONS.map((r) => (
+                <option key={r.code} value={r.code}>{r.flag} {r.label}</option>
+              ))}
+            </select>
+          </div>
+
+          {/* Search query */}
+          {mode === "search" && (
+            <div style={{ flex: 1, minWidth: 200 }}>
+              <Label>SEARCH TITLE</Label>
+              <Input
+                value={query}
+                onChange={(v) => { setQuery(v); setPage(1); }}
+                placeholder="e.g. King of Boys, Jenifa…"
+              />
+            </div>
+          )}
+
+          {/* Sort + year (discover only) */}
+          {mode === "discover" && (
+            <>
+              <div>
+                <Label>SORT BY</Label>
+                <select
+                  value={sort}
+                  onChange={(e) => { setSort(e.target.value); setPage(1); }}
+                  style={{ border: `1px solid ${P.border}`, background: P.white, color: P.ink, fontFamily: "var(--font-sans, sans-serif)", fontSize: 12, padding: "6px 8px" }}
+                >
+                  {SORT_OPTIONS.map((s) => <option key={s.v} value={s.v}>{s.label}</option>)}
+                </select>
+              </div>
+              <div>
+                <Label>YEAR (OPTIONAL)</Label>
+                <Input
+                  type="number"
+                  value={year}
+                  onChange={(v) => { setYear(v); setPage(1); }}
+                  placeholder="e.g. 2024"
+                  style={{ width: 90 }}
+                />
+              </div>
+            </>
+          )}
+        </div>
+
+        {/* Results header */}
+        <div style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginBottom: 10,
+          borderBottom: `1px solid ${P.border}`,
+          paddingBottom: 8,
+        }}>
+          <span style={{ fontFamily: "var(--font-sans, sans-serif)", fontSize: 10, color: P.inkFaint }}>
+            {loading ? "Loading…"
+              : loadError ? ""
+                : results.length > 0
+                  ? `${totalResults.toLocaleString()} results · page ${page} of ${totalPages}`
+                  : mode === "search" && !query ? "Enter a search term above"
+                    : "No results"}
+          </span>
+          {!loading && results.length > 0 && (
+            <div style={{ display: "flex", gap: 6 }}>
+              <Btn onClick={() => fetchResults(page - 1)} variant="ghost" small disabled={page <= 1}>← Prev</Btn>
+              <Btn onClick={() => fetchResults(page + 1)} variant="ghost" small disabled={page >= totalPages}>Next →</Btn>
+            </div>
+          )}
+        </div>
+
+        {/* Error */}
+        {loadError && (
+          <div style={{
+            background: `${P.red}12`,
+            border: `1px solid ${P.red}`,
+            padding: "10px 14px",
+            fontFamily: "var(--font-sans, sans-serif)",
+            fontSize: 12,
+            color: P.red,
+            marginBottom: 16,
+          }}>
+            {loadError.includes("TMDB_API_KEY")
+              ? "TMDb API key not set. Add TMDB_API_KEY to your .env file."
+              : `Error: ${loadError}`}
+          </div>
+        )}
+
+        {/* Loading skeleton */}
+        {loading && (
+          <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} style={{
+                height: 96,
+                background: P.parchDark,
+                border: `0.5px solid ${P.borderLight}`,
+                animation: "pulse 1.5s ease-in-out infinite",
+              }} />
+            ))}
+          </div>
+        )}
+
+        {/* Results grid */}
+        {!loading && results.length > 0 && (
+          <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+            {results.map((film) => (
+              <FilmCard
+                key={film.id}
+                film={film}
+                onImport={() => setImportFilm(film)}
+                onView={() => setPreviewFilm(film)}
+              />
+            ))}
+          </div>
+        )}
+
+        {/* Bottom pagination */}
+        {!loading && results.length > 0 && (
+          <div style={{ display: "flex", justifyContent: "center", gap: 8, marginTop: 20 }}>
+            <Btn onClick={() => fetchResults(page - 1)} variant="ghost" disabled={page <= 1}>← Previous page</Btn>
+            <span style={{ fontFamily: "var(--font-sans, sans-serif)", fontSize: 11, color: P.inkFaint, alignSelf: "center" }}>
+              {page} / {totalPages}
+            </span>
+            <Btn onClick={() => fetchResults(page + 1)} variant="ghost" disabled={page >= totalPages}>Next page →</Btn>
+          </div>
+        )}
+      </div>
+
+      {/* Import modal */}
+      {importFilm && (
+        <ImportModal
+          film={importFilm}
+          onClose={() => setImportFilm(null)}
+          onSuccess={markImported}
+        />
+      )}
+
+      {/* Quick preview panel */}
+      {previewFilm && (
+        <div style={{
+          position: "fixed", inset: 0, zIndex: 150,
+          background: "rgba(28,22,8,0.6)",
+          display: "flex", alignItems: "center", justifyContent: "center",
+          padding: 20,
+        }}
+          onClick={(e) => { if (e.target === e.currentTarget) setPreviewFilm(null); }}
+        >
+          <div style={{
+            background: P.parch,
+            border: `1px solid ${P.inkSoft}`,
+            maxWidth: 480,
+            width: "100%",
+            padding: "20px 24px",
+            position: "relative",
+          }}>
+            <div style={{ position: "absolute", inset: 4, border: `0.5px solid ${P.goldLight}`, pointerEvents: "none" }} />
+            <div style={{ display: "flex", gap: 14, marginBottom: 14 }}>
+              {previewFilm.poster_url && (
+                <Image src={previewFilm.poster_url} alt={previewFilm.title} width={80} height={120}
+                  style={{ objectFit: "cover", flexShrink: 0, border: `0.5px solid ${P.border}` }} />
+              )}
+              <div>
+                <div style={{ fontFamily: "var(--font-serif, Georgia, serif)", fontSize: 20, fontWeight: 700, color: P.ink, marginBottom: 4 }}>
+                  {previewFilm.title}
+                </div>
+                <div style={{ fontFamily: "var(--font-sans, sans-serif)", fontSize: 11, color: P.inkFaint, marginBottom: 8 }}>
+                  {previewFilm.release_date?.slice(0, 4)} · TMDb #{previewFilm.id} · {previewFilm.original_language.toUpperCase()}
+                  · ⭐ {previewFilm.vote_average.toFixed(1)}
+                </div>
+                <p style={{ fontFamily: "var(--font-sans, sans-serif)", fontSize: 12, color: P.inkMuted, lineHeight: 1.6, margin: 0 }}>
+                  {previewFilm.overview}
+                </p>
+              </div>
+            </div>
+            <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
+              <Btn onClick={() => setPreviewFilm(null)} variant="ghost">Close</Btn>
+              <Btn onClick={() => { setImportFilm(previewFilm); setPreviewFilm(null); }} variant="primary">
+                Import this film
+              </Btn>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Success toast */}
+      {successSlug && (
+        <SuccessToast slug={successSlug} onClose={() => setSuccessSlug(null)} />
+      )}
+
+      <style>{`
+        @keyframes pulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.5; }
+        }
+      `}</style>
+    </div>
+  );
+}

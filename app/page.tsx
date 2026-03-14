@@ -5,6 +5,7 @@ import Link from "next/link";
 import FlipHero from "@/components/flip-hero";
 import BoxOfficeTable from "@/components/box-office-table";
 import EventsGrid from "@/components/events-grid";
+import NewsletterSignup from "@/components/newsletter-signup";
 
 export const dynamic = "force-dynamic";
 
@@ -392,6 +393,52 @@ export default async function HomePage() {
           </Link>
         </div>
         <EventsGrid events={events} />
+      </section>
+
+      {/* Newsletter Signup */}
+      <section style={{
+        maxWidth: 1100,
+        margin: "0 auto",
+        padding: "0 16px 30px",
+      }}>
+        <div style={{
+          borderTop: "2px solid var(--ink)",
+          borderBottom: "0.5px solid var(--border)",
+          background: "var(--parch-light)",
+          padding: "24px 32px",
+          textAlign: "center",
+        }}>
+          <div style={{
+            fontFamily: "var(--font-sans, sans-serif)",
+            fontSize: 9,
+            color: "var(--gold)",
+            letterSpacing: "0.14em",
+            fontWeight: 700,
+            marginBottom: 10,
+          }}>
+            JOIN THE MAILING LIST
+          </div>
+          <div style={{
+            fontFamily: "var(--font-serif, Georgia, serif)",
+            fontSize: 20,
+            fontWeight: 700,
+            color: "var(--ink)",
+            marginBottom: 6,
+          }}>
+            Weekly Recap
+          </div>
+          <p style={{
+            fontFamily: "var(--font-sans, sans-serif)",
+            fontSize: 12,
+            color: "var(--ink-muted)",
+            lineHeight: 1.6,
+            margin: "0 auto 16px",
+            maxWidth: 420,
+          }}>
+            Box office numbers, new films, live events, and the week in African culture — delivered every Monday.
+          </p>
+          <NewsletterSignup />
+        </div>
       </section>
 
       {/* CTAs */}

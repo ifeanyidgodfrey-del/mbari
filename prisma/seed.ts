@@ -1,6 +1,11 @@
 import { PrismaClient } from "@prisma/client";
+import { PrismaPg } from "@prisma/adapter-pg";
+import "dotenv/config";
 
-const prisma = new PrismaClient();
+const connectionString = process.env.DATABASE_URL ?? "postgresql://mbari:mbari_password@localhost:5432/mbari";
+const adapter = new PrismaPg({ connectionString });
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const prisma = new PrismaClient({ adapter } as any);
 
 async function main() {
   console.log("Seeding M'Bari database...");
@@ -144,7 +149,10 @@ async function main() {
   // 1. Behind the Scenes (2025)
   const bts = await prisma.film.upsert({
     where: { slug: "behind-the-scenes" },
-    update: {},
+    update: {
+      posterUrl: "https://image.tmdb.org/t/p/w500/b7H6dvJFyJJPJEYSqVuw3VpKuTN.jpg",
+      backdropUrl: "https://image.tmdb.org/t/p/w1280/q3jHCb4TkBZXk43IYIEUK0zKnMA.jpg",
+    },
     create: {
       slug: "behind-the-scenes",
       title: "Behind the Scenes",
@@ -153,6 +161,8 @@ async function main() {
       country: "Nigeria",
       genres: ["Drama", "Comedy"],
       tagline: "The camera never lies. Or does it?",
+      posterUrl: "https://image.tmdb.org/t/p/w500/b7H6dvJFyJJPJEYSqVuw3VpKuTN.jpg",
+      backdropUrl: "https://image.tmdb.org/t/p/w1280/q3jHCb4TkBZXk43IYIEUK0zKnMA.jpg",
       synopsis:
         "A behind-the-scenes look at the chaotic making of Nigeria's biggest Nollywood blockbuster, where ambition, ego, and talent collide on and off screen. Funke Akindele delivers a self-aware, genre-bending love letter to Nigerian cinema.",
       criticScore: 82,
@@ -173,7 +183,13 @@ async function main() {
   // 2. Everybody Loves Jenifa (2024)
   const jenifa = await prisma.film.upsert({
     where: { slug: "everybody-loves-jenifa" },
-    update: {},
+    update: {
+      posterUrl: "https://image.tmdb.org/t/p/w500/bTWnGxDqMNvbViYjMAOMqxBh9b0.jpg",
+      backdropUrl: "https://image.tmdb.org/t/p/w1280/3V5qlvEyyiqgnheAKN0qft2OHYY.jpg",
+      boxWeekend: null,
+      boxWeek: null,
+      boxLive: false,
+    },
     create: {
       slug: "everybody-loves-jenifa",
       title: "Everybody Loves Jenifa",
@@ -182,6 +198,8 @@ async function main() {
       country: "Nigeria",
       genres: ["Comedy", "Drama"],
       tagline: "Jenifa is back — and she's going global.",
+      posterUrl: "https://image.tmdb.org/t/p/w500/bTWnGxDqMNvbViYjMAOMqxBh9b0.jpg",
+      backdropUrl: "https://image.tmdb.org/t/p/w1280/3V5qlvEyyiqgnheAKN0qft2OHYY.jpg",
       synopsis:
         "The beloved Jenifa returns in this crowd-pleasing sequel that sees her navigating fame, family, and the complicated terrain of Nigerian celebrity culture. A record-breaking commercial triumph.",
       criticScore: 74,
@@ -191,9 +209,9 @@ async function main() {
       criticCount: 38,
       audienceCount: 28900,
       verifiedCount: 7540,
-      boxWeekend: BigInt("95000000"),
-      boxCumulative: BigInt("1880000000"),
-      boxWeek: 8,
+      boxWeekend: null,           // no longer in cinemas — 2024 release
+      boxCumulative: BigInt("1880000000"),  // final theatrical gross
+      boxWeek: null,              // run complete
       boxLive: false,
       awards: [],
     },
@@ -202,7 +220,10 @@ async function main() {
   // 3. Onobiren (2026)
   const onobiren = await prisma.film.upsert({
     where: { slug: "onobiren" },
-    update: {},
+    update: {
+      posterUrl: "https://image.tmdb.org/t/p/w500/qPmGtFDf5sJbaaGNyMsNBiOb55X.jpg",
+      backdropUrl: "https://image.tmdb.org/t/p/w1280/7UYs12Mz8JcJQAphiMaPHxdNu8P.jpg",
+    },
     create: {
       slug: "onobiren",
       title: "Onobiren",
@@ -211,6 +232,8 @@ async function main() {
       country: "Nigeria",
       genres: ["Drama"],
       tagline: "Who we are when no one is watching.",
+      posterUrl: "https://image.tmdb.org/t/p/w500/qPmGtFDf5sJbaaGNyMsNBiOb55X.jpg",
+      backdropUrl: "https://image.tmdb.org/t/p/w1280/7UYs12Mz8JcJQAphiMaPHxdNu8P.jpg",
       synopsis:
         "A quiet, devastating portrait of a young woman navigating marriage, identity, and belonging in contemporary Lagos. Laju Iren's debut feature is a revelatory piece of Nigerian filmmaking.",
       criticScore: 88,
@@ -231,7 +254,13 @@ async function main() {
   // 4. Gingerrr (2025)
   const gingerrr = await prisma.film.upsert({
     where: { slug: "gingerrr" },
-    update: {},
+    update: {
+      posterUrl: "https://image.tmdb.org/t/p/w500/vOBG4PEhONyA2h1h8gHtiXg7rPN.jpg",
+      backdropUrl: "https://image.tmdb.org/t/p/w1280/rAgsOIhqRS6tUthmRoRDGMkGFTU.jpg",
+      boxWeekend: null,
+      boxWeek: null,
+      boxLive: false,
+    },
     create: {
       slug: "gingerrr",
       title: "Gingerrr",
@@ -240,6 +269,8 @@ async function main() {
       country: "Nigeria",
       genres: ["Romance", "Drama"],
       tagline: "Love, heat, and three r's.",
+      posterUrl: "https://image.tmdb.org/t/p/w500/vOBG4PEhONyA2h1h8gHtiXg7rPN.jpg",
+      backdropUrl: "https://image.tmdb.org/t/p/w1280/rAgsOIhqRS6tUthmRoRDGMkGFTU.jpg",
       synopsis:
         "Two estranged siblings reunite in Lagos to settle their late father's estate, uncovering secrets and old wounds in a story about love, legacy, and what it means to come home.",
       criticScore: 71,
@@ -249,9 +280,9 @@ async function main() {
       criticCount: 29,
       audienceCount: 8900,
       verifiedCount: 2100,
-      boxWeekend: BigInt("42000000"),
-      boxCumulative: BigInt("378000000"),
-      boxWeek: 6,
+      boxWeekend: null,           // no longer in cinemas — ended run
+      boxCumulative: BigInt("378000000"),  // final theatrical gross
+      boxWeek: null,
       boxLive: false,
       awards: [],
     },
@@ -260,7 +291,13 @@ async function main() {
   // 5. King of Boys (2018)
   const kob = await prisma.film.upsert({
     where: { slug: "king-of-boys" },
-    update: {},
+    update: {
+      posterUrl: "https://image.tmdb.org/t/p/w500/9pGMtiujfNAhPWycRWFnVOdKx4C.jpg",
+      backdropUrl: "https://image.tmdb.org/t/p/w1280/etUCaVd1mZEjfRgStzheJhSv5gx.jpg",
+      boxWeekend: null,
+      boxWeek: null,
+      boxLive: false,
+    },
     create: {
       slug: "king-of-boys",
       title: "King of Boys",
@@ -269,6 +306,8 @@ async function main() {
       country: "Nigeria",
       genres: ["Crime", "Drama", "Thriller"],
       tagline: "Power is not given. It is seized.",
+      posterUrl: "https://image.tmdb.org/t/p/w500/9pGMtiujfNAhPWycRWFnVOdKx4C.jpg",
+      backdropUrl: "https://image.tmdb.org/t/p/w1280/etUCaVd1mZEjfRgStzheJhSv5gx.jpg",
       synopsis:
         "A powerful businesswoman with deep ties to Lagos' criminal underworld seeks political power in this sweeping crime epic. Kemi Adetiba's masterwork announced a new era for Nigerian storytelling.",
       criticScore: 91,
@@ -278,9 +317,9 @@ async function main() {
       criticCount: 64,
       audienceCount: 34200,
       verifiedCount: 9800,
-      boxWeekend: BigInt("18000000"),
-      boxCumulative: BigInt("245000000"),
-      boxWeek: 0,
+      boxWeekend: null,           // catalogue title — 2018 release
+      boxCumulative: BigInt("245000000"),  // final theatrical gross
+      boxWeek: null,
       boxLive: false,
       awards: ["AMVCA Best Film 2019", "Africa Magic Best Director"],
     },

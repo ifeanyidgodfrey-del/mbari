@@ -61,6 +61,11 @@ export async function GET(
     director: film.crew
       .filter((c) => c.role === "Director")
       .map((c) => ({ "@type": "Person", name: c.crewMember.name })),
+    trailer: film.trailerUrl ? { "@type": "VideoObject", url: film.trailerUrl } : undefined,
+    sameAs: [
+      film.imdbId ? `https://www.imdb.com/title/${film.imdbId}` : null,
+      film.tmdbId ? `https://www.themoviedb.org/movie/${film.tmdbId}` : null,
+    ].filter(Boolean),
     mbariData: {
       criticScore: film.criticScore,
       audienceScore: film.audienceScore,
@@ -70,6 +75,9 @@ export async function GET(
       boxCumulative: film.boxCumulative?.toString(),
       boxWeek: film.boxWeek,
       boxLive: film.boxLive,
+      tmdbId: film.tmdbId,
+      imdbId: film.imdbId,
+      trailerUrl: film.trailerUrl,
       availability: film.availability,
     },
     provenance: { ...provenance, timestamp: new Date().toISOString() },

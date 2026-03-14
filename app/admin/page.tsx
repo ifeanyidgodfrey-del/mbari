@@ -49,9 +49,25 @@ const TIERS = [
 ];
 
 export default async function AdminPage() {
-  const submissions = await prisma.submission.findMany({
+  const [submissions, subscriberStats] = await Promise.all([
+    prisma.submission.findMany({
+      orderBy: { createdAt: "desc" },
+    }),
+    prisma.subscriber.groupBy({
+      by: ["status"],
+      _count: true,
+    }).catch(() => [] as { status: string; _count: number }[]),
+  ]);
+
+  const recentSubscribers = await prisma.subscriber.findMany({
     orderBy: { createdAt: "desc" },
-  });
+    take: 10,
+    select: { id: true, email: true, name: true, status: true, source: true, createdAt: true },
+  }).catch(() => [] as { id: string; email: string; name: string | null; status: string; source: string; createdAt: Date }[]);
+
+  const subActive = subscriberStats.find((s) => s.status === "active")?._count ?? 0;
+  const subUnsub = subscriberStats.find((s) => s.status === "unsubscribed")?._count ?? 0;
+  const subTotal = subActive + subUnsub + (subscriberStats.find((s) => s.status === "bounced")?._count ?? 0);
 
   const pending = submissions.filter((s) => s.status === "pending").length;
   const approved = submissions.filter((s) => s.status === "approved").length;
@@ -98,6 +114,21 @@ export default async function AdminPage() {
         >
           Admin Console
         </h1>
+        <Link
+          href="/admin/import"
+          style={{
+            background: gold,
+            color: "#fff",
+            fontFamily: "var(--font-sans, sans-serif)",
+            fontSize: 11,
+            fontWeight: 700,
+            letterSpacing: "0.06em",
+            padding: "7px 14px",
+            textDecoration: "none",
+          }}
+        >
+          TMDb Import →
+        </Link>
       </div>
 
       {/* Stats row */}
@@ -364,6 +395,142 @@ export default async function AdminPage() {
                         </form>
                       )}
                     </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
+
+      {/* Newsletter Management */}
+      <div
+        style={{
+          background: parch,
+          border: `0.5px solid ${border}`,
+          padding: "20px 24px",
+          marginBottom: 24,
+        }}
+      >
+        <div
+          style={{
+            fontFamily: "var(--font-sans, sans-serif)",
+            fontSize: 9,
+            color: gold,
+            letterSpacing: "0.16em",
+            fontWeight: 700,
+            marginBottom: 14,
+          }}
+        >
+          NEWSLETTER
+        </div>
+
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(3, 1fr)",
+            gap: 0,
+            border: `0.5px solid ${border}`,
+            marginBottom: 16,
+          }}
+        >
+          {[
+            { label: "ACTIVE", value: subActive, color: green },
+            { label: "UNSUBSCRIBED", value: subUnsub, color: red },
+            { label: "TOTAL", value: subTotal, color: ink },
+          ].map((stat, i) => (
+            <div
+              key={stat.label}
+              style={{
+                padding: "12px 16px",
+                textAlign: "center",
+                borderRight: i < 2 ? `0.5px solid ${border}` : "none",
+              }}
+            >
+              <div
+                style={{
+                  fontFamily: "var(--font-serif, Georgia, serif)",
+                  fontSize: 24,
+                  fontWeight: 700,
+                  color: stat.color,
+                }}
+              >
+                {stat.value}
+              </div>
+              <div
+                style={{
+                  fontFamily: "var(--font-sans, sans-serif)",
+                  fontSize: 7,
+                  color: inkFaint,
+                  letterSpacing: "0.14em",
+                  marginTop: 2,
+                }}
+              >
+                {stat.label}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {recentSubscribers.length > 0 && (
+          <table
+            style={{
+              width: "100%",
+              borderCollapse: "collapse",
+              fontFamily: "var(--font-sans, sans-serif)",
+              fontSize: 11,
+            }}
+          >
+            <thead>
+              <tr style={{ borderBottom: `1px solid ${border}` }}>
+                {["EMAIL", "NAME", "SOURCE", "STATUS", "JOINED"].map((col) => (
+                  <th
+                    key={col}
+                    style={{
+                      fontSize: 8,
+                      color: gold,
+                      letterSpacing: "0.12em",
+                      fontWeight: 700,
+                      textAlign: "left",
+                      padding: "6px 8px",
+                    }}
+                  >
+                    {col}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {recentSubscribers.map((sub, i) => (
+                <tr
+                  key={sub.id}
+                  style={{
+                    background: i % 2 === 0 ? "#fff" : "#EDE6D6",
+                    borderBottom: `0.5px solid ${border}30`,
+                  }}
+                >
+                  <td style={{ padding: "6px 8px", color: ink, fontSize: 11 }}>{sub.email}</td>
+                  <td style={{ padding: "6px 8px", color: inkMuted, fontSize: 11 }}>{sub.name ?? "—"}</td>
+                  <td style={{ padding: "6px 8px", color: inkFaint, fontSize: 10 }}>{sub.source}</td>
+                  <td style={{ padding: "6px 8px" }}>
+                    <span
+                      style={{
+                        fontSize: 8,
+                        color: sub.status === "active" ? green : red,
+                        border: `0.5px solid ${sub.status === "active" ? green : red}`,
+                        padding: "1px 6px",
+                        fontWeight: 700,
+                        letterSpacing: "0.1em",
+                      }}
+                    >
+                      {sub.status.toUpperCase()}
+                    </span>
+                  </td>
+                  <td style={{ padding: "6px 8px", color: inkFaint, fontSize: 10 }}>
+                    {new Date(sub.createdAt).toLocaleDateString("en-NG", {
+                      day: "numeric",
+                      month: "short",
+                    })}
                   </td>
                 </tr>
               ))}

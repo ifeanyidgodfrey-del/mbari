@@ -831,6 +831,23 @@ export default async function FilmPage({ params }: Props) {
 
           <CulturalDivider langCode={langCode} width={width - 56} />
 
+          {/* 10b. TRAILER */}
+          {film.trailerUrl && (
+            <>
+              <SectionLabel>TRAILER</SectionLabel>
+              <div style={{ position: "relative", width: "100%", paddingBottom: "56.25%", margin: "8px 0 12px", background: ink }}>
+                <iframe
+                  src={film.trailerUrl.replace("watch?v=", "embed/").split("&")[0]}
+                  style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", border: "none" }}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  title={`${film.title} trailer`}
+                />
+              </div>
+              <CulturalDivider langCode={langCode} width={width - 56} />
+            </>
+          )}
+
           {/* 11. RATE THIS FILM */}
           <SectionLabel>RATE THIS FILM</SectionLabel>
           <div style={{ margin: "8px 0 20px" }}>
