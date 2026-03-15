@@ -40,9 +40,9 @@ type SearchParams = {
 export default async function FilmsPage({
   searchParams,
 }: {
-  searchParams: SearchParams;
+  searchParams: Promise<SearchParams>;
 }) {
-  const { q, year, genre, country, sort, live } = searchParams;
+  const { q, year, genre, country, sort, live } = await searchParams;
 
   // Build where clause
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
