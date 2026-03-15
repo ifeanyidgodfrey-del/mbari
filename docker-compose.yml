@@ -4,11 +4,11 @@ services:
   app:
     build: .
     ports:
-      - "3000:3000"
+      - "127.0.0.1:3001:3000"
     environment:
       DATABASE_URL: postgresql://mbari:mbari_secret@db:5432/mbari
       REDIS_URL: redis://redis:6379
-      NEXTAUTH_URL: http://localhost:3000
+      NEXTAUTH_URL: https://mbari.art
       NEXTAUTH_SECRET: change_me_in_production
     depends_on:
       db:
