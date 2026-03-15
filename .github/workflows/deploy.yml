@@ -40,6 +40,7 @@ jobs:
                 npx prisma db push &&
                 npx tsx prisma/seed.ts &&
                 npx tsx prisma/update-content.ts || true &&
-                npx tsx prisma/import-research-batch.ts || true
+                npx tsx prisma/import-research-batch.ts || true &&
+                npx tsx prisma/migrate-actors.ts || true
               "
             echo "Deploy complete"

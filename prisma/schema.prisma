@@ -36,6 +36,7 @@ model Film {
   trailerUrl    String?           // YouTube trailer URL
   languages     FilmLanguage[]
   cast          CastMember[]
+  actorCredits  ActorCredit[]
   crew          CrewCredit[]
   availability  Availability[]
   reviews       Review[]
@@ -92,6 +93,30 @@ model CastMember {
   name      String
   character String?
   film      Film    @relation(fields: [filmId], references: [id])
+}
+
+model Actor {
+  id          String        @id @default(cuid())
+  slug        String        @unique
+  name        String
+  bio         String?       @db.Text
+  imageUrl    String?
+  nationality String?       // ISO 3166-1 alpha-2 country code
+  born        String?       // year or full date string
+  awards      String[]
+  credits     ActorCredit[]
+  createdAt   DateTime      @default(now())
+}
+
+model ActorCredit {
+  id        String @id @default(cuid())
+  filmId    String
+  actorId   String
+  character String?
+  order     Int    @default(0)
+  film      Film   @relation(fields: [filmId], references: [id])
+  actor     Actor  @relation(fields: [actorId], references: [id])
+  @@unique([filmId, actorId])
 }
 
 model Availability {

@@ -1,0 +1,446 @@
+import { prisma } from "@/lib/prisma";
+import { fmtDual } from "@/lib/format";
+import Link from "next/link";
+import Image from "next/image";
+import { notFound } from "next/navigation";
+import type { Metadata } from "next";
+
+export const dynamic = "force-dynamic";
+
+type Props = { params: Promise<{ slug: string }> };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params;
+  const actor = await prisma.actor.findUnique({ where: { slug } });
+  if (!actor) return { title: "Actor Not Found" };
+  return {
+    title: `${actor.name} — M'Bari`,
+    description: actor.bio?.slice(0, 160) ?? `${actor.name} on M'Bari`,
+  };
+}
+
+const ink = "#1C1608";
+const gold = "#8B7040";
+const border = "#D8CDB4";
+const inkFaint = "#9C8B6E";
+const inkMuted = "#6B5D3F";
+const green = "#2D7A3A";
+
+const scoreColor = (s: number) =>
+  s >= 75 ? green : s >= 50 ? "#D4882A" : "#B83232";
+
+const COUNTRY_NAME: Record<string, string> = {
+  NG: "Nigeria", ZA: "South Africa", KE: "Kenya", GH: "Ghana",
+  ET: "Ethiopia", CM: "Cameroon", TZ: "Tanzania", SN: "Senegal",
+  CI: "Côte d'Ivoire", EG: "Egypt",
+};
+
+export default async function ActorPage({ params }: Props) {
+  const { slug } = await params;
+  const actor = await prisma.actor.findUnique({
+    where: { slug },
+    include: {
+      credits: {
+        include: { film: true },
+        orderBy: { film: { year: "desc" } },
+      },
+    },
+  });
+
+  if (!actor) notFound();
+
+  const totalFilms = actor.credits.length;
+  const scores = actor.credits
+    .map((c) => c.film.criticScore)
+    .filter((s): s is number => s != null);
+  const avgScore =
+    scores.length > 0
+      ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length)
+      : null;
+  const combinedBox = actor.credits
+    .map((c) => c.film.boxCumulative)
+    .filter((b): b is bigint => b != null)
+    .reduce((a, b) => a + b, BigInt(0));
+
+  // Group by year descending
+  const byYear: Record<number, typeof actor.credits> = {};
+  for (const credit of actor.credits) {
+    const yr = credit.film.year;
+    if (!byYear[yr]) byYear[yr] = [];
+    byYear[yr].push(credit);
+  }
+  const years = Object.keys(byYear).map(Number).sort((a, b) => b - a);
+
+  return (
+    <div style={{ background: "#fff", minHeight: "100vh" }}>
+
+      {/* ── Top ribbon ──────────────────────────────────────────────────── */}
+      <header style={{ background: ink, position: "relative", overflow: "hidden" }}>
+        <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 2, background: gold }} />
+
+        <div style={{
+          maxWidth: 900,
+          margin: "0 auto",
+          padding: "56px 32px 60px",
+          display: "flex",
+          gap: 40,
+          alignItems: "flex-end",
+        }}>
+          {/* Photo */}
+          <div style={{
+            width: 140,
+            height: 168,
+            flexShrink: 0,
+            border: `2px solid ${gold}40`,
+            overflow: "hidden",
+            position: "relative",
+            background: "#2A2018",
+          }}>
+            {actor.imageUrl ? (
+              <Image
+                src={actor.imageUrl}
+                alt={actor.name}
+                fill
+                style={{ objectFit: "cover", objectPosition: "top" }}
+                sizes="140px"
+              />
+            ) : (
+              <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <span style={{
+                  fontFamily: "var(--font-serif, Georgia, serif)",
+                  fontSize: 52,
+                  color: `${gold}60`,
+                  fontWeight: 700,
+                }}>
+                  {actor.name.charAt(0)}
+                </span>
+              </div>
+            )}
+          </div>
+
+          {/* Name + meta */}
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <Link href="/cast" style={{
+              fontFamily: "var(--font-sans, sans-serif)",
+              fontSize: 9,
+              color: gold,
+              textDecoration: "none",
+              letterSpacing: "0.16em",
+              fontWeight: 700,
+              display: "block",
+              marginBottom: 16,
+            }}>
+              ← CAST DIRECTORY
+            </Link>
+
+            {/* Tags */}
+            <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 12 }}>
+              <span style={{
+                border: `0.5px solid ${gold}60`,
+                fontSize: 8,
+                fontFamily: "var(--font-sans, sans-serif)",
+                color: gold,
+                padding: "2px 8px",
+                letterSpacing: "0.12em",
+                fontWeight: 700,
+              }}>
+                ACTOR
+              </span>
+              {actor.nationality && (
+                <span style={{
+                  background: `${gold}30`,
+                  fontSize: 8,
+                  fontFamily: "var(--font-sans, sans-serif)",
+                  color: gold,
+                  padding: "2px 8px",
+                  letterSpacing: "0.12em",
+                  fontWeight: 700,
+                }}>
+                  {COUNTRY_NAME[actor.nationality] ?? actor.nationality}
+                </span>
+              )}
+            </div>
+
+            <h1 style={{
+              fontFamily: "var(--font-serif, Georgia, serif)",
+              fontSize: "clamp(28px, 4vw, 46px)",
+              fontWeight: 700,
+              color: "#FFFDF7",
+              margin: 0,
+              lineHeight: 1.05,
+              letterSpacing: "-0.02em",
+            }}>
+              {actor.name}
+            </h1>
+
+            {actor.born && (
+              <div style={{
+                fontFamily: "var(--font-sans, sans-serif)",
+                fontSize: 11,
+                color: `${gold}99`,
+                marginTop: 8,
+                letterSpacing: "0.04em",
+              }}>
+                Born {actor.born}
+              </div>
+            )}
+          </div>
+        </div>
+      </header>
+
+      {/* ── Body ─────────────────────────────────────────────────────────── */}
+      <div style={{ maxWidth: 900, margin: "0 auto", padding: "48px 32px 80px" }}>
+
+        {/* Bio */}
+        {actor.bio && (
+          <div style={{ marginBottom: 48 }}>
+            <p style={{
+              fontFamily: "var(--font-sans, sans-serif)",
+              fontSize: 15,
+              color: inkMuted,
+              lineHeight: 1.8,
+              margin: 0,
+              maxWidth: 640,
+            }}>
+              {actor.bio}
+            </p>
+          </div>
+        )}
+
+        {/* Stats */}
+        <div style={{
+          display: "grid",
+          gridTemplateColumns: "1fr 1fr 1fr",
+          gap: 0,
+          border: `1px solid ${border}`,
+          marginBottom: 56,
+        }}>
+          {[
+            { label: "FILMS", value: totalFilms },
+            { label: "AVG SCORE", value: avgScore ?? "—" },
+            { label: "COMBINED BOX OFFICE", value: combinedBox > BigInt(0) ? fmtDual(combinedBox) : "—" },
+          ].map((stat, i) => (
+            <div key={stat.label} style={{
+              textAlign: "center",
+              padding: "20px 12px",
+              borderRight: i < 2 ? `1px solid ${border}` : "none",
+              background: "#fff",
+            }}>
+              <div style={{
+                fontFamily: "var(--font-serif, Georgia, serif)",
+                fontSize: i === 2 ? 18 : 32,
+                fontWeight: 700,
+                color: ink,
+                lineHeight: 1.1,
+                marginBottom: 4,
+              }}>
+                {stat.value}
+              </div>
+              <div style={{
+                fontFamily: "var(--font-sans, sans-serif)",
+                fontSize: 8,
+                color: inkFaint,
+                letterSpacing: "0.14em",
+                fontWeight: 700,
+              }}>
+                {stat.label}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Awards */}
+        {actor.awards.length > 0 && (
+          <div style={{ marginBottom: 56 }}>
+            <div style={{
+              fontFamily: "var(--font-sans, sans-serif)",
+              fontSize: 9,
+              color: gold,
+              letterSpacing: "0.18em",
+              fontWeight: 700,
+              marginBottom: 16,
+            }}>
+              AWARDS & RECOGNITION
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+              {actor.awards.map((award, i) => (
+                <div key={i} style={{
+                  fontFamily: "var(--font-sans, sans-serif)",
+                  fontSize: 13,
+                  color: inkMuted,
+                  padding: "10px 14px",
+                  borderLeft: `3px solid ${gold}`,
+                  background: "#FDFAF4",
+                }}>
+                  {award}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Filmography */}
+        <div>
+          <div style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            marginBottom: 28,
+            paddingBottom: 12,
+            borderBottom: `1.5px solid ${ink}`,
+          }}>
+            <h2 style={{
+              fontFamily: "var(--font-serif, Georgia, serif)",
+              fontSize: 22,
+              fontWeight: 700,
+              color: ink,
+              margin: 0,
+            }}>
+              Filmography
+            </h2>
+            <span style={{
+              fontFamily: "var(--font-sans, sans-serif)",
+              fontSize: 10,
+              color: inkFaint,
+              letterSpacing: "0.1em",
+            }}>
+              {totalFilms} {totalFilms === 1 ? "credit" : "credits"} · chronological
+            </span>
+          </div>
+
+          <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
+            {years.map((year) => (
+              <div key={year} style={{ display: "flex", gap: 0, marginBottom: 32 }}>
+                {/* Year */}
+                <div style={{ width: 72, flexShrink: 0, paddingTop: 18 }}>
+                  <div style={{
+                    fontFamily: "var(--font-serif, Georgia, serif)",
+                    fontSize: 18,
+                    fontWeight: 700,
+                    color: gold,
+                  }}>
+                    {year}
+                  </div>
+                </div>
+
+                {/* Credits */}
+                <div style={{ flex: 1, borderLeft: `1px solid ${border}`, paddingLeft: 24 }}>
+                  {byYear[year].map((credit, i) => (
+                    <div key={credit.id} style={{
+                      display: "flex",
+                      gap: 16,
+                      alignItems: "flex-start",
+                      padding: "16px 0",
+                      borderBottom: i < byYear[year].length - 1 ? `0.5px solid ${border}` : "none",
+                    }}>
+                      {/* Poster thumb */}
+                      <div style={{
+                        width: 44,
+                        height: 64,
+                        flexShrink: 0,
+                        background: "#F0EAD8",
+                        position: "relative",
+                        overflow: "hidden",
+                        border: `0.5px solid ${border}`,
+                      }}>
+                        {credit.film.posterUrl ? (
+                          <Image
+                            src={credit.film.posterUrl}
+                            alt={credit.film.title}
+                            fill
+                            style={{ objectFit: "cover" }}
+                            sizes="44px"
+                          />
+                        ) : (
+                          <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                            <span style={{ fontFamily: "var(--font-serif, Georgia, serif)", fontSize: 18, color: border }}>
+                              {credit.film.title.charAt(0)}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Info */}
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <Link href={`/film/${credit.film.slug}`} style={{
+                          fontFamily: "var(--font-serif, Georgia, serif)",
+                          fontSize: 17,
+                          fontWeight: 700,
+                          color: ink,
+                          textDecoration: "none",
+                          display: "block",
+                          marginBottom: 4,
+                          lineHeight: 1.2,
+                        }}>
+                          {credit.film.title}
+                        </Link>
+                        <div style={{
+                          fontFamily: "var(--font-sans, sans-serif)",
+                          fontSize: 11,
+                          color: inkFaint,
+                          marginBottom: 6,
+                        }}>
+                          {credit.character ? (
+                            <>as <em>{credit.character}</em></>
+                          ) : "Actor"}
+                          {credit.film.country && (
+                            <span style={{ marginLeft: 8 }}>
+                              · {COUNTRY_NAME[credit.film.country] ?? credit.film.country}
+                            </span>
+                          )}
+                        </div>
+                        {credit.film.genres.length > 0 && (
+                          <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
+                            {credit.film.genres.slice(0, 2).map((g) => (
+                              <span key={g} style={{
+                                fontFamily: "var(--font-sans, sans-serif)",
+                                fontSize: 8,
+                                color: inkMuted,
+                                border: `0.5px solid ${border}`,
+                                padding: "1px 6px",
+                                letterSpacing: "0.06em",
+                              }}>
+                                {g}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Score */}
+                      <div style={{ flexShrink: 0, textAlign: "right", display: "flex", flexDirection: "column", gap: 6, alignItems: "flex-end" }}>
+                        {credit.film.criticScore != null && (
+                          <span style={{
+                            background: scoreColor(credit.film.criticScore),
+                            color: "#fff",
+                            fontSize: 14,
+                            fontWeight: 700,
+                            fontFamily: "var(--font-serif, Georgia, serif)",
+                            padding: "3px 9px",
+                            display: "inline-block",
+                          }}>
+                            {credit.film.criticScore}
+                          </span>
+                        )}
+                        {credit.film.boxCumulative != null && (
+                          <div style={{
+                            fontFamily: "var(--font-sans, sans-serif)",
+                            fontSize: 10,
+                            color: gold,
+                            fontWeight: 700,
+                          }}>
+                            {fmtDual(credit.film.boxCumulative, credit.film.country)}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

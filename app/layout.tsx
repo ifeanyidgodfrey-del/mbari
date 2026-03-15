@@ -44,7 +44,7 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <Nav />
-        <main style={{ paddingTop: "34px" }}>
+        <main style={{ paddingTop: "68px" }}>
           {children}
         </main>
       </body>

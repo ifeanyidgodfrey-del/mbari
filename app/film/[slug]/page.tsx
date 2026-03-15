@@ -134,6 +134,7 @@ export default async function FilmPage({ params }: Props) {
     include: {
       languages: { include: { language: true } },
       cast: true,
+      actorCredits: { include: { actor: true }, orderBy: { order: "asc" } },
       crew: { include: { crewMember: true } },
       availability: true,
       reviews: { include: { user: true } },
@@ -433,8 +434,8 @@ export default async function FilmPage({ params }: Props) {
             </>
           )}
 
-          {/* 7. THE PLAYERS: cast */}
-          {film.cast.length > 0 && (
+          {/* 7. THE PLAYERS: cast — linked to actor profiles */}
+          {(film.actorCredits.length > 0 || film.cast.length > 0) && (
             <>
               <SectionLabel>THE PLAYERS</SectionLabel>
               <div
@@ -445,38 +446,55 @@ export default async function FilmPage({ params }: Props) {
                   margin: "8px 0 12px",
                 }}
               >
-                {film.cast.map((c) => (
-                  <div
-                    key={c.id}
-                    style={{
-                      border: `0.5px solid ${border}`,
-                      padding: "8px 10px",
-                    }}
-                  >
+                {/* Prefer actorCredits (linked) over legacy cast rows */}
+                {(film.actorCredits.length > 0 ? film.actorCredits : film.cast).map((c) => {
+                  const isLinked = "actor" in c;
+                  const name = isLinked ? c.actor.name : c.name;
+                  const character = isLinked ? c.character : c.character;
+                  const href = isLinked ? `/cast/${c.actor.slug}` : null;
+
+                  const card = (
                     <div
                       style={{
-                        fontFamily: "var(--font-sans, sans-serif)",
-                        fontSize: 12,
-                        fontWeight: 600,
-                        color: ink,
+                        border: `0.5px solid ${border}`,
+                        padding: "8px 10px",
+                        background: isLinked ? "#FDFAF4" : "#fff",
+                        transition: "border-color 0.15s",
                       }}
                     >
-                      {c.name}
-                    </div>
-                    {c.character && (
                       <div
                         style={{
                           fontFamily: "var(--font-sans, sans-serif)",
-                          fontSize: 10,
-                          color: inkFaint,
-                          fontStyle: "italic",
+                          fontSize: 12,
+                          fontWeight: 600,
+                          color: isLinked ? gold : ink,
                         }}
                       >
-                        as {c.character}
+                        {name}
                       </div>
-                    )}
-                  </div>
-                ))}
+                      {character && (
+                        <div
+                          style={{
+                            fontFamily: "var(--font-sans, sans-serif)",
+                            fontSize: 10,
+                            color: inkFaint,
+                            fontStyle: "italic",
+                          }}
+                        >
+                          as {character}
+                        </div>
+                      )}
+                    </div>
+                  );
+
+                  return href ? (
+                    <Link key={c.id} href={href} style={{ textDecoration: "none" }}>
+                      {card}
+                    </Link>
+                  ) : (
+                    <div key={c.id}>{card}</div>
+                  );
+                })}
               </div>
               <CulturalDivider langCode={langCode} width={width - 56} />
             </>

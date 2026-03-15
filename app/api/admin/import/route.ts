@@ -193,7 +193,7 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    // 4. Cast members (recreate — simple approach)
+    // 4. Cast members — write both legacy CastMember and Actor + ActorCredit
     if (shape.cast.length > 0) {
       await prisma.castMember.deleteMany({ where: { filmId: film.id } });
       await prisma.castMember.createMany({
@@ -203,6 +203,36 @@ export async function POST(req: NextRequest) {
           character: c.character || null,
         })),
       });
+
+      // Also upsert Actor profiles + ActorCredit records
+      for (let i = 0; i < shape.cast.length; i++) {
+        const c = shape.cast[i];
+        const actorSlug = c.name
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "")
+          .toLowerCase()
+          .replace(/[^a-z0-9\s-]/g, "")
+          .replace(/\s+/g, "-")
+          .replace(/-+/g, "-")
+          .replace(/^-|-$/g, "");
+
+        const actor = await prisma.actor.upsert({
+          where: { slug: actorSlug },
+          create: {
+            slug: actorSlug,
+            name: c.name,
+            nationality: shape.country ?? null,
+            awards: [],
+          },
+          update: {},
+        });
+
+        await prisma.actorCredit.upsert({
+          where: { filmId_actorId: { filmId: film.id, actorId: actor.id } },
+          create: { filmId: film.id, actorId: actor.id, character: c.character || null, order: i },
+          update: { character: c.character || null },
+        });
+      }
     }
 
     // 5. Crew members + credits
