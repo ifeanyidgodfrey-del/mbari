@@ -1,10 +1,19 @@
 import Link from "next/link";
-import { fmt } from "@/lib/format";
+import { fmtDual } from "@/lib/format";
+
+const COUNTRY_NAME: Record<string, string> = {
+  NG: "Nigeria", ZA: "South Africa", KE: "Kenya", GH: "Ghana",
+  FR: "France", GB: "UK", US: "USA", NZ: "New Zealand", IE: "Ireland",
+};
+const COUNTRY_COLOR: Record<string, string> = {
+  NG: "#2D7A3A", ZA: "#1A5C8A", KE: "#8B1A1A", GH: "#B8860B",
+};
 
 type Film = {
   id: string;
   slug: string;
   title: string;
+  country: string;
   boxWeekend: bigint | null;
   boxCumulative: bigint | null;
   boxWeek: number | null;
@@ -36,7 +45,7 @@ export default function BoxOfficeTable({ films }: { films: Film[] }) {
             borderBottom: `1px solid ${border}`,
           }}
         >
-          {["#", "TITLE", "WKND", "TOTAL", "WK", "STATUS"].map((col, i) => (
+          {["#", "TITLE", "COUNTRY", "WKND", "TOTAL", "WK", "STATUS"].map((col, i) => (
             <th
               key={col}
               style={{
@@ -90,6 +99,20 @@ export default function BoxOfficeTable({ films }: { films: Film[] }) {
                   {film.title}
                 </Link>
               </td>
+              <td style={{ padding: "8px", textAlign: "center" }}>
+                <span style={{
+                  display: "inline-block",
+                  background: COUNTRY_COLOR[film.country] ?? gold,
+                  color: "#fff",
+                  fontSize: 8,
+                  fontWeight: 700,
+                  letterSpacing: "0.1em",
+                  padding: "2px 6px",
+                  fontFamily: "var(--font-sans, sans-serif)",
+                }}>
+                  {COUNTRY_NAME[film.country] ?? film.country}
+                </span>
+              </td>
               <td
                 style={{
                   padding: "8px",
@@ -98,7 +121,7 @@ export default function BoxOfficeTable({ films }: { films: Film[] }) {
                   fontWeight: 600,
                 }}
               >
-                {film.boxWeekend != null ? fmt(film.boxWeekend) : "—"}
+                {film.boxWeekend != null ? fmtDual(film.boxWeekend, film.country) : "—"}
               </td>
               <td
                 style={{
@@ -108,7 +131,7 @@ export default function BoxOfficeTable({ films }: { films: Film[] }) {
                   fontWeight: 700,
                 }}
               >
-                {film.boxCumulative != null ? fmt(film.boxCumulative) : "—"}
+                {film.boxCumulative != null ? fmtDual(film.boxCumulative, film.country) : "—"}
               </td>
               <td
                 style={{

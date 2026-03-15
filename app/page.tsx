@@ -1,33 +1,55 @@
 import { prisma } from "@/lib/prisma";
-import { fmt } from "@/lib/format";
+import { fmtDual } from "@/lib/format";
 import { CITIES_DATELINE } from "@/lib/constants";
 import Link from "next/link";
 import FlipHero from "@/components/flip-hero";
 import BoxOfficeTable from "@/components/box-office-table";
 import EventsGrid from "@/components/events-grid";
 import NewsletterSignup from "@/components/newsletter-signup";
+import type { Metadata } from "next";
 
 export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = {
+  title: "M'Bari — Nigerian Box Office & African Cinema Scores",
+  description:
+    "Live Nigerian box office rankings, Nollywood film scores, and African cinema data. Track what's playing in Lagos, Nairobi, Accra and Johannesburg.",
+  keywords: [
+    "Nigerian box office",
+    "Nollywood box office",
+    "Nigerian cinema",
+    "African films",
+    "Nollywood scores",
+    "box office Nigeria 2025",
+    "what's on in Lagos",
+    "African film ratings",
+  ],
+  openGraph: {
+    title: "M'Bari — Nigerian Box Office & African Cinema",
+    description:
+      "Live Nigerian box office rankings, Nollywood scores, and African culture data.",
+    url: "https://mbari.art",
+    siteName: "M'Bari",
+    locale: "en_NG",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "M'Bari — Nigerian Box Office & African Cinema",
+    description:
+      "Live Nigerian box office rankings, Nollywood scores, and African culture data.",
+  },
+};
 
 export default async function HomePage() {
   const [films, events] = await Promise.all([
     prisma.film.findMany({
-      where: {
-        OR: [
-          { boxLive: true },
-          { year: { gte: new Date().getFullYear() - 1 } },
-        ],
-        boxCumulative: { not: null },
-      },
-      orderBy: [
-        { boxLive: "desc" },
-        { boxCumulative: "desc" },
-      ],
+      where: { boxLive: true },
+      orderBy: [{ country: "asc" }, { boxCumulative: "desc" }],
       include: {
         languages: { include: { language: true } },
         crew: { include: { crewMember: true }, take: 1 },
       },
-      take: 10,
     }),
     prisma.event.findMany({
       orderBy: { createdAt: "desc" },
@@ -44,7 +66,36 @@ export default async function HomePage() {
     year: "numeric",
   });
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    name: "Nigerian Box Office — M'Bari",
+    description:
+      "Live Nigerian box office rankings, Nollywood film scores, and African cinema data.",
+    url: "https://mbari.art",
+    mainEntity: {
+      "@type": "ItemList",
+      name: "Nigerian Box Office Chart",
+      itemListElement: films.slice(0, 10).map((film, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        item: {
+          "@type": "Movie",
+          name: film.title,
+          dateCreated: String(film.year),
+          description: film.synopsis?.slice(0, 160),
+          url: `https://mbari.art/film/${film.slug}`,
+        },
+      })),
+    },
+  };
+
   return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
     <div style={{ background: "var(--parch)", minHeight: "100vh" }}>
       {/* Masthead */}
       <header style={{
@@ -144,7 +195,7 @@ export default async function HomePage() {
                       marginTop: 2,
                     }}>
                       {film.year} · {film.country}
-                      {film.boxCumulative != null ? ` · ${fmt(film.boxCumulative)}` : ""}
+                      {film.boxCumulative != null ? ` · ${fmtDual(film.boxCumulative, film.country)}` : ""}
                     </div>
                   </div>
                 </div>
@@ -195,7 +246,7 @@ export default async function HomePage() {
                   color: "var(--ink-muted)",
                   fontWeight: 600,
                 }}>
-                  {film.boxCumulative != null ? fmt(film.boxCumulative) : "—"}
+                  {film.boxCumulative != null ? fmtDual(film.boxCumulative, film.country) : "—"}
                 </span>
               </div>
             ))}
@@ -221,15 +272,16 @@ export default async function HomePage() {
             letterSpacing: "0.14em",
             fontWeight: 700,
           }}>
-            BOX OFFICE
+            NOW IN CINEMAS
           </span>
-          <span style={{
+          <Link href="/films?live=1" style={{
             fontFamily: "var(--font-sans, sans-serif)",
             fontSize: 9,
             color: "var(--ink-faint)",
+            textDecoration: "none",
           }}>
-            All figures in Nigerian Naira
-          </span>
+            Nigeria · South Africa · Kenya · Ghana →
+          </Link>
         </div>
         <BoxOfficeTable films={films} />
         <div style={{
@@ -524,5 +576,6 @@ export default async function HomePage() {
         M&apos;Bari — Where culture lives · mbari.art · © {new Date().getFullYear()}
       </footer>
     </div>
+    </>
   );
 }

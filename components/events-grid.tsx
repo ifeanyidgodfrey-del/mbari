@@ -8,6 +8,7 @@ type Event = {
   type: string;
   venue: string;
   city: string;
+  country: string;
   date: string;
   imageUrl: string | null;
   live: boolean;
@@ -170,6 +171,9 @@ export default function EventsGrid({ events }: { events: Event[] }) {
                 }}
               >
                 {event.venue} · {event.city}
+                {event.country && (
+                  <span style={{ color: gold, fontWeight: 700, marginLeft: 4 }}>· {event.country.toUpperCase()}</span>
+                )}
               </div>
 
               <div

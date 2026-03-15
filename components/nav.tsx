@@ -33,7 +33,7 @@ export default function Nav() {
         </Link>
         <div style={{ display: "flex", gap: 14 }}>
           {[
-            ["Films", "/film"],
+            ["Films", "/films"],
             ["Events", "/events"],
             ["Languages", "/language/yo"],
             ["Submit", "/submit"],

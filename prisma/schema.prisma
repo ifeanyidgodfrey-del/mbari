@@ -67,6 +67,7 @@ model CrewMember {
   slug      String       @unique
   name      String
   bio       String?      @db.Text
+  imageUrl  String?                // Profile photo URL
   type      String
   roles     String[]
   awards    String[]
@@ -139,6 +140,7 @@ model Event {
   type          String
   venue         String
   city          String
+  country       String   @default("Nigeria")
   date          String
   imageUrl      String?
   live          Boolean  @default(false)

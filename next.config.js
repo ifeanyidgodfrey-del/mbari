@@ -8,6 +8,16 @@ const nextConfig = {
       { protocol: "https", hostname: "image.tmdb.org" },
     ],
   },
+  async redirects() {
+    return [
+      // Singular /film → plural /films directory
+      { source: "/film", destination: "/films", permanent: false },
+      // /event singular → /events
+      { source: "/event", destination: "/events", permanent: false },
+      // /language without a code → default to Yorùbá
+      { source: "/language", destination: "/language/yo", permanent: false },
+    ];
+  },
   async headers() {
     return [
       {

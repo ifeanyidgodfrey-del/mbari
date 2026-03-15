@@ -402,22 +402,21 @@ function NowPlayingPanel({ onImport }: { onImport: (film: TmdbResult, autoBoxLiv
                   marginBottom: 4,
                   fontFamily: "var(--font-sans, sans-serif)",
                   fontSize: 11,
-                  flex: 1,
                 }}>
-                  <span style={{ color: P.ink }}>{film.title}</span>
-                </div>
-                <div style={{ display: "flex", gap: 6, alignItems: "center", flexShrink: 0 }}>
-                  <Link href={`/film/${film.slug}`} style={{ color: P.gold, fontSize: 10, textDecoration: "none", whiteSpace: "nowrap" }}>
-                    Edit →
-                  </Link>
-                  <Btn
-                    small
-                    variant="success"
-                    disabled={markingLive === film.slug}
-                    onClick={() => markLive(film.slug)}
-                  >
-                    {markingLive === film.slug ? "…" : "Mark Live"}
-                  </Btn>
+                  <span style={{ color: P.ink, flex: 1 }}>{film.title}</span>
+                  <div style={{ display: "flex", gap: 6, alignItems: "center", flexShrink: 0 }}>
+                    <Link href={`/film/${film.slug}`} style={{ color: P.gold, fontSize: 10, textDecoration: "none", whiteSpace: "nowrap" }}>
+                      Edit →
+                    </Link>
+                    <Btn
+                      small
+                      variant="success"
+                      disabled={markingLive === film.slug}
+                      onClick={() => markLive(film.slug)}
+                    >
+                      {markingLive === film.slug ? "…" : "Mark Live"}
+                    </Btn>
+                  </div>
                 </div>
               ))}
             </div>
@@ -1012,6 +1011,294 @@ function SuccessToast({ slug, onClose }: { slug: string; onClose: () => void }) 
   );
 }
 
+// ─── Manual Entry Form ────────────────────────────────────────────────────────
+
+function ManualEntryForm({ onSuccess }: { onSuccess: (slug: string) => void }) {
+  const [title, setTitle] = useState("");
+  const [year, setYear] = useState("");
+  const [country, setCountry] = useState("Nigeria");
+  const [synopsis, setSynopsis] = useState("");
+  const [genres, setGenres] = useState("");
+  const [runtime, setRuntime] = useState("");
+  const [tagline, setTagline] = useState("");
+  const [posterUrl, setPosterUrl] = useState("");
+  const [backdropUrl, setBackdropUrl] = useState("");
+  const [trailerUrl, setTrailerUrl] = useState("");
+  const [rated, setRated] = useState("");
+  const [slugOverride, setSlugOverride] = useState("");
+  const [awards, setAwards] = useState("");
+
+  const [languages, setLanguages] = useState<LangEntry[]>([{ code: "en", percentage: 100 }]);
+  const [availability, setAvailability] = useState<AvailEntry[]>([]);
+  const [criticScore, setCriticScore] = useState("");
+  const [audienceScore, setAudienceScore] = useState("");
+  const [verifiedScore, setVerifiedScore] = useState("");
+  const [heatScore, setHeatScore] = useState("");
+  const [boxWeekend, setBoxWeekend] = useState("");
+  const [boxCumulative, setBoxCumulative] = useState("");
+  const [boxWeek, setBoxWeek] = useState("");
+  const [boxLive, setBoxLive] = useState(false);
+
+  const [submitting, setSubmitting] = useState(false);
+  const [errors, setErrors] = useState<string[]>([]);
+  const [warnings, setWarnings] = useState<string[]>([]);
+
+  const langTotal = languages.reduce((s, l) => s + l.percentage, 0);
+
+  const addLang = () => setLanguages((prev) => [...prev, { code: "en", percentage: 0 }]);
+  const removeLang = (i: number) => setLanguages((prev) => prev.filter((_, j) => j !== i));
+  const updateLang = (i: number, key: "code" | "percentage", val: string) =>
+    setLanguages((prev) => prev.map((l, j) => j === i ? { ...l, [key]: key === "percentage" ? Number(val) : val } : l));
+
+  const addAvail = () => setAvailability((prev) => [...prev, { countryCode: "NG", platform: "Netflix", accessType: "svod", url: "" }]);
+  const removeAvail = (i: number) => setAvailability((prev) => prev.filter((_, j) => j !== i));
+  const updateAvail = (i: number, key: keyof AvailEntry, val: string) =>
+    setAvailability((prev) => prev.map((a, j) => j === i ? { ...a, [key]: val } : a));
+
+  const handleSubmit = async () => {
+    setSubmitting(true);
+    setErrors([]);
+    setWarnings([]);
+    try {
+      const body: Record<string, unknown> = {
+        title: title.trim(),
+        year: Number(year),
+        country: country.trim(),
+        synopsis: synopsis.trim(),
+        genres: genres.split(",").map((g) => g.trim()).filter(Boolean),
+        runtime: runtime.trim() || undefined,
+        tagline: tagline.trim() || undefined,
+        posterUrl: posterUrl.trim() || undefined,
+        backdropUrl: backdropUrl.trim() || undefined,
+        trailerUrl: trailerUrl.trim() || undefined,
+        rated: rated.trim() || undefined,
+        slugOverride: slugOverride.trim() || undefined,
+        awards: awards.split(",").map((a) => a.trim()).filter(Boolean),
+        languages,
+        availability,
+        boxLive,
+      };
+      if (criticScore) body.criticScore = Number(criticScore);
+      if (audienceScore) body.audienceScore = Number(audienceScore);
+      if (verifiedScore) body.verifiedScore = Number(verifiedScore);
+      if (heatScore) body.heatScore = Number(heatScore);
+      if (boxWeekend) body.boxWeekend = Number(boxWeekend);
+      if (boxCumulative) body.boxCumulative = Number(boxCumulative);
+      if (boxWeek) body.boxWeek = Number(boxWeek);
+
+      const res = await fetch("/api/admin/manual-import", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        const errs = data.errors?.map((e: { message: string }) => e.message) ?? [data.error ?? "Unknown error"];
+        setErrors(errs);
+        const warns = data.warnings?.map((w: { message: string }) => w.message) ?? [];
+        setWarnings(warns);
+        return;
+      }
+      if (data.validation?.warnings?.length) {
+        setWarnings(data.validation.warnings.map((w: { message: string }) => w.message));
+      }
+      onSuccess(data.film.slug);
+      // Reset form
+      setTitle(""); setYear(""); setSynopsis(""); setGenres(""); setRuntime("");
+      setTagline(""); setPosterUrl(""); setBackdropUrl(""); setTrailerUrl("");
+      setRated(""); setSlugOverride(""); setAwards("");
+      setLanguages([{ code: "en", percentage: 100 }]); setAvailability([]);
+      setCriticScore(""); setAudienceScore(""); setVerifiedScore(""); setHeatScore("");
+      setBoxWeekend(""); setBoxCumulative(""); setBoxWeek(""); setBoxLive(false);
+    } catch (e) {
+      setErrors([e instanceof Error ? e.message : "Unknown error"]);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+      <div style={{
+        background: P.parchLight,
+        border: `0.5px solid ${P.border}`,
+        padding: "16px 20px",
+        fontFamily: "var(--font-sans, sans-serif)",
+        fontSize: 11,
+        color: P.inkMuted,
+        lineHeight: 1.6,
+      }}>
+        Add a film that isn&apos;t on TMDb — or one that TMDb hasn&apos;t catalogued yet. All M&apos;Bari validation still applies.
+        Images must be hosted on <strong>media.mbari.art</strong> or <strong>images.unsplash.com</strong>.
+      </div>
+
+      {/* Errors */}
+      {errors.length > 0 && (
+        <div style={{ background: `${P.red}10`, border: `1px solid ${P.red}`, padding: "12px 16px" }}>
+          {errors.map((e, i) => (
+            <div key={i} style={{ fontFamily: "var(--font-sans, sans-serif)", fontSize: 12, color: P.red, marginBottom: 4 }}>✕ {e}</div>
+          ))}
+        </div>
+      )}
+      {warnings.length > 0 && (
+        <div style={{ background: `${P.orange}10`, border: `1px solid ${P.orange}`, padding: "12px 16px" }}>
+          {warnings.map((w, i) => (
+            <div key={i} style={{ fontFamily: "var(--font-sans, sans-serif)", fontSize: 12, color: P.orange, marginBottom: 4 }}>⚠ {w}</div>
+          ))}
+        </div>
+      )}
+
+      {/* Core fields */}
+      <div style={{ background: P.parchLight, border: `0.5px solid ${P.border}`, padding: "16px 20px", display: "flex", flexDirection: "column", gap: 14 }}>
+        <div style={{ fontFamily: "var(--font-sans, sans-serif)", fontSize: 9, color: P.gold, letterSpacing: "0.14em", fontWeight: 700 }}>FILM DETAILS</div>
+
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 100px 160px", gap: 10 }}>
+          <div><Label>TITLE *</Label><Input value={title} onChange={setTitle} placeholder="e.g. Breath of Life" /></div>
+          <div><Label>YEAR *</Label><Input type="number" value={year} onChange={setYear} placeholder="2025" /></div>
+          <div><Label>COUNTRY *</Label><Input value={country} onChange={setCountry} placeholder="Nigeria" /></div>
+        </div>
+
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 120px", gap: 10 }}>
+          <div><Label>GENRES (comma-separated) *</Label><Input value={genres} onChange={setGenres} placeholder="Drama, Crime, Thriller" /></div>
+          <div><Label>RUNTIME</Label><Input value={runtime} onChange={setRuntime} placeholder="1h 52m" /></div>
+        </div>
+
+        <div><Label>TAGLINE</Label><Input value={tagline} onChange={setTagline} placeholder="Optional one-liner" /></div>
+
+        <div>
+          <Label>SYNOPSIS *</Label>
+          <textarea
+            value={synopsis}
+            onChange={(e) => setSynopsis(e.target.value)}
+            rows={4}
+            placeholder="Film synopsis / description…"
+            style={{
+              width: "100%",
+              border: `1px solid ${P.border}`,
+              background: P.white,
+              color: P.ink,
+              fontFamily: "var(--font-sans, sans-serif)",
+              fontSize: 12,
+              padding: "6px 8px",
+              outline: "none",
+              resize: "vertical",
+              boxSizing: "border-box",
+            }}
+          />
+        </div>
+
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+          <div><Label>POSTER URL (media.mbari.art or images.unsplash.com)</Label><Input value={posterUrl} onChange={setPosterUrl} placeholder="https://…" /></div>
+          <div><Label>BACKDROP URL</Label><Input value={backdropUrl} onChange={setBackdropUrl} placeholder="https://…" /></div>
+        </div>
+
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 80px 1fr", gap: 10 }}>
+          <div><Label>TRAILER URL (YouTube)</Label><Input value={trailerUrl} onChange={setTrailerUrl} placeholder="https://youtube.com/…" /></div>
+          <div><Label>RATED</Label><Input value={rated} onChange={setRated} placeholder="PG-13" /></div>
+          <div><Label>AWARDS (comma-separated)</Label><Input value={awards} onChange={setAwards} placeholder="AMVCA Best Film, …" /></div>
+        </div>
+
+        <div><Label>SLUG OVERRIDE (optional — auto-generated from title + year)</Label><Input value={slugOverride} onChange={setSlugOverride} placeholder="leave blank to auto-generate" /></div>
+      </div>
+
+      {/* Language breakdown */}
+      <div style={{ background: P.parchLight, border: `0.5px solid ${P.border}`, padding: "16px 20px" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+          <div style={{ fontFamily: "var(--font-sans, sans-serif)", fontSize: 9, color: P.gold, letterSpacing: "0.14em", fontWeight: 700 }}>LANGUAGE BREAKDOWN</div>
+          <span style={{ fontSize: 9, fontFamily: "var(--font-sans, sans-serif)", color: langTotal === 100 ? P.green : P.red, fontWeight: 700 }}>
+            {langTotal}% {langTotal !== 100 && "(must sum to 100)"}
+          </span>
+        </div>
+        <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+          {languages.map((l, i) => (
+            <div key={i} style={{ display: "flex", gap: 6, alignItems: "center" }}>
+              <select value={l.code} onChange={(e) => updateLang(i, "code", e.target.value)}
+                style={{ flex: 1, border: `1px solid ${P.border}`, background: P.white, color: P.ink, fontFamily: "var(--font-sans, sans-serif)", fontSize: 12, padding: "5px 6px" }}>
+                {LANGUAGES.map((lg) => <option key={lg.code} value={lg.code}>{lg.name}</option>)}
+              </select>
+              <input type="number" min={0} max={100} value={l.percentage} onChange={(e) => updateLang(i, "percentage", e.target.value)}
+                style={{ width: 60, border: `1px solid ${P.border}`, background: P.white, color: P.ink, fontFamily: "var(--font-sans, sans-serif)", fontSize: 12, padding: "5px 6px", textAlign: "center" }} />
+              <span style={{ fontSize: 11, color: P.inkFaint }}>%</span>
+              {languages.length > 1 && (
+                <button onClick={() => removeLang(i)} style={{ background: "none", border: "none", color: P.red, cursor: "pointer", fontSize: 14, padding: "0 2px" }}>×</button>
+              )}
+            </div>
+          ))}
+        </div>
+        <div style={{ marginTop: 8 }}><Btn onClick={addLang} variant="ghost" small>+ Add language</Btn></div>
+      </div>
+
+      {/* Scores */}
+      <div style={{ background: P.parchLight, border: `0.5px solid ${P.border}`, padding: "16px 20px" }}>
+        <div style={{ fontFamily: "var(--font-sans, sans-serif)", fontSize: 9, color: P.gold, letterSpacing: "0.14em", fontWeight: 700, marginBottom: 10 }}>SCORES (leave blank to fill in later)</div>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: 8 }}>
+          {[
+            { label: "CRITIC", val: criticScore, set: setCriticScore },
+            { label: "AUDIENCE", val: audienceScore, set: setAudienceScore },
+            { label: "VERIFIED", val: verifiedScore, set: setVerifiedScore },
+            { label: "HEAT", val: heatScore, set: setHeatScore },
+          ].map(({ label, val, set }) => (
+            <div key={label}>
+              <div style={{ fontSize: 8, color: P.inkFaint, fontFamily: "var(--font-sans, sans-serif)", marginBottom: 3, letterSpacing: "0.08em" }}>{label} (0–100)</div>
+              <Input type="number" value={val} onChange={set} placeholder="—" />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Box office */}
+      <div style={{ background: P.parchLight, border: `0.5px solid ${P.border}`, padding: "16px 20px" }}>
+        <div style={{ fontFamily: "var(--font-sans, sans-serif)", fontSize: 9, color: P.gold, letterSpacing: "0.14em", fontWeight: 700, marginBottom: 10 }}>BOX OFFICE (Nigerian Naira)</div>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 80px", gap: 8, marginBottom: 8 }}>
+          <div><Label>CUMULATIVE TOTAL</Label><Input type="number" value={boxCumulative} onChange={setBoxCumulative} placeholder="e.g. 450000000" /></div>
+          <div><Label>LAST WEEKEND</Label><Input type="number" value={boxWeekend} onChange={setBoxWeekend} placeholder="e.g. 45000000" /></div>
+          <div><Label>WEEK #</Label><Input type="number" value={boxWeek} onChange={setBoxWeek} placeholder="e.g. 3" /></div>
+        </div>
+        <label style={{ display: "flex", alignItems: "center", gap: 8, fontFamily: "var(--font-sans, sans-serif)", fontSize: 11, color: P.inkMuted, cursor: "pointer" }}>
+          <input type="checkbox" checked={boxLive} onChange={(e) => setBoxLive(e.target.checked)} />
+          Currently in cinemas (box office LIVE)
+        </label>
+      </div>
+
+      {/* Availability */}
+      <div style={{ background: P.parchLight, border: `0.5px solid ${P.border}`, padding: "16px 20px" }}>
+        <div style={{ fontFamily: "var(--font-sans, sans-serif)", fontSize: 9, color: P.gold, letterSpacing: "0.14em", fontWeight: 700, marginBottom: 10 }}>WHERE TO WATCH</div>
+        <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+          {availability.map((a, i) => (
+            <div key={i} style={{ display: "flex", gap: 6, alignItems: "center", flexWrap: "wrap" }}>
+              <select value={a.countryCode} onChange={(e) => updateAvail(i, "countryCode", e.target.value)}
+                style={{ width: 80, border: `1px solid ${P.border}`, background: P.white, color: P.ink, fontFamily: "var(--font-sans, sans-serif)", fontSize: 12, padding: "5px 6px" }}>
+                {["NG","GH","ZA","KE","US","GB","FR","CA","DE"].map((c) => <option key={c} value={c}>{c}</option>)}
+              </select>
+              <select value={a.platform} onChange={(e) => updateAvail(i, "platform", e.target.value)}
+                style={{ flex: 1, minWidth: 120, border: `1px solid ${P.border}`, background: P.white, color: P.ink, fontFamily: "var(--font-sans, sans-serif)", fontSize: 12, padding: "5px 6px" }}>
+                {PLATFORMS.map((p) => <option key={p} value={p}>{p}</option>)}
+              </select>
+              <select value={a.accessType} onChange={(e) => updateAvail(i, "accessType", e.target.value)}
+                style={{ width: 110, border: `1px solid ${P.border}`, background: P.white, color: P.ink, fontFamily: "var(--font-sans, sans-serif)", fontSize: 12, padding: "5px 6px" }}>
+                <option value="svod">Subscription</option>
+                <option value="tvod">Rental</option>
+                <option value="cinema">Cinema</option>
+                <option value="free">Free</option>
+                <option value="avod">Ad-supported</option>
+              </select>
+              <button onClick={() => removeAvail(i)} style={{ background: "none", border: "none", color: P.red, cursor: "pointer", fontSize: 14, padding: "0 2px" }}>×</button>
+            </div>
+          ))}
+        </div>
+        <div style={{ marginTop: 8 }}><Btn onClick={addAvail} variant="ghost" small>+ Add platform</Btn></div>
+      </div>
+
+      {/* Submit */}
+      <div style={{ display: "flex", justifyContent: "flex-end", paddingBottom: 40 }}>
+        <Btn onClick={handleSubmit} disabled={submitting || !title || !year || !country || !synopsis}>
+          {submitting ? "Saving…" : "Add film to M'Bari →"}
+        </Btn>
+      </div>
+    </div>
+  );
+}
+
 // ─── Main page ────────────────────────────────────────────────────────────────
 
 export default function ImportPage() {
@@ -1019,7 +1306,7 @@ export default function ImportPage() {
   const [sort, setSort] = useState("popularity.desc");
   const [year, setYear] = useState("");
   const [query, setQuery] = useState("");
-  const [mode, setMode] = useState<"discover" | "search">("discover");
+  const [mode, setMode] = useState<"discover" | "search" | "manual">("discover");
   const [page, setPage] = useState(1);
 
   const [results, setResults] = useState<TmdbResult[]>([]);
@@ -1146,7 +1433,7 @@ export default function ImportPage() {
           <div>
             <Label>MODE</Label>
             <div style={{ display: "flex", gap: 0 }}>
-              {(["discover", "search"] as const).map((m) => (
+              {(["discover", "search", "manual"] as const).map((m, i, arr) => (
                 <button
                   key={m}
                   onClick={() => { setMode(m); setResults([]); setPage(1); }}
@@ -1157,38 +1444,40 @@ export default function ImportPage() {
                     fontWeight: 700,
                     letterSpacing: "0.08em",
                     border: `1px solid ${P.border}`,
-                    borderRight: m === "discover" ? "none" : undefined,
+                    borderRight: i < arr.length - 1 ? "none" : undefined,
                     background: mode === m ? P.gold : P.white,
                     color: mode === m ? "#fff" : P.inkMuted,
                     cursor: "pointer",
                   }}
                 >
-                  {m === "discover" ? "DISCOVER" : "SEARCH"}
+                  {m === "discover" ? "DISCOVER" : m === "search" ? "SEARCH" : "MANUAL ENTRY"}
                 </button>
               ))}
             </div>
           </div>
 
           {/* Region */}
-          <div>
-            <Label>REGION</Label>
-            <select
-              value={region}
-              onChange={(e) => { setRegion(e.target.value); setPage(1); }}
-              style={{
-                border: `1px solid ${P.border}`,
-                background: P.white,
-                color: P.ink,
-                fontFamily: "var(--font-sans, sans-serif)",
-                fontSize: 12,
-                padding: "6px 8px",
-              }}
-            >
-              {REGIONS.map((r) => (
-                <option key={r.code} value={r.code}>{r.flag} {r.label}</option>
-              ))}
-            </select>
-          </div>
+          {mode !== "manual" && (
+            <div>
+              <Label>REGION</Label>
+              <select
+                value={region}
+                onChange={(e) => { setRegion(e.target.value); setPage(1); }}
+                style={{
+                  border: `1px solid ${P.border}`,
+                  background: P.white,
+                  color: P.ink,
+                  fontFamily: "var(--font-sans, sans-serif)",
+                  fontSize: 12,
+                  padding: "6px 8px",
+                }}
+              >
+                {REGIONS.map((r) => (
+                  <option key={r.code} value={r.code}>{r.flag} {r.label}</option>
+                ))}
+              </select>
+            </div>
+          )}
 
           {/* Search query */}
           {mode === "search" && (
@@ -1229,33 +1518,40 @@ export default function ImportPage() {
           )}
         </div>
 
+        {/* Manual entry form */}
+        {mode === "manual" && (
+          <ManualEntryForm onSuccess={(slug) => setSuccessSlug(slug)} />
+        )}
+
         {/* Results header */}
-        <div style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: 10,
-          borderBottom: `1px solid ${P.border}`,
-          paddingBottom: 8,
-        }}>
-          <span style={{ fontFamily: "var(--font-sans, sans-serif)", fontSize: 10, color: P.inkFaint }}>
-            {loading ? "Loading…"
-              : loadError ? ""
-                : results.length > 0
-                  ? `${totalResults.toLocaleString()} results · page ${page} of ${totalPages}`
-                  : mode === "search" && !query ? "Enter a search term above"
-                    : "No results"}
-          </span>
-          {!loading && results.length > 0 && (
-            <div style={{ display: "flex", gap: 6 }}>
-              <Btn onClick={() => fetchResults(page - 1)} variant="ghost" small disabled={page <= 1}>← Prev</Btn>
-              <Btn onClick={() => fetchResults(page + 1)} variant="ghost" small disabled={page >= totalPages}>Next →</Btn>
-            </div>
-          )}
-        </div>
+        {mode !== "manual" && (
+          <div style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            marginBottom: 10,
+            borderBottom: `1px solid ${P.border}`,
+            paddingBottom: 8,
+          }}>
+            <span style={{ fontFamily: "var(--font-sans, sans-serif)", fontSize: 10, color: P.inkFaint }}>
+              {loading ? "Loading…"
+                : loadError ? ""
+                  : results.length > 0
+                    ? `${totalResults.toLocaleString()} results · page ${page} of ${totalPages}`
+                    : mode === "search" && !query ? "Enter a search term above"
+                      : "No results"}
+            </span>
+            {!loading && results.length > 0 && (
+              <div style={{ display: "flex", gap: 6 }}>
+                <Btn onClick={() => fetchResults(page - 1)} variant="ghost" small disabled={page <= 1}>← Prev</Btn>
+                <Btn onClick={() => fetchResults(page + 1)} variant="ghost" small disabled={page >= totalPages}>Next →</Btn>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Error */}
-        {loadError && (
+        {mode !== "manual" && loadError && (
           <div style={{
             background: `${P.red}12`,
             border: `1px solid ${P.red}`,
@@ -1272,7 +1568,7 @@ export default function ImportPage() {
         )}
 
         {/* Loading skeleton */}
-        {loading && (
+        {mode !== "manual" && loading && (
           <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
             {Array.from({ length: 6 }).map((_, i) => (
               <div key={i} style={{
@@ -1286,7 +1582,7 @@ export default function ImportPage() {
         )}
 
         {/* Results grid */}
-        {!loading && results.length > 0 && (
+        {mode !== "manual" && !loading && results.length > 0 && (
           <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
             {results.map((film) => (
               <FilmCard
@@ -1300,7 +1596,7 @@ export default function ImportPage() {
         )}
 
         {/* Bottom pagination */}
-        {!loading && results.length > 0 && (
+        {mode !== "manual" && !loading && results.length > 0 && (
           <div style={{ display: "flex", justifyContent: "center", gap: 8, marginTop: 20 }}>
             <Btn onClick={() => fetchResults(page - 1)} variant="ghost" disabled={page <= 1}>← Previous page</Btn>
             <span style={{ fontFamily: "var(--font-sans, sans-serif)", fontSize: 11, color: P.inkFaint, alignSelf: "center" }}>

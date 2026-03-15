@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import { fmt } from "@/lib/format";
+import { fmtDual } from "@/lib/format";
 import CulturalDivider from "@/components/cultural-divider";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -603,7 +603,7 @@ export default async function FilmPage({ params }: Props) {
                         color: ink,
                       }}
                     >
-                      {fmt(film.boxWeekend)}
+                      {fmtDual(film.boxWeekend, film.country)}
                     </div>
                     <div
                       style={{
@@ -634,7 +634,7 @@ export default async function FilmPage({ params }: Props) {
                         color: ink,
                       }}
                     >
-                      {fmt(film.boxCumulative)}
+                      {fmtDual(film.boxCumulative, film.country)}
                     </div>
                     <div
                       style={{

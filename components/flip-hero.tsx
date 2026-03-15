@@ -3,13 +3,21 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { fmt } from "@/lib/format";
+
+const COUNTRY_NAME: Record<string, string> = {
+  NG: "Nigeria", ZA: "South Africa", KE: "Kenya", GH: "Ghana",
+  FR: "France", GB: "UK", US: "USA", NZ: "New Zealand", IE: "Ireland",
+};
+const COUNTRY_COLOR: Record<string, string> = {
+  NG: "#2D7A3A", ZA: "#1A5C8A", KE: "#8B1A1A", GH: "#B8860B",
+};
 
 type FilmWithRelations = {
   id: string;
   slug: string;
   title: string;
   year: number;
+  country: string;
   tagline: string | null;
   posterUrl: string | null;
   criticScore: number | null;
@@ -165,6 +173,19 @@ export default function FlipHero({ films }: { films: FilmWithRelations[] }) {
                   {film.criticScore}
                 </span>
               )}
+              <span
+                style={{
+                  background: COUNTRY_COLOR[film.country] ?? "#8B7040",
+                  color: "#fff",
+                  fontSize: 8,
+                  fontWeight: 700,
+                  fontFamily: "var(--font-sans, sans-serif)",
+                  letterSpacing: "0.1em",
+                  padding: "2px 7px",
+                }}
+              >
+                {COUNTRY_NAME[film.country] ?? film.country}
+              </span>
             </div>
 
             <h2

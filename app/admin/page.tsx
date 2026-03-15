@@ -114,21 +114,39 @@ export default async function AdminPage() {
         >
           Admin Console
         </h1>
-        <Link
-          href="/admin/import"
-          style={{
-            background: gold,
-            color: "#fff",
-            fontFamily: "var(--font-sans, sans-serif)",
-            fontSize: 11,
-            fontWeight: 700,
-            letterSpacing: "0.06em",
-            padding: "7px 14px",
-            textDecoration: "none",
-          }}
-        >
-          TMDb Import →
-        </Link>
+        <div style={{ display: "flex", gap: 8 }}>
+          <Link
+            href="/admin/events"
+            style={{
+              background: "transparent",
+              color: gold,
+              border: `1px solid ${gold}`,
+              fontFamily: "var(--font-sans, sans-serif)",
+              fontSize: 11,
+              fontWeight: 700,
+              letterSpacing: "0.06em",
+              padding: "7px 14px",
+              textDecoration: "none",
+            }}
+          >
+            Manage Events →
+          </Link>
+          <Link
+            href="/admin/import"
+            style={{
+              background: gold,
+              color: "#fff",
+              fontFamily: "var(--font-sans, sans-serif)",
+              fontSize: 11,
+              fontWeight: 700,
+              letterSpacing: "0.06em",
+              padding: "7px 14px",
+              textDecoration: "none",
+            }}
+          >
+            Import Films →
+          </Link>
+        </div>
       </div>
 
       {/* Stats row */}
