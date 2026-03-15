@@ -14,13 +14,32 @@ jobs:
           host: ${{ secrets.MBARI_HOST }}
           username: ${{ secrets.MBARI_USER }}
           key: ${{ secrets.MBARI_SSH_KEY }}
+          command_timeout: 10m
           script: |
             set -e
             cd /opt/mbari
             git pull origin main
+
+            # Build & restart app
             docker compose build app
             docker compose up -d
-            docker compose exec -T app npx prisma db push --skip-generate
-            docker compose exec -T app npx tsx prisma/update-content.ts || true
-            docker compose exec -T app npx tsx prisma/import-research-batch.ts || true
+
+            # Wait for DB to be healthy
+            sleep 8
+
+            # Run migrations + data scripts via temp container on the mbari network
+            docker run --rm \
+              --network mbari_default \
+              -e DATABASE_URL=postgresql://mbari:mbari_secret@db:5432/mbari \
+              -v /opt/mbari:/app \
+              -w /app \
+              node:20-alpine sh -c "
+                apk add --no-cache openssl &&
+                npm ci --prefer-offline --silent &&
+                npx prisma generate &&
+                npx prisma db push &&
+                npx tsx prisma/seed.ts &&
+                npx tsx prisma/update-content.ts || true &&
+                npx tsx prisma/import-research-batch.ts || true
+              "
             echo "Deploy complete"
