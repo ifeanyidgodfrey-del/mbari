@@ -23,7 +23,7 @@ export default function Nav() {
       <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
         <Link href="/" style={{
           fontFamily: "var(--font-sans, 'Source Sans 3', sans-serif)",
-          fontSize: 11,
+          fontSize: 22,
           fontWeight: 700,
           color: "#C4A862",
           letterSpacing: "0.18em",
@@ -41,7 +41,7 @@ export default function Nav() {
           ].map(([label, href]) => (
             <Link key={href} href={href} style={{
               fontFamily: "var(--font-sans, sans-serif)",
-              fontSize: 10,
+              fontSize: 20,
               color: "rgba(255,255,255,0.5)",
               textDecoration: "none",
               letterSpacing: "0.06em",
@@ -54,7 +54,7 @@ export default function Nav() {
       <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
         <span style={{
           fontFamily: "var(--font-sans, sans-serif)",
-          fontSize: 9,
+          fontSize: 18,
           color: "rgba(255,255,255,0.3)",
           letterSpacing: "0.1em",
         }}>
@@ -62,7 +62,7 @@ export default function Nav() {
         </span>
         <Link href="/admin" style={{
           fontFamily: "var(--font-sans, sans-serif)",
-          fontSize: 9,
+          fontSize: 18,
           color: "rgba(255,255,255,0.3)",
           textDecoration: "none",
           letterSpacing: "0.06em",
