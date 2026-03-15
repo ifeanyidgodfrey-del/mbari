@@ -104,14 +104,16 @@ const EMPTY_OVERRIDES = (): ImportOverrides => ({
 });
 
 const REGIONS = [
-  { code: "NG", label: "Nigeria", flag: "🇳🇬" },
-  { code: "GH", label: "Ghana", flag: "🇬🇭" },
-  { code: "ZA", label: "South Africa", flag: "🇿🇦" },
-  { code: "KE", label: "Kenya", flag: "🇰🇪" },
-  { code: "CI", label: "Côte d'Ivoire", flag: "🇨🇮" },
-  { code: "SN", label: "Senegal", flag: "🇸🇳" },
-  { code: "ET", label: "Ethiopia", flag: "🇪🇹" },
-  { code: "CM", label: "Cameroon", flag: "🇨🇲" },
+  { code: "NG", label: "Nigeria" },
+  { code: "GH", label: "Ghana" },
+  { code: "ZA", label: "South Africa" },
+  { code: "KE", label: "Kenya" },
+  { code: "ET", label: "Ethiopia" },
+  { code: "EG", label: "Egypt" },
+  { code: "MA", label: "Morocco" },
+  { code: "CI", label: "Côte d'Ivoire" },
+  { code: "SN", label: "Senegal" },
+  { code: "CM", label: "Cameroon" },
 ];
 
 const LANGUAGES = [
@@ -1473,7 +1475,7 @@ export default function ImportPage() {
                 }}
               >
                 {REGIONS.map((r) => (
-                  <option key={r.code} value={r.code}>{r.flag} {r.label}</option>
+                  <option key={r.code} value={r.code}>{r.label}</option>
                 ))}
               </select>
             </div>

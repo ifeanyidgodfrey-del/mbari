@@ -20,12 +20,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 const D = {
-  bgDeep: "#111110", bg: "#171715", bgCard: "#1d1d1a", bgElev: "#232320",
-  border: "#2a2a26", borderF: "#222220",
-  hero: "#ede8dd", primary: "#c8c2b5", secondary: "#8a847a",
-  muted: "#5a5650", dim: "#3e3c38",
-  accent: "#9a8060", accentH: "#b8985e",
-  green: "#5a7a5a", greenS: "rgba(90,122,90,0.12)",
+  bgDeep: "#1a1812", bg: "#222018", bgCard: "#2a2720", bgElev: "#333028",
+  border: "#4a4538", borderF: "#3a3530",
+  hero: "#ede8dd", primary: "#c8c2b5", secondary: "#9a9488",
+  muted: "#6a6560", dim: "#524e48",
+  accent: "#b8985e", accentH: "#d4b870",
+  green: "#5a7a5a", greenS: "rgba(90,122,90,0.14)",
 };
 
 const COUNTRY_NAME: Record<string, string> = {

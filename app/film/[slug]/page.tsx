@@ -22,24 +22,24 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-// ── Design tokens (dark editorial) ───────────────────────────────────────────
+// ── Design tokens (warm editorial — midway between parchment and pitch black) ─
 const D = {
-  bgDeep:  "#111110",
-  bg:      "#171715",
-  bgCard:  "#1d1d1a",
-  bgElev:  "#232320",
-  bgHover: "#2a2a26",
-  border:  "#2a2a26",
-  borderF: "#222220",
+  bgDeep:  "#1a1812",
+  bg:      "#222018",
+  bgCard:  "#2a2720",
+  bgElev:  "#333028",
+  bgHover: "#3a3730",
+  border:  "#4a4538",
+  borderF: "#3a3530",
   hero:    "#ede8dd",
   primary: "#c8c2b5",
-  secondary:"#8a847a",
-  muted:   "#5a5650",
-  dim:     "#3e3c38",
-  accent:  "#9a8060",
-  accentH: "#b8985e",
+  secondary:"#9a9488",
+  muted:   "#6a6560",
+  dim:     "#524e48",
+  accent:  "#b8985e",
+  accentH: "#d4b870",
   green:   "#5a7a5a",
-  greenS:  "rgba(90,122,90,0.12)",
+  greenS:  "rgba(90,122,90,0.14)",
   red:     "#7a3a3a",
 };
 
@@ -49,10 +49,6 @@ const COUNTRY_NAME: Record<string, string> = {
   CI: "Côte d'Ivoire", EG: "Egypt", MA: "Morocco", UG: "Uganda",
 };
 
-const FLAGS: Record<string, string> = {
-  NG: "🇳🇬", GH: "🇬🇭", ZA: "🇿🇦", KE: "🇰🇪",
-  US: "🇺🇸", GB: "🇬🇧", ET: "🇪🇹", CM: "🇨🇲",
-};
 
 function initials(name: string) {
   const parts = name.trim().split(/\s+/);
@@ -763,7 +759,7 @@ export default async function FilmPage({ params, searchParams }: Props) {
                   justifyContent: "space-between",
                 }}>
                   <div style={{ display: "flex", alignItems: "center", gap: "0.7rem" }}>
-                    <span style={{ fontSize: "1rem" }}>{FLAGS[code] ?? code}</span>
+                    <span style={{ fontSize: "1rem" }}>{COUNTRY_NAME[code] ?? code}</span>
                     <span style={{ fontSize: "0.78rem", color: D.muted, fontStyle: "italic" }}>Not available</span>
                   </div>
                 </div>
