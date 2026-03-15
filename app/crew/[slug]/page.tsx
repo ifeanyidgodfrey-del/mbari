@@ -93,7 +93,7 @@ export default async function CrewPage({ params }: Props) {
           style={{
             maxWidth: 900,
             margin: "0 auto",
-            padding: "44px 32px 48px",
+            padding: "88px 32px 96px",
             display: "flex",
             gap: 40,
             alignItems: "flex-end",

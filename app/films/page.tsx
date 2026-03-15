@@ -139,18 +139,79 @@ export default async function FilmsPage({
                 ← M&apos;Bari
               </Link>
             </div>
-            <h1
-              style={{
-                fontFamily: "var(--font-serif, Georgia, serif)",
-                fontSize: 26,
-                fontWeight: 700,
-                color: "var(--ink)",
-                margin: 0,
-                lineHeight: 1,
-              }}
-            >
-              Film Directory
-            </h1>
+            {/* Title + country strip on same horizontal level */}
+            <div style={{ display: "flex", alignItems: "center", gap: 24, flexWrap: "wrap" }}>
+              <h1
+                style={{
+                  fontFamily: "var(--font-serif, Georgia, serif)",
+                  fontSize: 26,
+                  fontWeight: 700,
+                  color: "var(--ink)",
+                  margin: 0,
+                  lineHeight: 1,
+                  flexShrink: 0,
+                }}
+              >
+                Film Directory
+              </h1>
+              {/* Country coverage strip — inline with title */}
+              <div style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 0,
+                borderLeft: "1px solid var(--border)",
+                paddingLeft: 20,
+                flexWrap: "wrap",
+                rowGap: 4,
+                columnGap: 14,
+              }}>
+                {COVERED.map((c) => (
+                  <div key={c} style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 4,
+                    whiteSpace: "nowrap",
+                  }}>
+                    <span style={{
+                      width: 5,
+                      height: 5,
+                      borderRadius: "50%",
+                      background: "var(--gold)",
+                      flexShrink: 0,
+                      display: "inline-block",
+                    }} />
+                    <span style={{
+                      fontFamily: "var(--font-sans, sans-serif)",
+                      fontSize: 10,
+                      color: "var(--ink-muted)",
+                      fontWeight: 600,
+                    }}>{c}</span>
+                  </div>
+                ))}
+                {INCOMING.map((c) => (
+                  <div key={c} style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 4,
+                    whiteSpace: "nowrap",
+                  }}>
+                    <span style={{
+                      width: 5,
+                      height: 5,
+                      borderRadius: "50%",
+                      border: "1px solid var(--border)",
+                      flexShrink: 0,
+                      display: "inline-block",
+                    }} />
+                    <span style={{
+                      fontFamily: "var(--font-sans, sans-serif)",
+                      fontSize: 10,
+                      color: "var(--border)",
+                    }}>{c}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
             <div
               style={{
                 fontFamily: "var(--font-sans, sans-serif)",
@@ -160,78 +221,6 @@ export default async function FilmsPage({
               }}
             >
               African cinema — all years, all genres
-            </div>
-            {/* Country coverage strip */}
-            <div style={{ marginTop: 10 }}>
-              <div style={{
-                fontFamily: "var(--font-sans, sans-serif)",
-                fontSize: 8,
-                color: "var(--ink-faint)",
-                letterSpacing: "0.14em",
-                fontWeight: 700,
-                marginBottom: 5,
-                textTransform: "uppercase",
-              }}>
-                Countries covered
-              </div>
-              <div style={{
-                columns: "auto 80px",
-                columnGap: 0,
-                width: "fit-content",
-                maxWidth: 520,
-              }}>
-                {COVERED.map((c) => (
-                  <div key={c} style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 4,
-                    breakInside: "avoid",
-                    paddingRight: 20,
-                    marginBottom: 3,
-                  }}>
-                    <span style={{
-                      width: 4,
-                      height: 4,
-                      borderRadius: "50%",
-                      background: "var(--gold)",
-                      flexShrink: 0,
-                      display: "inline-block",
-                    }} />
-                    <span style={{
-                      fontFamily: "var(--font-sans, sans-serif)",
-                      fontSize: 9,
-                      color: "var(--ink-muted)",
-                      fontWeight: 600,
-                      whiteSpace: "nowrap",
-                    }}>{c}</span>
-                  </div>
-                ))}
-                {INCOMING.map((c) => (
-                  <div key={c} style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 4,
-                    breakInside: "avoid",
-                    paddingRight: 20,
-                    marginBottom: 3,
-                  }}>
-                    <span style={{
-                      width: 4,
-                      height: 4,
-                      borderRadius: "50%",
-                      border: "0.5px solid var(--border)",
-                      flexShrink: 0,
-                      display: "inline-block",
-                    }} />
-                    <span style={{
-                      fontFamily: "var(--font-sans, sans-serif)",
-                      fontSize: 9,
-                      color: "var(--border)",
-                      whiteSpace: "nowrap",
-                    }}>{c}</span>
-                  </div>
-                ))}
-              </div>
             </div>
           </div>
           <div

@@ -309,6 +309,52 @@ registerRule((input) => {
 });
 
 /**
+ * RULE: Africa-Only Gate
+ *
+ * M'Bari is a platform exclusively for African cinema.
+ * Films whose production country is not on the African continent are rejected
+ * at the validation layer — before any DB write or image mirror occurs.
+ *
+ * Root cause of prior contamination:
+ *  - TMDb search/discover is global; it returns results from any country.
+ *  - The old `required_field` country rule only checked that country was non-empty.
+ *  - Nothing verified that country was actually African before upsert.
+ *  - Result: Crime 101 (ZA-labelled but UK), Cold Storage (AU), Scream 7 (US), etc.
+ *    were written to the DB because the admin UI showed them in the discover list.
+ *
+ * Fix: block at validateFilm() — gates both /api/admin/import (TMDb) and
+ *      /api/admin/manual-import before any side-effects happen.
+ */
+export const AFRICAN_COUNTRIES = new Set([
+  // North Africa
+  "DZ", "EG", "LY", "MA", "MR", "SD", "TN",
+  // West Africa
+  "BJ", "BF", "CV", "CI", "GM", "GH", "GN", "GW", "LR", "ML",
+  "MR", "NE", "NG", "SN", "SL", "TG",
+  // Central Africa
+  "AO", "CM", "CF", "TD", "CG", "CD", "GQ", "GA", "ST",
+  // East Africa
+  "BI", "KM", "DJ", "ER", "ET", "KE", "MG", "MW", "MU", "MZ",
+  "RW", "SC", "SO", "SS", "TZ", "UG",
+  // Southern Africa
+  "BW", "LS", "NA", "ZA", "SZ", "ZM", "ZW",
+]);
+
+registerRule((input) => {
+  if (!input.country) return []; // caught by required_field rule
+  if (!AFRICAN_COUNTRIES.has(input.country.toUpperCase())) {
+    return [{
+      field: "country",
+      rule: "africa_only",
+      message: `M'Bari only accepts African films. Country code "${input.country}" is not an African nation. ` +
+        `Accepted codes: ${[...AFRICAN_COUNTRIES].sort().join(", ")}`,
+      severity: "error",
+    }];
+  }
+  return [];
+});
+
+/**
  * RULE: Poster URL Validation
  * If posterUrl is set, it should be a valid HTTPS URL from a whitelisted domain.
  */
