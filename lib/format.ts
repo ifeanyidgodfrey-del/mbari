@@ -6,6 +6,34 @@ const FX: Record<string, { symbol: string; perUsd: number }> = {
   GH: { symbol: "₵", perUsd: 15   },
 };
 
+// Population in millions (2024 estimates)
+const POP_M: Record<string, number> = {
+  NG: 220,
+  ZA: 60,
+  KE: 55,
+  GH: 33,
+};
+
+/**
+ * Returns USD box office per capita in cents.
+ * e.g. ₦1.88B in Nigeria → $1.175M / 220M people → 0.53¢/person
+ */
+export function perCapitaCents(n: number | bigint, country: string): number {
+  const num = typeof n === "bigint" ? Number(n) : n;
+  const { perUsd } = FX[country] ?? FX.NG;
+  const pop = POP_M[country] ?? POP_M.NG;
+  const usd = num / perUsd;
+  return (usd / (pop * 1_000_000)) * 100; // cents per person
+}
+
+/** Format per-capita as "¢0.53" or "$1.20" */
+export function fmtPerCap(n: number | bigint, country: string): string {
+  const cents = perCapitaCents(n, country);
+  if (cents >= 100) return `$${(cents / 100).toFixed(2)}`;
+  if (cents >= 1)   return `¢${cents.toFixed(1)}`;
+  return `¢${cents.toFixed(2)}`;
+}
+
 function fmtLocal(num: number, symbol: string): string {
   if (num >= 1e9) return `${symbol}${(num / 1e9).toFixed(1)}B`;
   if (num >= 1e6) return `${symbol}${(num / 1e6).toFixed(1)}M`;
