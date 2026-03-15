@@ -1,0 +1,26 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.MBARI_HOST }}
+          username: ${{ secrets.MBARI_USER }}
+          key: ${{ secrets.MBARI_SSH_KEY }}
+          script: |
+            set -e
+            cd /opt/mbari
+            git pull origin main
+            docker compose build app
+            docker compose up -d
+            docker compose exec -T app npx prisma db push --skip-generate
+            docker compose exec -T app npx tsx prisma/update-content.ts || true
+            docker compose exec -T app npx tsx prisma/import-research-batch.ts || true
+            echo "Deploy complete"
