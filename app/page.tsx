@@ -132,7 +132,55 @@ export default async function HomePage() {
         }}>
           {today} · Where culture lives
         </div>
-        <div style={{ borderTop: "0.5px solid var(--border)", marginTop: 10 }} />
+        {/* Country coverage strip */}
+        <div style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: 0,
+          marginTop: 8,
+          flexWrap: "wrap",
+          rowGap: 4,
+        }}>
+          {["Nigeria","South Africa","Kenya","Ghana"].map((c, i) => (
+            <span key={c} style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 4,
+              padding: "0 10px",
+              borderRight: i < 3 ? "0.5px solid var(--border)" : "none",
+            }}>
+              <span style={{
+                width: 4, height: 4, borderRadius: "50%",
+                background: "var(--gold)", flexShrink: 0, display: "inline-block",
+              }} />
+              <span style={{
+                fontFamily: "var(--font-sans, sans-serif)",
+                fontSize: 9, color: "var(--ink-muted)", fontWeight: 600,
+                letterSpacing: "0.06em",
+              }}>{c}</span>
+            </span>
+          ))}
+          {["Ethiopia","Cameroon","Tanzania","Senegal","Côte d'Ivoire","Egypt"].map((c) => (
+            <span key={c} style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 4,
+              padding: "0 10px",
+              borderRight: "0.5px solid var(--border)",
+            }}>
+              <span style={{
+                width: 4, height: 4, borderRadius: "50%",
+                border: "0.5px solid var(--border)", flexShrink: 0, display: "inline-block",
+              }} />
+              <span style={{
+                fontFamily: "var(--font-sans, sans-serif)",
+                fontSize: 9, color: "var(--border)", letterSpacing: "0.06em",
+              }}>{c}</span>
+            </span>
+          ))}
+        </div>
+        <div style={{ borderTop: "0.5px solid var(--border)", marginTop: 8 }} />
       </header>
 
       {/* Broadsheet grid */}

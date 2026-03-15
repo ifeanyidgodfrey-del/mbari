@@ -19,6 +19,11 @@ const COUNTRY_NAME: Record<string, string> = {
   FR: "France", GB: "UK", US: "USA", NZ: "New Zealand", IE: "Ireland",
 };
 
+// Countries currently covered in M'Bari
+const COVERED = ["Nigeria", "South Africa", "Kenya", "Ghana"];
+// Coming soon — shown faded
+const INCOMING = ["Ethiopia", "Cameroon", "Tanzania", "Senegal", "Côte d'Ivoire", "Egypt"];
+
 const scoreColor = (s: number) =>
   s >= 75 ? "#2D7A3A" : s >= 50 ? "#D4882A" : "#C0392B";
 
@@ -154,7 +159,79 @@ export default async function FilmsPage({
                 marginTop: 4,
               }}
             >
-              Nigerian, South African, Kenyan &amp; Ghanaian cinema — all years, all genres
+              African cinema — all years, all genres
+            </div>
+            {/* Country coverage strip */}
+            <div style={{ marginTop: 10 }}>
+              <div style={{
+                fontFamily: "var(--font-sans, sans-serif)",
+                fontSize: 8,
+                color: "var(--ink-faint)",
+                letterSpacing: "0.14em",
+                fontWeight: 700,
+                marginBottom: 5,
+                textTransform: "uppercase",
+              }}>
+                Countries covered
+              </div>
+              <div style={{
+                columns: "auto 80px",
+                columnGap: 0,
+                width: "fit-content",
+                maxWidth: 520,
+              }}>
+                {COVERED.map((c) => (
+                  <div key={c} style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 4,
+                    breakInside: "avoid",
+                    paddingRight: 20,
+                    marginBottom: 3,
+                  }}>
+                    <span style={{
+                      width: 4,
+                      height: 4,
+                      borderRadius: "50%",
+                      background: "var(--gold)",
+                      flexShrink: 0,
+                      display: "inline-block",
+                    }} />
+                    <span style={{
+                      fontFamily: "var(--font-sans, sans-serif)",
+                      fontSize: 9,
+                      color: "var(--ink-muted)",
+                      fontWeight: 600,
+                      whiteSpace: "nowrap",
+                    }}>{c}</span>
+                  </div>
+                ))}
+                {INCOMING.map((c) => (
+                  <div key={c} style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 4,
+                    breakInside: "avoid",
+                    paddingRight: 20,
+                    marginBottom: 3,
+                  }}>
+                    <span style={{
+                      width: 4,
+                      height: 4,
+                      borderRadius: "50%",
+                      border: "0.5px solid var(--border)",
+                      flexShrink: 0,
+                      display: "inline-block",
+                    }} />
+                    <span style={{
+                      fontFamily: "var(--font-sans, sans-serif)",
+                      fontSize: 9,
+                      color: "var(--border)",
+                      whiteSpace: "nowrap",
+                    }}>{c}</span>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
           <div
