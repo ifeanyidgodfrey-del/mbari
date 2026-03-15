@@ -59,7 +59,7 @@ export async function POST(req: NextRequest) {
       rated, slugOverride, awards = [],
       languages, availability,
       criticScore, audienceScore, verifiedScore, heatScore,
-      boxWeekend, boxCumulative, boxWeek, boxLive,
+      boxWeekend, boxCumulative, boxWeek, boxLive, upcoming,
     } = body;
 
     // ── Validate ──────────────────────────────────────────────────────────────
@@ -134,6 +134,7 @@ export async function POST(req: NextRequest) {
         boxCumulative: boxCumulative ? BigInt(boxCumulative) : null,
         boxWeek: boxWeek ?? null,
         boxLive: boxLive ?? false,
+        upcoming: upcoming ?? false,
       },
       update: {
         title, year, country, synopsis, genres,
@@ -151,6 +152,7 @@ export async function POST(req: NextRequest) {
         ...(boxCumulative !== undefined && { boxCumulative: BigInt(boxCumulative) }),
         ...(boxWeek !== undefined && { boxWeek }),
         ...(boxLive !== undefined && { boxLive }),
+        ...(upcoming !== undefined && { upcoming }),
         ...(awards.length > 0 && { awards }),
       },
     });

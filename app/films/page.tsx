@@ -16,13 +16,14 @@ export const metadata: Metadata = {
 
 const COUNTRY_NAME: Record<string, string> = {
   NG: "Nigeria", ZA: "South Africa", KE: "Kenya", GH: "Ghana",
+  ET: "Ethiopia", EG: "Egypt", MA: "Morocco",
   FR: "France", GB: "UK", US: "USA", NZ: "New Zealand", IE: "Ireland",
 };
 
 // Countries currently covered in M'Bari
-const COVERED = ["Nigeria", "South Africa", "Kenya", "Ghana"];
+const COVERED = ["Nigeria", "South Africa", "Kenya", "Ghana", "Ethiopia", "Egypt"];
 // Coming soon — shown faded
-const INCOMING = ["Ethiopia", "Cameroon", "Tanzania", "Senegal", "Côte d'Ivoire", "Egypt"];
+const INCOMING = ["Morocco", "Cameroon", "Tanzania", "Senegal", "Côte d'Ivoire"];
 
 const scoreColor = (s: number) =>
   s >= 75 ? "#2D7A3A" : s >= 50 ? "#D4882A" : "#C0392B";

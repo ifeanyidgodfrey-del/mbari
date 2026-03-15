@@ -34,6 +34,7 @@ model Film {
   tmdbId        Int?     @unique  // TMDb movie ID — for dedup on import
   imdbId        String?           // IMDb ID (from TMDb external_ids)
   trailerUrl    String?           // YouTube trailer URL
+  upcoming      Boolean  @default(false) // announced but not yet released
   languages     FilmLanguage[]
   cast          CastMember[]
   actorCredits  ActorCredit[]

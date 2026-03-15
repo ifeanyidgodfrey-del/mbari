@@ -47,6 +47,7 @@ interface ImportBody {
   boxCumulative?: number;
   boxWeek?: number;
   boxLive?: boolean;
+  upcoming?: boolean;
   rated?: string;
   // allow admin to override slug if auto-generated one collides
   slugOverride?: string;
@@ -166,6 +167,7 @@ export async function POST(req: NextRequest) {
         boxCumulative: body.boxCumulative ? BigInt(body.boxCumulative) : null,
         boxWeek: body.boxWeek ?? null,
         boxLive: body.boxLive ?? false,
+        upcoming: body.upcoming ?? false,
         awards: [],
       },
       update: {
@@ -190,6 +192,7 @@ export async function POST(req: NextRequest) {
         ...(body.boxCumulative !== undefined && { boxCumulative: BigInt(body.boxCumulative) }),
         ...(body.boxWeek !== undefined && { boxWeek: body.boxWeek }),
         ...(body.boxLive !== undefined && { boxLive: body.boxLive }),
+        ...(body.upcoming !== undefined && { upcoming: body.upcoming }),
       },
     });
 

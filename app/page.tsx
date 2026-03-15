@@ -42,7 +42,7 @@ export const metadata: Metadata = {
 };
 
 export default async function HomePage() {
-  const [films, events] = await Promise.all([
+  const [films, events, upcomingFilms] = await Promise.all([
     prisma.film.findMany({
       where: { boxLive: true },
       orderBy: [{ country: "asc" }, { boxCumulative: "desc" }],
@@ -54,6 +54,11 @@ export default async function HomePage() {
     prisma.event.findMany({
       orderBy: { createdAt: "desc" },
       take: 6,
+    }),
+    prisma.film.findMany({
+      where: { upcoming: true },
+      orderBy: { year: "asc" },
+      take: 8,
     }),
   ]);
 
@@ -142,13 +147,13 @@ export default async function HomePage() {
           flexWrap: "wrap",
           rowGap: 4,
         }}>
-          {["Nigeria","South Africa","Kenya","Ghana"].map((c, i) => (
+          {["Nigeria","South Africa","Kenya","Ghana","Ethiopia","Egypt"].map((c, i, arr) => (
             <span key={c} style={{
               display: "inline-flex",
               alignItems: "center",
               gap: 4,
               padding: "0 10px",
-              borderRight: i < 3 ? "0.5px solid var(--border)" : "none",
+              borderRight: i < arr.length - 1 ? "0.5px solid var(--border)" : "none",
             }}>
               <span style={{
                 width: 4, height: 4, borderRadius: "50%",
@@ -161,7 +166,7 @@ export default async function HomePage() {
               }}>{c}</span>
             </span>
           ))}
-          {["Ethiopia","Cameroon","Tanzania","Senegal","Côte d'Ivoire","Egypt"].map((c) => (
+          {["Morocco","Cameroon","Tanzania","Senegal","Côte d'Ivoire"].map((c) => (
             <span key={c} style={{
               display: "inline-flex",
               alignItems: "center",
@@ -422,6 +427,99 @@ export default async function HomePage() {
           ))}
         </div>
       </section>
+
+      {/* Upcoming / Announced */}
+      {upcomingFilms.length > 0 && (
+        <section style={{ maxWidth: 1100, margin: "0 auto", padding: "0 16px 30px" }}>
+          <div style={{
+            borderTop: "2px solid var(--ink)",
+            padding: "6px 0 16px",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}>
+            <span style={{
+              fontFamily: "var(--font-sans, sans-serif)",
+              fontSize: 10,
+              color: "var(--gold)",
+              letterSpacing: "0.14em",
+              fontWeight: 700,
+            }}>
+              COMING SOON
+            </span>
+            <span style={{
+              fontFamily: "var(--font-sans, sans-serif)",
+              fontSize: 9,
+              color: "var(--ink-faint)",
+            }}>
+              Announced &amp; in production
+            </span>
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: 12 }}>
+            {upcomingFilms.map((film) => (
+              <Link key={film.id} href={`/film/${film.slug}`} style={{ textDecoration: "none" }}>
+                <div style={{
+                  border: "0.5px solid var(--border)",
+                  padding: "12px 14px",
+                  background: "var(--parch-light)",
+                  position: "relative",
+                }}>
+                  <div style={{
+                    position: "absolute",
+                    top: 8,
+                    right: 10,
+                    fontSize: 8,
+                    fontFamily: "var(--font-sans, sans-serif)",
+                    color: "var(--gold)",
+                    letterSpacing: "0.12em",
+                    border: "0.5px solid var(--gold)",
+                    padding: "1px 5px",
+                  }}>
+                    {film.year}
+                  </div>
+                  <div style={{
+                    fontFamily: "var(--font-serif, Georgia, serif)",
+                    fontSize: 15,
+                    fontWeight: 700,
+                    color: "var(--ink)",
+                    lineHeight: 1.25,
+                    marginBottom: 4,
+                    paddingRight: 40,
+                  }}>
+                    {film.title}
+                  </div>
+                  {film.country && (
+                    <div style={{
+                      fontFamily: "var(--font-sans, sans-serif)",
+                      fontSize: 10,
+                      color: "var(--ink-faint)",
+                      marginBottom: 6,
+                    }}>
+                      {film.country} · {film.genres.slice(0,2).join(", ")}
+                    </div>
+                  )}
+                  {film.tagline && (
+                    <p style={{
+                      fontFamily: "var(--font-sans, sans-serif)",
+                      fontSize: 11,
+                      color: "var(--ink-muted)",
+                      fontStyle: "italic",
+                      lineHeight: 1.45,
+                      margin: 0,
+                      overflow: "hidden",
+                      display: "-webkit-box",
+                      WebkitLineClamp: 2,
+                      WebkitBoxOrient: "vertical",
+                    }}>
+                      {film.tagline}
+                    </p>
+                  )}
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* Language cinema */}
       <section style={{ maxWidth: 1100, margin: "0 auto", padding: "0 16px 30px" }}>

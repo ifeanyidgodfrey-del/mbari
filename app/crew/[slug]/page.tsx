@@ -19,597 +19,195 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-const ink = "#1C1608";
-const gold = "#8B7040";
-const border = "#D8CDB4";
-const inkFaint = "#9C8B6E";
-const inkMuted = "#6B5D3F";
-const green = "#2D7A3A";
-
-const scoreColor = (s: number) =>
-  s >= 75 ? green : s >= 50 ? "#D4882A" : "#B83232";
+const D = {
+  bgDeep: "#111110", bg: "#171715", bgCard: "#1d1d1a", bgElev: "#232320",
+  border: "#2a2a26", borderF: "#222220",
+  hero: "#ede8dd", primary: "#c8c2b5", secondary: "#8a847a",
+  muted: "#5a5650", dim: "#3e3c38",
+  accent: "#9a8060", accentH: "#b8985e",
+  green: "#5a7a5a", greenS: "rgba(90,122,90,0.12)",
+};
 
 const COUNTRY_NAME: Record<string, string> = {
   NG: "Nigeria", ZA: "South Africa", KE: "Kenya", GH: "Ghana",
-  FR: "France", GB: "UK", US: "USA",
+  ET: "Ethiopia", CM: "Cameroon", TZ: "Tanzania", EG: "Egypt", MA: "Morocco",
 };
+
+function scoreColor(s: number) {
+  return s >= 75 ? D.green : s >= 50 ? "#8a6a30" : "#7a3a3a";
+}
 
 export default async function CrewPage({ params }: Props) {
   const { slug } = await params;
   const crew = await prisma.crewMember.findUnique({
     where: { slug },
     include: {
-      credits: {
-        include: { film: true },
-        orderBy: { film: { year: "desc" } },
-      },
+      credits: { include: { film: true }, orderBy: { film: { year: "desc" } } },
     },
   });
 
   if (!crew) notFound();
 
   const totalFilms = crew.credits.length;
-  const scores = crew.credits
-    .map((c) => c.film.criticScore)
-    .filter((s): s is number => s != null);
-  const avgScore =
-    scores.length > 0
-      ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length)
-      : null;
+  const scores = crew.credits.map((c) => c.film.criticScore).filter((s): s is number => s != null);
+  const avgScore = scores.length > 0 ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length) : null;
   const combinedBox = crew.credits
-    .map((c) => c.film.boxCumulative)
-    .filter((b): b is bigint => b != null)
+    .map((c) => c.film.boxCumulative).filter((b): b is bigint => b != null)
     .reduce((a, b) => a + b, BigInt(0));
 
-  // Group credits chronologically by year (desc)
   const byYear: Record<number, typeof crew.credits> = {};
   for (const credit of crew.credits) {
     const yr = credit.film.year;
     if (!byYear[yr]) byYear[yr] = [];
     byYear[yr].push(credit);
   }
-  const years = Object.keys(byYear)
-    .map(Number)
-    .sort((a, b) => b - a);
+  const years = Object.keys(byYear).map(Number).sort((a, b) => b - a);
 
   return (
-    <div style={{ background: "#fff", minHeight: "100vh" }}>
+    <div style={{ background: D.bgDeep, minHeight: "100vh", color: D.primary, fontFamily: "var(--font-sans, sans-serif)" }}>
+      <style>{`
+        .fg::after { content:''; position:fixed; inset:0; pointer-events:none; z-index:10000; opacity:0.25;
+          background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='0.08'/%3E%3C/svg%3E");
+          background-size:200px 200px; }
+      `}</style>
+      <div className="fg">
 
-      {/* ── Top ribbon — 2x elongated ─────────────────────────────────────── */}
-      <header style={{ background: ink, position: "relative", overflow: "hidden" }}>
-        {/* Decorative gold line */}
-        <div
-          style={{
-            position: "absolute",
-            bottom: 0,
-            left: 0,
-            right: 0,
-            height: 2,
-            background: gold,
-          }}
-        />
-
-        <div
-          style={{
-            maxWidth: 900,
-            margin: "0 auto",
-            padding: "88px 32px 96px",
-            display: "flex",
-            gap: 40,
-            alignItems: "flex-end",
-          }}
-        >
-          {/* Photo */}
-          <div
-            style={{
-              width: 140,
-              height: 168,
-              flexShrink: 0,
-              border: `2px solid ${gold}40`,
-              overflow: "hidden",
-              position: "relative",
-              background: "#2A2018",
-            }}
-          >
-            {crew.imageUrl ? (
-              <Image
-                src={crew.imageUrl}
-                alt={crew.name}
-                fill
-                style={{ objectFit: "cover", objectPosition: "top" }}
-                sizes="140px"
-              />
-            ) : (
-              <div
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                <span
-                  style={{
-                    fontFamily: "var(--font-serif, Georgia, serif)",
-                    fontSize: 52,
-                    color: `${gold}60`,
-                    fontWeight: 700,
-                  }}
-                >
-                  {crew.name.charAt(0)}
-                </span>
-              </div>
+      <section style={{ display: "grid", gridTemplateColumns: "1fr 1fr", minHeight: "72vh" }}>
+        <div style={{ display:"flex", flexDirection:"column", justifyContent:"center", padding:"5rem 4rem 5rem 3rem", position:"relative" }}>
+          <div style={{ position:"absolute", right:0, top:"12%", bottom:"12%", width:1, background:`linear-gradient(to bottom, transparent, ${D.border}, transparent)` }} />
+          <Link href="/crew" style={{ display:"inline-flex", alignItems:"center", gap:"0.5rem", color:D.muted, fontSize:"0.62rem", letterSpacing:"0.14em", textTransform:"uppercase", textDecoration:"none", marginBottom:"3rem" }}>
+            ← Crew Directory
+          </Link>
+          <div style={{ fontSize:"0.52rem", letterSpacing:"0.35em", textTransform:"uppercase", color:D.dim, marginBottom:"1.5rem" }}>
+            M&apos;Bari · Crew Record
+          </div>
+          <div style={{ display:"flex", gap:"0.5rem", flexWrap:"wrap", marginBottom:"1rem" }}>
+            {crew.roles.map((role) => (
+              <span key={role} style={{ fontSize:"0.6rem", letterSpacing:"0.07em", textTransform:"uppercase", padding:"0.28rem 0.7rem", border:`1px solid ${D.accent}50`, color:D.accent, borderRadius:2 }}>{role}</span>
+            ))}
+            {crew.type === "craft" && (
+              <span style={{ fontSize:"0.6rem", letterSpacing:"0.07em", textTransform:"uppercase", padding:"0.28rem 0.7rem", border:`1px solid ${D.green}`, color:D.green, background:D.greenS, borderRadius:2 }}>Craft Professional</span>
             )}
           </div>
-
-          {/* Name + meta */}
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <Link
-              href="/crew"
-              style={{
-                fontFamily: "var(--font-sans, sans-serif)",
-                fontSize: 9,
-                color: gold,
-                textDecoration: "none",
-                letterSpacing: "0.16em",
-                fontWeight: 700,
-                display: "block",
-                marginBottom: 16,
-              }}
-            >
-              ← CREW DIRECTORY
-            </Link>
-
-            {/* Roles */}
-            <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 12 }}>
-              {crew.roles.map((role) => (
-                <span
-                  key={role}
-                  style={{
-                    border: `0.5px solid ${gold}60`,
-                    fontSize: 8,
-                    fontFamily: "var(--font-sans, sans-serif)",
-                    color: gold,
-                    padding: "2px 8px",
-                    letterSpacing: "0.12em",
-                    fontWeight: 700,
-                  }}
-                >
-                  {role.toUpperCase()}
-                </span>
-              ))}
-              {crew.type === "craft" && (
-                <span
-                  style={{
-                    background: green,
-                    color: "#fff",
-                    fontSize: 8,
-                    fontFamily: "var(--font-sans, sans-serif)",
-                    letterSpacing: "0.12em",
-                    padding: "2px 8px",
-                    fontWeight: 700,
-                  }}
-                >
-                  CRAFT PROFESSIONAL
-                </span>
-              )}
+          <h1 style={{ fontFamily:"var(--font-serif, Georgia, serif)", fontSize:"clamp(2.8rem, 5vw, 4.5rem)", fontWeight:400, lineHeight:1.02, color:D.hero, letterSpacing:"-0.01em", marginBottom:"0.7rem" }}>
+            {crew.name}
+          </h1>
+          {years.length > 0 && (
+            <div style={{ fontSize:"0.78rem", color:D.muted, fontStyle:"italic", fontFamily:"var(--font-serif, Georgia, serif)", marginBottom:"2rem" }}>
+              Active {years[years.length - 1]}–{years[0]}
             </div>
-
-            <h1
-              style={{
-                fontFamily: "var(--font-serif, Georgia, serif)",
-                fontSize: "clamp(28px, 4vw, 46px)",
-                fontWeight: 700,
-                color: "#FFFDF7",
-                margin: 0,
-                lineHeight: 1.05,
-                letterSpacing: "-0.02em",
-              }}
-            >
-              {crew.name}
-            </h1>
-
-            {/* Active years */}
-            {years.length > 0 && (
-              <div
-                style={{
-                  fontFamily: "var(--font-sans, sans-serif)",
-                  fontSize: 11,
-                  color: `${gold}99`,
-                  marginTop: 8,
-                  letterSpacing: "0.04em",
-                }}
-              >
-                Active {years[years.length - 1]}–{years[0]}
-              </div>
-            )}
-          </div>
-        </div>
-      </header>
-
-      {/* ── Body ─────────────────────────────────────────────────────────────── */}
-      <div style={{ maxWidth: 900, margin: "0 auto", padding: "48px 32px 80px" }}>
-
-        {/* Bio */}
-        {crew.bio && (
-          <div style={{ marginBottom: 48 }}>
-            <p
-              style={{
-                fontFamily: "var(--font-sans, sans-serif)",
-                fontSize: 15,
-                color: inkMuted,
-                lineHeight: 1.8,
-                margin: 0,
-                maxWidth: 640,
-              }}
-            >
+          )}
+          {crew.bio && (
+            <p style={{ fontFamily:"var(--font-serif, Georgia, serif)", fontSize:"0.9rem", lineHeight:1.85, color:D.secondary, maxWidth:460, margin:0 }}>
               {crew.bio}
             </p>
-          </div>
-        )}
-
-        {/* Available banner */}
-        {crew.available && (
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              gap: 16,
-              marginBottom: 40,
-              padding: "16px 20px",
-              border: `1px solid ${green}`,
-              background: `${green}08`,
-            }}
-          >
-            <div>
-              <div
-                style={{
-                  fontFamily: "var(--font-sans, sans-serif)",
-                  fontSize: 9,
-                  color: green,
-                  fontWeight: 700,
-                  letterSpacing: "0.14em",
-                  marginBottom: 2,
-                }}
-              >
-                OPEN TO WORK
-              </div>
-              <div
-                style={{
-                  fontFamily: "var(--font-sans, sans-serif)",
-                  fontSize: 12,
-                  color: inkMuted,
-                }}
-              >
-                Available for new film and television projects
-              </div>
+          )}
+          {crew.available && (
+            <div style={{ marginTop:"2rem", display:"flex", alignItems:"center", gap:"0.7rem", border:`1px solid ${D.green}`, background:D.greenS, padding:"0.7rem 1.1rem", borderRadius:3 }}>
+              <div style={{ width:7, height:7, borderRadius:"50%", background:D.green, boxShadow:`0 0 6px ${D.green}50` }} />
+              <span style={{ fontSize:"0.75rem", color:D.primary }}><strong style={{ color:D.hero }}>Open to work</strong> — available for new projects</span>
             </div>
-            <button
-              style={{
-                background: green,
-                color: "#fff",
-                border: "none",
-                padding: "8px 18px",
-                fontFamily: "var(--font-sans, sans-serif)",
-                fontSize: 10,
-                cursor: "pointer",
-                fontWeight: 700,
-                letterSpacing: "0.08em",
-                whiteSpace: "nowrap",
-              }}
-            >
-              CONTACT
-            </button>
-          </div>
-        )}
-
-        {/* Stats */}
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 1fr 1fr",
-            gap: 0,
-            border: `1px solid ${border}`,
-            marginBottom: 56,
-          }}
-        >
-          {[
-            { label: "FILMS", value: totalFilms },
-            { label: "AVG SCORE", value: avgScore ?? "—" },
-            {
-              label: "COMBINED BOX OFFICE",
-              value: combinedBox > BigInt(0) ? fmtDual(combinedBox) : "—",
-            },
-          ].map((stat, i) => (
-            <div
-              key={stat.label}
-              style={{
-                textAlign: "center",
-                padding: "20px 12px",
-                borderRight: i < 2 ? `1px solid ${border}` : "none",
-                background: "#fff",
-              }}
-            >
-              <div
-                style={{
-                  fontFamily: "var(--font-serif, Georgia, serif)",
-                  fontSize: i === 2 ? 18 : 32,
-                  fontWeight: 700,
-                  color: ink,
-                  lineHeight: 1.1,
-                  marginBottom: 4,
-                }}
-              >
-                {stat.value}
-              </div>
-              <div
-                style={{
-                  fontFamily: "var(--font-sans, sans-serif)",
-                  fontSize: 8,
-                  color: inkFaint,
-                  letterSpacing: "0.14em",
-                  fontWeight: 700,
-                }}
-              >
-                {stat.label}
-              </div>
-            </div>
-          ))}
+          )}
         </div>
-
-        {/* Awards */}
-        {crew.awards.length > 0 && (
-          <div style={{ marginBottom: 56 }}>
-            <div
-              style={{
-                fontFamily: "var(--font-sans, sans-serif)",
-                fontSize: 9,
-                color: gold,
-                letterSpacing: "0.18em",
-                fontWeight: 700,
-                marginBottom: 16,
-              }}
-            >
-              AWARDS & RECOGNITION
+        <div style={{ position:"relative", overflow:"hidden", background:D.bg }}>
+          {crew.imageUrl ? (
+            <>
+              <Image src={crew.imageUrl} alt={crew.name} fill style={{ objectFit:"cover", objectPosition:"top" }} sizes="50vw" priority />
+              <div style={{ position:"absolute", inset:0, background:`linear-gradient(to right, ${D.bgDeep} 0%, transparent 20%), linear-gradient(to top, ${D.bgDeep} 0%, transparent 25%)` }} />
+            </>
+          ) : (
+            <div style={{ position:"absolute", top:"50%", left:"50%", transform:"translate(-50%,-50%)", textAlign:"center" }}>
+              <div style={{ fontFamily:"var(--font-serif, Georgia, serif)", fontSize:"8rem", fontStyle:"italic", color:D.border, lineHeight:1 }}>{crew.name.charAt(0)}</div>
+              <div style={{ fontSize:"0.55rem", letterSpacing:"0.25em", textTransform:"uppercase", color:D.dim, marginTop:"0.5rem" }}>Crew Profile</div>
             </div>
-            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-              {crew.awards.map((award, i) => (
-                <div
-                  key={i}
-                  style={{
-                    fontFamily: "var(--font-sans, sans-serif)",
-                    fontSize: 13,
-                    color: inkMuted,
-                    padding: "10px 14px",
-                    borderLeft: `3px solid ${gold}`,
-                    background: "#FDFAF4",
-                  }}
-                >
-                  {award}
-                </div>
-              ))}
-            </div>
+          )}
+        </div>
+      </section>
+
+      <div style={{ display:"flex", borderTop:`1px solid ${D.borderF}`, borderBottom:`1px solid ${D.borderF}`, background:"#161614" }}>
+        {[
+          { label:"Films", value:String(totalFilms), sub:"total credits" },
+          { label:"Avg Score", value:avgScore != null ? String(avgScore) : "—", sub:"critic consensus" },
+          { label:"Combined Box Office", value:combinedBox > BigInt(0) ? fmtDual(combinedBox) : "—", sub:"career gross" },
+        ].map(({ label, value, sub }, i) => (
+          <div key={label} style={{ flex:1, display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", padding:"1.4rem 1rem", borderRight:i<2?`1px solid ${D.borderF}`:"none" }}>
+            <div style={{ fontFamily:"var(--font-serif, Georgia, serif)", fontSize:i===2?"1rem":"1.35rem", color:D.hero, marginBottom:"0.15rem" }}>{value}</div>
+            <div style={{ fontSize:"0.52rem", letterSpacing:"0.16em", textTransform:"uppercase", color:D.muted }}>{label}</div>
+            <div style={{ fontSize:"0.48rem", color:D.dim, fontStyle:"italic", marginTop:"0.1rem" }}>{sub}</div>
           </div>
-        )}
+        ))}
+      </div>
 
-        {/* Filmography — chronological timeline */}
-        <div>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              marginBottom: 28,
-              paddingBottom: 12,
-              borderBottom: `1.5px solid ${ink}`,
-            }}
-          >
-            <h2
-              style={{
-                fontFamily: "var(--font-serif, Georgia, serif)",
-                fontSize: 22,
-                fontWeight: 700,
-                color: ink,
-                margin: 0,
-              }}
-            >
-              Filmography
-            </h2>
-            <span
-              style={{
-                fontFamily: "var(--font-sans, sans-serif)",
-                fontSize: 10,
-                color: inkFaint,
-                letterSpacing: "0.1em",
-              }}
-            >
-              {totalFilms} {totalFilms === 1 ? "credit" : "credits"} · chronological
-            </span>
-          </div>
-
-          <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
-            {years.map((year) => (
-              <div key={year} style={{ display: "flex", gap: 0, marginBottom: 32 }}>
-                {/* Year marker */}
-                <div
-                  style={{
-                    width: 72,
-                    flexShrink: 0,
-                    paddingTop: 18,
-                  }}
-                >
-                  <div
-                    style={{
-                      fontFamily: "var(--font-serif, Georgia, serif)",
-                      fontSize: 18,
-                      fontWeight: 700,
-                      color: gold,
-                    }}
-                  >
-                    {year}
-                  </div>
-                </div>
-
-                {/* Credits for that year */}
-                <div style={{ flex: 1, borderLeft: `1px solid ${border}`, paddingLeft: 24 }}>
-                  {byYear[year].map((credit, i) => (
-                    <div
-                      key={credit.id}
-                      style={{
-                        display: "flex",
-                        gap: 16,
-                        alignItems: "flex-start",
-                        padding: "16px 0",
-                        borderBottom:
-                          i < byYear[year].length - 1
-                            ? `0.5px solid ${border}`
-                            : "none",
-                      }}
-                    >
-                      {/* Film poster thumb */}
-                      <div
-                        style={{
-                          width: 44,
-                          height: 64,
-                          flexShrink: 0,
-                          background: "#F0EAD8",
-                          position: "relative",
-                          overflow: "hidden",
-                          border: `0.5px solid ${border}`,
-                        }}
-                      >
-                        {credit.film.posterUrl ? (
-                          <Image
-                            src={credit.film.posterUrl}
-                            alt={credit.film.title}
-                            fill
-                            style={{ objectFit: "cover" }}
-                            sizes="44px"
-                          />
-                        ) : (
-                          <div
-                            style={{
-                              width: "100%",
-                              height: "100%",
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                            }}
-                          >
-                            <span
-                              style={{
-                                fontFamily: "var(--font-serif, Georgia, serif)",
-                                fontSize: 18,
-                                color: border,
-                              }}
-                            >
-                              {credit.film.title.charAt(0)}
-                            </span>
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Info */}
-                      <div style={{ flex: 1, minWidth: 0 }}>
-                        <Link
-                          href={`/film/${credit.film.slug}`}
-                          style={{
-                            fontFamily: "var(--font-serif, Georgia, serif)",
-                            fontSize: 17,
-                            fontWeight: 700,
-                            color: ink,
-                            textDecoration: "none",
-                            display: "block",
-                            marginBottom: 4,
-                            lineHeight: 1.2,
-                          }}
-                        >
-                          {credit.film.title}
-                        </Link>
-                        <div
-                          style={{
-                            fontFamily: "var(--font-sans, sans-serif)",
-                            fontSize: 11,
-                            color: inkFaint,
-                            marginBottom: 6,
-                          }}
-                        >
-                          {credit.role}
-                          {credit.film.country && (
-                            <span style={{ marginLeft: 8 }}>
-                              · {COUNTRY_NAME[credit.film.country] ?? credit.film.country}
-                            </span>
-                          )}
-                        </div>
-                        {credit.film.genres.length > 0 && (
-                          <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
-                            {credit.film.genres.slice(0, 2).map((g) => (
-                              <span
-                                key={g}
-                                style={{
-                                  fontFamily: "var(--font-sans, sans-serif)",
-                                  fontSize: 8,
-                                  color: inkMuted,
-                                  border: `0.5px solid ${border}`,
-                                  padding: "1px 6px",
-                                  letterSpacing: "0.06em",
-                                }}
-                              >
-                                {g}
-                              </span>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Score + box office */}
-                      <div
-                        style={{
-                          flexShrink: 0,
-                          textAlign: "right",
-                          display: "flex",
-                          flexDirection: "column",
-                          gap: 6,
-                          alignItems: "flex-end",
-                        }}
-                      >
-                        {credit.film.criticScore != null && (
-                          <span
-                            style={{
-                              background: scoreColor(credit.film.criticScore),
-                              color: "#fff",
-                              fontSize: 14,
-                              fontWeight: 700,
-                              fontFamily: "var(--font-serif, Georgia, serif)",
-                              padding: "3px 9px",
-                              display: "inline-block",
-                            }}
-                          >
-                            {credit.film.criticScore}
-                          </span>
-                        )}
-                        {credit.film.boxCumulative != null && (
-                          <div
-                            style={{
-                              fontFamily: "var(--font-sans, sans-serif)",
-                              fontSize: 10,
-                              color: gold,
-                              fontWeight: 700,
-                            }}
-                          >
-                            {fmtDual(credit.film.boxCumulative, credit.film.country)}
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
+      {crew.awards.length > 0 && (
+        <div style={{ maxWidth:940, margin:"3rem auto 0", padding:"0 3rem" }}>
+          <div style={{ fontSize:"0.52rem", letterSpacing:"0.22em", textTransform:"uppercase", color:D.dim, marginBottom:"1rem" }}>Awards &amp; Recognition</div>
+          <div style={{ display:"flex", flexDirection:"column", gap:1, background:D.borderF }}>
+            {crew.awards.map((award, i) => (
+              <div key={i} style={{ background:D.bgCard, padding:"0.9rem 1.4rem", fontFamily:"var(--font-serif, Georgia, serif)", fontSize:"0.88rem", color:D.secondary, borderLeft:`3px solid ${D.accent}` }}>{award}</div>
             ))}
           </div>
         </div>
+      )}
+
+      <div style={{ maxWidth:940, margin:"3rem auto 0", padding:"0 3rem 5rem" }}>
+        <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:"2rem", paddingBottom:"1rem", borderBottom:`1px solid ${D.borderF}` }}>
+          <h2 style={{ fontFamily:"var(--font-serif, Georgia, serif)", fontSize:"1.4rem", fontWeight:400, color:D.hero, margin:0 }}>Filmography</h2>
+          <span style={{ fontSize:"0.62rem", letterSpacing:"0.1em", textTransform:"uppercase", color:D.muted }}>{totalFilms} {totalFilms===1?"credit":"credits"} · chronological</span>
+        </div>
+        {years.map((year) => (
+          <div key={year} style={{ display:"flex", gap:0, marginBottom:"2.5rem" }}>
+            <div style={{ width:72, flexShrink:0, paddingTop:"1.1rem" }}>
+              <div style={{ fontFamily:"var(--font-serif, Georgia, serif)", fontSize:"1.1rem", color:D.accent }}>{year}</div>
+            </div>
+            <div style={{ flex:1, borderLeft:`1px solid ${D.border}`, paddingLeft:"1.5rem" }}>
+              {byYear[year].map((credit, i) => (
+                <div key={credit.id} style={{ display:"flex", gap:"1rem", alignItems:"flex-start", padding:"1rem 0", borderBottom:i<byYear[year].length-1?`1px solid ${D.borderF}`:"none" }}>
+                  <div style={{ width:44, height:64, flexShrink:0, background:D.bgElev, position:"relative", overflow:"hidden", border:`1px solid ${D.border}` }}>
+                    {credit.film.posterUrl ? (
+                      <Image src={credit.film.posterUrl} alt={credit.film.title} fill style={{ objectFit:"cover" }} sizes="44px" />
+                    ) : (
+                      <div style={{ width:"100%", height:"100%", display:"flex", alignItems:"center", justifyContent:"center" }}>
+                        <span style={{ fontFamily:"var(--font-serif, Georgia, serif)", fontSize:"1.1rem", color:D.muted }}>{credit.film.title.charAt(0)}</span>
+                      </div>
+                    )}
+                  </div>
+                  <div style={{ flex:1, minWidth:0 }}>
+                    <Link href={`/film/${credit.film.slug}`} style={{ fontFamily:"var(--font-serif, Georgia, serif)", fontSize:"1rem", color:D.primary, textDecoration:"none", display:"block", marginBottom:"0.25rem", lineHeight:1.2 }}>{credit.film.title}</Link>
+                    <div style={{ fontSize:"0.7rem", color:D.muted, marginBottom:"0.4rem" }}>
+                      {credit.role}{credit.film.country && <span style={{ marginLeft:8 }}>· {COUNTRY_NAME[credit.film.country] ?? credit.film.country}</span>}
+                    </div>
+                    {credit.film.genres.length > 0 && (
+                      <div style={{ display:"flex", gap:4, flexWrap:"wrap" }}>
+                        {credit.film.genres.slice(0,2).map((g) => (
+                          <span key={g} style={{ fontSize:"0.58rem", color:D.muted, border:`1px solid ${D.border}`, padding:"1px 6px", letterSpacing:"0.06em", borderRadius:2 }}>{g}</span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                  <div style={{ flexShrink:0, textAlign:"right", display:"flex", flexDirection:"column", gap:6, alignItems:"flex-end" }}>
+                    {credit.film.criticScore != null && (
+                      <span style={{ background:scoreColor(credit.film.criticScore), color:"#fff", fontSize:"0.85rem", fontWeight:700, fontFamily:"var(--font-serif, Georgia, serif)", padding:"3px 9px" }}>{credit.film.criticScore}</span>
+                    )}
+                    {credit.film.boxCumulative != null && (
+                      <div style={{ fontSize:"0.68rem", color:D.accent, fontWeight:500 }}>{fmtDual(credit.film.boxCumulative, credit.film.country)}</div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <footer style={{ borderTop:`1px solid ${D.borderF}`, padding:"2.2rem 3rem", display:"flex", justifyContent:"space-between", alignItems:"center", maxWidth:940, margin:"0 auto" }}>
+        <div style={{ fontSize:"0.58rem", letterSpacing:"0.14em", textTransform:"uppercase", color:D.dim }}>M&apos;Bari Film Archive — {new Date().getFullYear()}</div>
+        <div style={{ display:"flex", gap:"1.4rem" }}>
+          {[["Films","/films"],["Cast","/cast"],["Crew","/crew"],["Events","/events"]].map(([label, href]) => (
+            <Link key={href} href={href} style={{ fontSize:"0.58rem", color:D.muted, textDecoration:"none", letterSpacing:"0.06em" }}>{label}</Link>
+          ))}
+        </div>
+      </footer>
+
       </div>
     </div>
   );
