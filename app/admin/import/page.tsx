@@ -82,6 +82,7 @@ interface ImportOverrides {
   boxCumulative: string;
   boxWeek: string;
   boxLive: boolean;
+  upcoming: boolean;
   rated: string;
   slugOverride: string;
   yearOverride: string;
@@ -466,6 +467,7 @@ function ImportModal({
     boxCumulative: "",
     boxWeek: "",
     boxLive: autoBoxLive,
+    upcoming: false,
     rated: "",
     slugOverride: "",
     yearOverride: film.release_date?.slice(0, 4) ?? "",
