@@ -27,9 +27,12 @@ model Film {
   audienceCount Int      @default(0)
   verifiedCount Int      @default(0)
   boxWeekend    BigInt?
-  boxCumulative BigInt?
+  boxCumulative BigInt?             // Primary: NG/EG revenue in local currency (kobo/piastres)
   boxWeek       Int?
   boxLive       Boolean  @default(false)
+  screenCount   Int?                // Secondary: ZA/KE/GH screen count (no revenue data)
+  isIndie       Boolean  @default(false) // Festival/arthouse — from Akoroko, Zawya, Labia listings
+  lastScrapedAt DateTime?           // Last time this film appeared in a cinema scrape
   awards        String[]
   tmdbId        Int?     @unique  // TMDb movie ID — for dedup on import
   imdbId        String?           // IMDb ID (from TMDb external_ids)
@@ -52,6 +55,7 @@ model Language {
   name   String
   native String?
   films  FilmLanguage[]
+  series SeriesLanguage[]
 }
 
 model FilmLanguage {
@@ -65,17 +69,18 @@ model FilmLanguage {
 }
 
 model CrewMember {
-  id        String       @id @default(cuid())
-  slug      String       @unique
-  name      String
-  bio       String?      @db.Text
-  imageUrl  String?                // Profile photo URL
-  type      String
-  roles     String[]
-  awards    String[]
-  available Boolean      @default(false)
-  credits   CrewCredit[]
-  createdAt DateTime     @default(now())
+  id            String             @id @default(cuid())
+  slug          String             @unique
+  name          String
+  bio           String?            @db.Text
+  imageUrl      String?                       // Profile photo URL
+  type          String
+  roles         String[]
+  awards        String[]
+  available     Boolean            @default(false)
+  credits       CrewCredit[]
+  seriesCredits SeriesCrewCredit[]
+  createdAt     DateTime           @default(now())
 }
 
 model CrewCredit {
@@ -129,6 +134,68 @@ model Availability {
   url         String?
   film        Film   @relation(fields: [filmId], references: [id])
   @@unique([filmId, countryCode, platform])
+}
+
+model Series {
+  id            String               @id @default(cuid())
+  slug          String               @unique
+  title         String
+  year          Int                            // first-aired year
+  endYear       Int?                           // null = ongoing
+  seasons       Int                  @default(1)
+  episodes      Int?
+  runtime       String?                        // per-episode, e.g. "45 min"
+  rated         String?
+  tagline       String?
+  synopsis      String               @db.Text
+  posterUrl     String?
+  backdropUrl   String?
+  country       String
+  genres        String[]
+  network       String?                        // e.g. "Netflix", "Showmax"
+  status        String               @default("returning") // returning | ended | cancelled | upcoming
+  criticScore   Int?
+  audienceScore Int?
+  awards        String[]
+  tmdbId        Int?                 @unique
+  imdbId        String?
+  trailerUrl    String?
+  languages     SeriesLanguage[]
+  crew          SeriesCrewCredit[]
+  availability  SeriesAvailability[]
+  createdAt     DateTime             @default(now())
+  updatedAt     DateTime             @updatedAt
+}
+
+model SeriesLanguage {
+  id         String   @id @default(cuid())
+  seriesId   String
+  languageId String
+  percentage Int
+  series     Series   @relation(fields: [seriesId], references: [id])
+  language   Language @relation(fields: [languageId], references: [id])
+  @@unique([seriesId, languageId])
+}
+
+model SeriesCrewCredit {
+  id           String     @id @default(cuid())
+  seriesId     String
+  crewMemberId String
+  role         String
+  series       Series     @relation(fields: [seriesId], references: [id])
+  crewMember   CrewMember @relation(fields: [crewMemberId], references: [id])
+  @@unique([seriesId, crewMemberId, role])
+}
+
+model SeriesAvailability {
+  id          String @id @default(cuid())
+  seriesId    String
+  countryCode String
+  platform    String
+  accessType  String
+  url         String?
+  series      Series @relation(fields: [seriesId], references: [id])
+  @@unique([seriesId, countryCode, platform])
 }
 
 model User {

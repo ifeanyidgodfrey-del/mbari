@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Cast Directory — M'Bari",
   description:
-    "Profiles for every actor in the M'Bari African cinema catalogue — Nollywood, South African, Kenyan and Ghanaian screen talent.",
+    "Profiles for every actor in the M'Bari African cinema catalogue — Nollywood, South African, Kenyan, Ghanaian, Ethiopian and Egyptian screen talent.",
 };
 
 const ink = "#1C1608";
@@ -48,7 +48,7 @@ export default async function CastDirectoryPage() {
     }
   }
 
-  const countryOrder = ["NG", "ZA", "KE", "GH"];
+  const countryOrder = ["NG", "ZA", "KE", "GH", "ET", "EG"];
   const sortedCountries = [
     ...countryOrder.filter((c) => byCountry[c]),
     ...Object.keys(byCountry).filter((c) => !countryOrder.includes(c)).sort(),

@@ -116,6 +116,22 @@ export default async function AdminPage() {
         </h1>
         <div style={{ display: "flex", gap: 8 }}>
           <Link
+            href="/admin/films"
+            style={{
+              background: "transparent",
+              color: gold,
+              border: `1px solid ${gold}`,
+              fontFamily: "var(--font-sans, sans-serif)",
+              fontSize: 11,
+              fontWeight: 700,
+              letterSpacing: "0.06em",
+              padding: "7px 14px",
+              textDecoration: "none",
+            }}
+          >
+            Film Availability →
+          </Link>
+          <Link
             href="/admin/events"
             style={{
               background: "transparent",
@@ -130,6 +146,38 @@ export default async function AdminPage() {
             }}
           >
             Manage Events →
+          </Link>
+          <Link
+            href="/admin/sync"
+            style={{
+              background: "transparent",
+              color: gold,
+              border: `1px solid ${gold}`,
+              fontFamily: "var(--font-sans, sans-serif)",
+              fontSize: 11,
+              fontWeight: 700,
+              letterSpacing: "0.06em",
+              padding: "7px 14px",
+              textDecoration: "none",
+            }}
+          >
+            Cinema Sync →
+          </Link>
+          <Link
+            href="/admin/images"
+            style={{
+              background: "transparent",
+              color: gold,
+              border: `1px solid ${gold}`,
+              fontFamily: "var(--font-sans, sans-serif)",
+              fontSize: 11,
+              fontWeight: 700,
+              letterSpacing: "0.06em",
+              padding: "7px 14px",
+              textDecoration: "none",
+            }}
+          >
+            Image Review →
           </Link>
           <Link
             href="/admin/import"

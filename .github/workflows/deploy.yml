@@ -42,6 +42,7 @@ jobs:
                 npx tsx prisma/update-content.ts || true &&
                 npx tsx prisma/import-research-batch.ts || true &&
                 npx tsx prisma/migrate-actors.ts || true &&
-                npx tsx prisma/enrich-portraits.ts || true
+                npx tsx prisma/enrich-portraits.ts || true &&
+                npx tsx prisma/discover-upcoming.ts || true
               "
             echo "Deploy complete"

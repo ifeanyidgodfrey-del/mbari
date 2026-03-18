@@ -150,7 +150,7 @@ async function main() {
   const bts = await prisma.film.upsert({
     where: { slug: "behind-the-scenes" },
     update: {
-      posterUrl: "https://image.tmdb.org/t/p/w500/b7H6dvJFyJJPJEYSqVuw3VpKuTN.jpg",
+      posterUrl: "https://image.tmdb.org/t/p/w500/g8cBAlTiKtmZFkjUWyUdAVR8LRs.jpg",
       backdropUrl: "https://image.tmdb.org/t/p/w1280/q3jHCb4TkBZXk43IYIEUK0zKnMA.jpg",
     },
     create: {
@@ -161,7 +161,7 @@ async function main() {
       country: "Nigeria",
       genres: ["Drama", "Comedy"],
       tagline: "The camera never lies. Or does it?",
-      posterUrl: "https://image.tmdb.org/t/p/w500/b7H6dvJFyJJPJEYSqVuw3VpKuTN.jpg",
+      posterUrl: "https://image.tmdb.org/t/p/w500/g8cBAlTiKtmZFkjUWyUdAVR8LRs.jpg",
       backdropUrl: "https://image.tmdb.org/t/p/w1280/q3jHCb4TkBZXk43IYIEUK0zKnMA.jpg",
       synopsis:
         "A behind-the-scenes look at the chaotic making of Nigeria's biggest Nollywood blockbuster, where ambition, ego, and talent collide on and off screen. Funke Akindele delivers a self-aware, genre-bending love letter to Nigerian cinema.",

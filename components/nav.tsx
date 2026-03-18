@@ -38,6 +38,7 @@ export default function Nav() {
             ["Crew", "/crew"],
             ["Events", "/events"],
             ["Submit", "/submit"],
+            ["Methodology", "/methodology"],
           ].map(([label, href]) => (
             <Link key={href} href={href} style={{
               fontFamily: "var(--font-sans, sans-serif)",

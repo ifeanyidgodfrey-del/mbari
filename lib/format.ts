@@ -1,17 +1,23 @@
 // Approximate exchange rates (local units per 1 USD)
 const FX: Record<string, { symbol: string; perUsd: number }> = {
-  NG: { symbol: "₦", perUsd: 1600 },
-  ZA: { symbol: "R",  perUsd: 18   },
-  KE: { symbol: "KSh", perUsd: 130 },
-  GH: { symbol: "₵", perUsd: 15   },
+  NG:     { symbol: "₦",   perUsd: 1600  },
+  Nigeria:{ symbol: "₦",   perUsd: 1600  },
+  ZA:     { symbol: "R",   perUsd: 18    },
+  KE:     { symbol: "KSh", perUsd: 130   },
+  GH:     { symbol: "₵",   perUsd: 15    },
+  EG:     { symbol: "E£",  perUsd: 50    }, // Egyptian pound (piastres stored × 100)
+  ET:     { symbol: "Br",  perUsd: 57    }, // Ethiopian birr
 };
 
 // Population in millions (2024 estimates)
 const POP_M: Record<string, number> = {
-  NG: 220,
-  ZA: 60,
-  KE: 55,
-  GH: 33,
+  NG:     220,
+  Nigeria:220,
+  ZA:     60,
+  KE:     55,
+  GH:     33,
+  EG:     106,
+  ET:     128,
 };
 
 /**

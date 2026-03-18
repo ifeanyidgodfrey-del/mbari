@@ -213,6 +213,7 @@ export default function EventsGrid({ events }: { events: Event[] }) {
                   )}
                   {event.barcode && (
                     <span
+                      title="Ticket barcodes verified via M'Bari — scan your ticket to log a Verified rating"
                       style={{
                         fontSize: 9,
                         fontFamily: "var(--font-sans, sans-serif)",
@@ -221,6 +222,7 @@ export default function EventsGrid({ events }: { events: Event[] }) {
                         padding: "2px 6px",
                         fontWeight: 700,
                         letterSpacing: "0.06em",
+                        cursor: "help",
                       }}
                     >
                       M&apos;BARI BARCODE

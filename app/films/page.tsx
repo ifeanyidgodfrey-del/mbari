@@ -9,9 +9,9 @@ import type { Metadata } from "next";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Film Directory — Search Nigerian & African Cinema",
+  title: "Film Directory — African Cinema Archive",
   description:
-    "Browse and search all Nigerian, South African, Kenyan and Ghanaian films by year, genre, language, and box office performance.",
+    "Browse and search Nigerian, South African, Kenyan, Ghanaian, Ethiopian and Egyptian films by year, genre, language, and box office performance.",
 };
 
 const COUNTRY_NAME: Record<string, string> = {
@@ -20,8 +20,15 @@ const COUNTRY_NAME: Record<string, string> = {
   FR: "France", GB: "UK", US: "USA", NZ: "New Zealand", IE: "Ireland",
 };
 
-// Countries currently covered in M'Bari
-const COVERED = ["Nigeria", "South Africa", "Kenya", "Ghana", "Ethiopia", "Egypt"];
+// ISO code → display name for filter pills
+const COVERED: { code: string; label: string }[] = [
+  { code: "NG", label: "Nigeria" },
+  { code: "ZA", label: "South Africa" },
+  { code: "KE", label: "Kenya" },
+  { code: "GH", label: "Ghana" },
+  { code: "ET", label: "Ethiopia" },
+  { code: "EG", label: "Egypt" },
+];
 // Coming soon — shown faded
 const INCOMING = ["Morocco", "Cameroon", "Tanzania", "Senegal", "Côte d'Ivoire"];
 
@@ -155,7 +162,7 @@ export default async function FilmsPage({
               >
                 Film Directory
               </h1>
-              {/* Country coverage strip — inline with title */}
+              {/* Country coverage strip — inline with title, each is a clickable filter */}
               <div style={{
                 display: "flex",
                 alignItems: "center",
@@ -164,37 +171,82 @@ export default async function FilmsPage({
                 paddingLeft: 20,
                 flexWrap: "wrap",
                 rowGap: 4,
-                columnGap: 14,
+                columnGap: 2,
               }}>
-                {COVERED.map((c) => (
-                  <div key={c} style={{
-                    display: "flex",
+                {/* "All" clear-filter pill */}
+                <Link
+                  href="/films"
+                  style={{
+                    display: "inline-flex",
                     alignItems: "center",
                     gap: 4,
                     whiteSpace: "nowrap",
-                  }}>
-                    <span style={{
-                      width: 5,
-                      height: 5,
-                      borderRadius: "50%",
-                      background: "var(--gold)",
-                      flexShrink: 0,
-                      display: "inline-block",
-                    }} />
-                    <span style={{
-                      fontFamily: "var(--font-sans, sans-serif)",
-                      fontSize: 10,
-                      color: "var(--ink-muted)",
-                      fontWeight: 600,
-                    }}>{c}</span>
-                  </div>
-                ))}
+                    textDecoration: "none",
+                    padding: "3px 8px",
+                    borderRadius: 2,
+                    marginRight: 4,
+                    background: !country ? "var(--ink)" : "transparent",
+                    border: !country ? "none" : "1px solid transparent",
+                  }}
+                >
+                  <span style={{
+                    fontFamily: "var(--font-sans, sans-serif)",
+                    fontSize: 10,
+                    color: !country ? "var(--parch)" : "var(--ink-faint)",
+                    fontWeight: 700,
+                    letterSpacing: "0.04em",
+                  }}>All</span>
+                </Link>
+
+                {COVERED.map(({ code, label }) => {
+                  const isActive = country === code;
+                  return (
+                    <Link
+                      key={code}
+                      href={isActive ? "/films" : `/films?country=${code}`}
+                      style={{
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: 5,
+                        whiteSpace: "nowrap",
+                        textDecoration: "none",
+                        padding: "3px 9px",
+                        borderRadius: 2,
+                        background: isActive ? "var(--gold)" : "transparent",
+                        border: isActive ? "none" : "1px solid transparent",
+                        transition: "background 0.12s",
+                      }}
+                    >
+                      <span style={{
+                        width: 5,
+                        height: 5,
+                        borderRadius: "50%",
+                        background: isActive ? "rgba(255,255,255,0.7)" : "var(--gold)",
+                        flexShrink: 0,
+                        display: "inline-block",
+                      }} />
+                      <span style={{
+                        fontFamily: "var(--font-sans, sans-serif)",
+                        fontSize: 10,
+                        color: isActive ? "#fff" : "var(--ink-muted)",
+                        fontWeight: isActive ? 700 : 600,
+                      }}>{label}</span>
+                    </Link>
+                  );
+                })}
+
+                {/* Separator */}
+                <span style={{ width: 1, height: 12, background: "var(--border)", margin: "0 6px", display: "inline-block", opacity: 0.5 }} />
+
                 {INCOMING.map((c) => (
-                  <div key={c} style={{
-                    display: "flex",
+                  <div key={c} title="Coming soon" style={{
+                    display: "inline-flex",
                     alignItems: "center",
                     gap: 4,
                     whiteSpace: "nowrap",
+                    padding: "3px 8px",
+                    cursor: "default",
+                    opacity: 0.45,
                   }}>
                     <span style={{
                       width: 5,
@@ -207,7 +259,7 @@ export default async function FilmsPage({
                     <span style={{
                       fontFamily: "var(--font-sans, sans-serif)",
                       fontSize: 10,
-                      color: "var(--border)",
+                      color: "var(--ink-faint)",
                     }}>{c}</span>
                   </div>
                 ))}
@@ -390,7 +442,25 @@ export default async function FilmsPage({
                           {score}
                         </div>
                       )}
-                      {film.boxLive && (
+                      {film.upcoming && (
+                        <div
+                          style={{
+                            position: "absolute",
+                            top: 6,
+                            left: 6,
+                            background: "#7a6030",
+                            color: "#ede8dd",
+                            fontSize: 8,
+                            fontWeight: 700,
+                            fontFamily: "var(--font-sans, sans-serif)",
+                            padding: "2px 6px",
+                            letterSpacing: "0.1em",
+                          }}
+                        >
+                          UPCOMING
+                        </div>
+                      )}
+                      {!film.upcoming && film.boxLive && (
                         <div
                           style={{
                             position: "absolute",

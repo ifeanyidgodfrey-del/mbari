@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { fmtDual } from "@/lib/format";
 import Link from "next/link";
 import Image from "next/image";
+import FilmHeroImage from "@/components/film-hero-image";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 
@@ -22,32 +23,70 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-// ── Design tokens (warm editorial — midway between parchment and pitch black) ─
+// ── Design tokens (warm parchment editorial — matches site theme) ─────────────
 const D = {
-  bgDeep:  "#1a1812",
-  bg:      "#222018",
-  bgCard:  "#2a2720",
-  bgElev:  "#333028",
-  bgHover: "#3a3730",
-  border:  "#4a4538",
-  borderF: "#3a3530",
-  hero:    "#ede8dd",
-  primary: "#c8c2b5",
-  secondary:"#9a9488",
-  muted:   "#6a6560",
-  dim:     "#524e48",
-  accent:  "#b8985e",
-  accentH: "#d4b870",
-  green:   "#5a7a5a",
-  greenS:  "rgba(90,122,90,0.14)",
-  red:     "#7a3a3a",
+  bgDeep:  "#F5F0E4",
+  bg:      "#F0E8D4",
+  bgCard:  "#EDE4CE",
+  bgElev:  "#E6DBC5",
+  bgHover: "#DFD3BA",
+  border:  "#D8CDB4",
+  borderF: "#E2D8C4",
+  hero:    "#1C1608",
+  primary: "#3A2E18",
+  secondary:"#5A4830",
+  muted:   "#8B7A5E",
+  dim:     "#A89070",
+  accent:  "#8B7040",
+  accentH: "#C4A862",
+  green:   "#2D7A3A",
+  greenS:  "rgba(45,122,58,0.10)",
+  red:     "#B83232",
 };
 
 const COUNTRY_NAME: Record<string, string> = {
   NG: "Nigeria", ZA: "South Africa", KE: "Kenya", GH: "Ghana",
   ET: "Ethiopia", CM: "Cameroon", TZ: "Tanzania", SN: "Senegal",
   CI: "Côte d'Ivoire", EG: "Egypt", MA: "Morocco", UG: "Uganda",
+  US: "United States", GB: "United Kingdom", FR: "France", CA: "Canada",
 };
+
+// Flat SVG flag via flagcdn.com — consistent cross-platform rendering
+function CountryFlag({ code, size = 20 }: { code: string; size?: number }) {
+  const lc = code.toLowerCase();
+  return (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      src={`https://flagcdn.com/${Math.round(size * 1.4)}x${size}/${lc}.png`}
+      srcSet={`https://flagcdn.com/${Math.round(size * 2.8)}x${Math.round(size * 2)}/${lc}.png 2x`}
+      width={Math.round(size * 1.4)}
+      height={size}
+      alt={code}
+      style={{ display: "inline-block", verticalAlign: "middle", borderRadius: 1 }}
+    />
+  );
+}
+
+// Normalise access type values from any format (svod, sub, Cinema, ticket…) to display label
+const ACCESS_LABEL: Record<string, string> = {
+  svod:          "Streaming",
+  sub:           "Streaming",
+  subscription:  "Streaming",
+  streaming:     "Streaming",
+  tvod:          "Rental",
+  rent:          "Rental",
+  rental:        "Rental",
+  cinema:        "Cinema",
+  ticket:        "Cinema",
+  "pay-per-view":"Pay-per-view",
+  free:          "Free",
+  avod:          "Free",
+  download:      "Download",
+  vod:           "VOD",
+};
+function fmtAccess(raw: string) {
+  return ACCESS_LABEL[raw.toLowerCase()] ?? raw;
+}
 
 
 function initials(name: string) {
@@ -173,6 +212,27 @@ export default async function FilmPage({ params, searchParams }: Props) {
             ← Back to catalogue
           </Link>
 
+          {/* Upcoming banner */}
+          {film.upcoming && (
+            <div style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "0.5rem",
+              background: `${D.accent}22`,
+              border: `1px solid ${D.accent}60`,
+              color: D.accent,
+              fontSize: "0.58rem",
+              letterSpacing: "0.2em",
+              textTransform: "uppercase",
+              padding: "0.35rem 0.8rem",
+              marginBottom: "1.2rem",
+              width: "fit-content",
+            }}>
+              <span style={{ width: 5, height: 5, borderRadius: "50%", background: D.accent, display: "inline-block" }} />
+              Announced · Coming Soon
+            </div>
+          )}
+
           {/* Eyebrow */}
           <div style={{
             fontSize: "0.52rem",
@@ -198,21 +258,31 @@ export default async function FilmPage({ params, searchParams }: Props) {
             {film.title}
           </h1>
 
-          {/* Director */}
+          {/* Director — prominent */}
           {director && (
             <div style={{
-              fontFamily: "var(--font-serif, Georgia, serif)",
-              fontSize: "0.95rem",
-              fontStyle: "italic",
-              color: D.secondary,
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "0.6rem",
               marginBottom: "2.5rem",
             }}>
-              A film by{" "}
+              <span style={{
+                fontSize: "0.58rem",
+                letterSpacing: "0.18em",
+                textTransform: "uppercase",
+                color: D.dim,
+                fontFamily: "var(--font-sans, sans-serif)",
+              }}>
+                Director
+              </span>
+              <span style={{ width: 1, height: 14, background: D.border, display: "inline-block" }} />
               <Link href={`/crew/${director.crewMember.slug}`} style={{
-                color: D.accent,
+                fontFamily: "var(--font-serif, Georgia, serif)",
+                fontSize: "1.05rem",
+                color: D.accentH,
                 fontStyle: "normal",
                 textDecoration: "none",
-                borderBottom: `1px solid transparent`,
+                letterSpacing: "-0.01em",
               }}>
                 {director.crewMember.name}
               </Link>
@@ -294,49 +364,13 @@ export default async function FilmPage({ params, searchParams }: Props) {
           overflow: "hidden",
           background: D.bg,
         }}>
-          {film.backdropUrl || film.posterUrl ? (
-            <>
-              <Image
-                src={film.backdropUrl ?? film.posterUrl!}
-                alt={film.title}
-                fill
-                style={{
-                  objectFit: "cover",
-                  objectPosition: film.backdropUrl ? "center" : "top",
-                }}
-                sizes="50vw"
-                priority
-              />
-              {/* Fades */}
-              <div style={{
-                position: "absolute",
-                inset: 0,
-                background: `linear-gradient(to right, ${D.bgDeep} 0%, transparent 20%),
-                             linear-gradient(to top, ${D.bgDeep} 0%, transparent 25%)`,
-              }} />
-            </>
-          ) : (
-            <div style={{
-              position: "absolute",
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%, -50%)",
-              textAlign: "center",
-            }}>
-              <div style={{
-                fontFamily: "var(--font-serif, Georgia, serif)",
-                fontSize: "8rem",
-                fontStyle: "italic",
-                color: D.border,
-                lineHeight: 1,
-              }}>
-                {film.title.charAt(0)}
-              </div>
-              <div style={{ fontSize: "0.55rem", letterSpacing: "0.25em", textTransform: "uppercase", color: D.dim, marginTop: "0.5rem" }}>
-                Film Still
-              </div>
-            </div>
-          )}
+          <FilmHeroImage
+            src={film.backdropUrl ?? film.posterUrl ?? null}
+            title={film.title}
+            bgColor={D.bg}
+            bgDeep={D.bgDeep}
+            textColor={D.hero}
+          />
 
           {/* Awards badge */}
           {film.awards.length > 0 && (
@@ -365,7 +399,7 @@ export default async function FilmPage({ params, searchParams }: Props) {
         display: "flex",
         borderTop: `1px solid ${D.borderF}`,
         borderBottom: `1px solid ${D.borderF}`,
-        background: "#161614",
+        background: D.bgElev,
       }}>
         {[
           { label: "Critics", value: film.criticScore, sub: "press + professional" },
@@ -481,6 +515,7 @@ export default async function FilmPage({ params, searchParams }: Props) {
               const name = isLinked ? c.actor.name : c.name;
               const character = c.character;
               const href = isLinked ? `/cast/${c.actor.slug}` : null;
+              const photoUrl = isLinked ? c.actor.imageUrl : null;
               const inits = initials(name);
 
               const inner = (
@@ -502,8 +537,12 @@ export default async function FilmPage({ params, searchParams }: Props) {
                     color: D.muted,
                     flexShrink: 0,
                     fontWeight: 400,
+                    position: "relative",
+                    overflow: "hidden",
                   }}>
-                    {inits}
+                    {photoUrl ? (
+                      <Image src={photoUrl} alt={name} fill style={{ objectFit: "cover", borderRadius: "50%" }} sizes="38px" />
+                    ) : inits}
                   </div>
                   <div>
                     <div style={{
@@ -753,42 +792,46 @@ export default async function FilmPage({ params, searchParams }: Props) {
               if (!entries?.length) return (
                 <div key={code} style={{
                   background: D.bgCard,
-                  padding: "0.9rem 1.4rem",
+                  padding: "0.85rem 1.4rem",
                   display: "flex",
                   alignItems: "center",
-                  justifyContent: "space-between",
+                  gap: "0.8rem",
+                  opacity: 0.55,
                 }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: "0.7rem" }}>
-                    <span style={{ fontSize: "1rem" }}>{COUNTRY_NAME[code] ?? code}</span>
-                    <span style={{ fontSize: "0.78rem", color: D.muted, fontStyle: "italic" }}>Not available</span>
-                  </div>
+                  <CountryFlag code={code} />
+                  <span style={{ fontSize: "0.78rem", color: D.secondary, fontWeight: 500 }}>{COUNTRY_NAME[code] ?? code}</span>
+                  <span style={{ fontSize: "0.72rem", color: D.muted, fontStyle: "italic" }}>Not available</span>
                 </div>
               );
               return entries.map((a) => (
                 <div key={a.id} style={{
                   background: D.bgCard,
-                  padding: "0.9rem 1.4rem",
+                  padding: "0.85rem 1.4rem",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "space-between",
                 }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: "0.7rem" }}>
-                    <div style={{ width: 7, height: 7, borderRadius: "50%", background: D.green, boxShadow: `0 0 6px ${D.green}40` }} />
-                    <span style={{ fontSize: "1rem" }}>{FLAGS[a.countryCode] ?? a.countryCode}</span>
-                    <span style={{ fontSize: "0.82rem", color: D.primary, fontWeight: 500 }}>{a.platform}</span>
+                  <div style={{ display: "flex", alignItems: "center", gap: "0.8rem" }}>
+                    {/* Flag */}
+                    <CountryFlag code={a.countryCode} />
+                    {/* Platform */}
+                    <span style={{ fontSize: "0.88rem", color: D.primary, fontWeight: 600 }}>{a.platform}</span>
+                    {/* Access type badge */}
                     <span style={{
                       fontSize: "0.58rem",
                       letterSpacing: "0.1em",
                       textTransform: "uppercase",
                       color: D.green,
                       border: `1px solid ${D.green}60`,
-                      padding: "1px 6px",
+                      padding: "2px 7px",
                       borderRadius: 2,
+                      fontFamily: "var(--font-sans, sans-serif)",
+                      fontWeight: 600,
                     }}>
-                      {a.accessType}
+                      {fmtAccess(a.accessType)}
                     </span>
                   </div>
-                  {a.url && (
+                  {a.url ? (
                     <a href={a.url} target="_blank" rel="noopener noreferrer" style={{
                       fontSize: "0.62rem",
                       letterSpacing: "0.1em",
@@ -798,9 +841,15 @@ export default async function FilmPage({ params, searchParams }: Props) {
                       padding: "0.35rem 0.9rem",
                       border: `1px solid ${D.accent}60`,
                       borderRadius: 2,
+                      fontFamily: "var(--font-sans, sans-serif)",
+                      fontWeight: 600,
                     }}>
-                      Watch
+                      Watch →
                     </a>
+                  ) : (
+                    <span style={{ fontSize: "0.62rem", color: D.muted, letterSpacing: "0.06em", fontStyle: "italic" }}>
+                      No link
+                    </span>
                   )}
                 </div>
               ));
@@ -843,8 +892,8 @@ const pill: React.CSSProperties = {
   textTransform: "uppercase",
   padding: "0.28rem 0.7rem",
   borderRadius: 2,
-  border: "1px solid #2a2a26",
-  color: "#5a5650",
+  border: `1px solid ${D.border}`,
+  color: D.muted,
   background: "transparent",
   display: "inline-flex",
   alignItems: "center",

@@ -98,6 +98,7 @@ const EMPTY_OVERRIDES = (): ImportOverrides => ({
   boxCumulative: "",
   boxWeek: "",
   boxLive: false,
+  upcoming: false,
   rated: "",
   slugOverride: "",
   yearOverride: "",
@@ -515,6 +516,7 @@ function ImportModal({
         ...(overrides.boxCumulative && { boxCumulative: Number(overrides.boxCumulative) }),
         ...(overrides.boxWeek && { boxWeek: Number(overrides.boxWeek) }),
         boxLive: overrides.boxLive,
+        upcoming: overrides.upcoming,
         ...(overrides.rated && { rated: overrides.rated }),
         ...(overrides.slugOverride && { slugOverride: overrides.slugOverride }),
         ...(overrides.yearOverride && { yearOverride: Number(overrides.yearOverride) }),
@@ -717,21 +719,39 @@ function ImportModal({
                 <Input type="number" value={overrides.boxWeek} onChange={(v) => set("boxWeek", v)} placeholder="e.g. 4" />
               </div>
             </div>
-            <div style={{ marginTop: 8, display: "flex", alignItems: "center", gap: 8 }}>
-              <input
-                type="checkbox"
-                id="boxLive"
-                checked={overrides.boxLive}
-                onChange={(e) => set("boxLive", e.target.checked)}
-              />
-              <label htmlFor="boxLive" style={{
-                fontFamily: "var(--font-sans, sans-serif)",
-                fontSize: 11,
-                color: P.inkMuted,
-                cursor: "pointer",
-              }}>
-                Cinema barcode partner — LIVE data
-              </label>
+            <div style={{ marginTop: 8, display: "flex", gap: 20, flexWrap: "wrap" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <input
+                  type="checkbox"
+                  id="boxLive"
+                  checked={overrides.boxLive}
+                  onChange={(e) => set("boxLive", e.target.checked)}
+                />
+                <label htmlFor="boxLive" style={{
+                  fontFamily: "var(--font-sans, sans-serif)",
+                  fontSize: 11,
+                  color: P.inkMuted,
+                  cursor: "pointer",
+                }}>
+                  Cinema barcode partner — LIVE data
+                </label>
+              </div>
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <input
+                  type="checkbox"
+                  id="upcoming"
+                  checked={overrides.upcoming}
+                  onChange={(e) => set("upcoming", e.target.checked)}
+                />
+                <label htmlFor="upcoming" style={{
+                  fontFamily: "var(--font-sans, sans-serif)",
+                  fontSize: 11,
+                  color: P.inkMuted,
+                  cursor: "pointer",
+                }}>
+                  Announced / upcoming (not yet released)
+                </label>
+              </div>
             </div>
           </div>
 
@@ -1040,6 +1060,7 @@ function ManualEntryForm({ onSuccess }: { onSuccess: (slug: string) => void }) {
   const [boxCumulative, setBoxCumulative] = useState("");
   const [boxWeek, setBoxWeek] = useState("");
   const [boxLive, setBoxLive] = useState(false);
+  const [upcoming, setUpcoming] = useState(false);
 
   const [submitting, setSubmitting] = useState(false);
   const [errors, setErrors] = useState<string[]>([]);
@@ -1079,6 +1100,7 @@ function ManualEntryForm({ onSuccess }: { onSuccess: (slug: string) => void }) {
         languages,
         availability,
         boxLive,
+        upcoming,
       };
       if (criticScore) body.criticScore = Number(criticScore);
       if (audienceScore) body.audienceScore = Number(audienceScore);
@@ -1256,10 +1278,16 @@ function ManualEntryForm({ onSuccess }: { onSuccess: (slug: string) => void }) {
           <div><Label>LAST WEEKEND</Label><Input type="number" value={boxWeekend} onChange={setBoxWeekend} placeholder="e.g. 45000000" /></div>
           <div><Label>WEEK #</Label><Input type="number" value={boxWeek} onChange={setBoxWeek} placeholder="e.g. 3" /></div>
         </div>
-        <label style={{ display: "flex", alignItems: "center", gap: 8, fontFamily: "var(--font-sans, sans-serif)", fontSize: 11, color: P.inkMuted, cursor: "pointer" }}>
-          <input type="checkbox" checked={boxLive} onChange={(e) => setBoxLive(e.target.checked)} />
-          Currently in cinemas (box office LIVE)
-        </label>
+        <div style={{ display: "flex", gap: 20, flexWrap: "wrap" }}>
+          <label style={{ display: "flex", alignItems: "center", gap: 8, fontFamily: "var(--font-sans, sans-serif)", fontSize: 11, color: P.inkMuted, cursor: "pointer" }}>
+            <input type="checkbox" checked={boxLive} onChange={(e) => setBoxLive(e.target.checked)} />
+            Currently in cinemas (box office LIVE)
+          </label>
+          <label style={{ display: "flex", alignItems: "center", gap: 8, fontFamily: "var(--font-sans, sans-serif)", fontSize: 11, color: P.inkMuted, cursor: "pointer" }}>
+            <input type="checkbox" checked={upcoming} onChange={(e) => setUpcoming(e.target.checked)} />
+            Announced / upcoming (not yet released)
+          </label>
+        </div>
       </div>
 
       {/* Availability */}

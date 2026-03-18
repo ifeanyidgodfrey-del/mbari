@@ -11,23 +11,25 @@ import type { Metadata } from "next";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "M'Bari — Nigerian Box Office & African Cinema Scores",
+  title: "M'Bari — African Cinema Box Office, Scores & Film Archive",
   description:
-    "Live Nigerian box office rankings, Nollywood film scores, and African cinema data. Track what's playing in Lagos, Nairobi, Accra and Johannesburg.",
+    "Live box office rankings for Nigerian, South African, Kenyan, Ghanaian, Ethiopian and Egyptian cinema. Track scores, cast, crew and what's playing across Africa.",
   keywords: [
     "Nigerian box office",
     "Nollywood box office",
-    "Nigerian cinema",
-    "African films",
+    "African cinema",
     "Nollywood scores",
-    "box office Nigeria 2025",
-    "what's on in Lagos",
+    "South African films",
+    "Ethiopian cinema",
+    "Egyptian films",
     "African film ratings",
+    "box office Africa 2025",
+    "what's on in Lagos Nairobi Accra Johannesburg Addis Ababa Cairo",
   ],
   openGraph: {
-    title: "M'Bari — Nigerian Box Office & African Cinema",
+    title: "M'Bari — African Cinema Box Office & Film Archive",
     description:
-      "Live Nigerian box office rankings, Nollywood scores, and African culture data.",
+      "Live African box office rankings, film scores, and cinema data from Nigeria, South Africa, Kenya, Ghana, Ethiopia and Egypt.",
     url: "https://mbari.art",
     siteName: "M'Bari",
     locale: "en_NG",
@@ -35,9 +37,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "M'Bari — Nigerian Box Office & African Cinema",
+    title: "M'Bari — African Cinema Box Office & Film Archive",
     description:
-      "Live Nigerian box office rankings, Nollywood scores, and African culture data.",
+      "Live African box office rankings, film scores, and cinema data from Nigeria, South Africa, Kenya, Ghana, Ethiopia and Egypt.",
   },
 };
 
@@ -63,6 +65,19 @@ export default async function HomePage() {
   ]);
 
   const sidebarFilms = films.slice(1, 4);
+
+  // Map display names → ISO codes stored in DB
+  const COUNTRY_ISO: Record<string, string[]> = {
+    "Nigeria":      ["NG", "Nigeria"],
+    "South Africa": ["ZA"],
+    "Kenya":        ["KE"],
+    "Ghana":        ["GH"],
+    "Ethiopia":     ["ET"],
+    "Egypt":        ["EG"],
+  };
+  const liveCountryCodes = new Set(films.map((f) => f.country));
+  const hasLiveFilms = (displayName: string) =>
+    (COUNTRY_ISO[displayName] ?? []).some((iso) => liveCountryCodes.has(iso));
 
   const today = new Date().toLocaleDateString("en-NG", {
     weekday: "long",
@@ -135,7 +150,16 @@ export default async function HomePage() {
           color: "var(--ink-faint)",
           letterSpacing: "0.12em",
         }}>
-          {today} · Where culture lives
+          {today}
+        </div>
+        <div style={{
+          fontSize: 9,
+          fontFamily: "var(--font-sans, sans-serif)",
+          color: "var(--ink-faint)",
+          letterSpacing: "0.1em",
+          marginTop: 3,
+        }}>
+          Verified box office · Full crew credits · Four independent scores · African cinema of record
         </div>
         {/* Country coverage strip */}
         <div style={{
@@ -147,25 +171,32 @@ export default async function HomePage() {
           flexWrap: "wrap",
           rowGap: 4,
         }}>
-          {["Nigeria","South Africa","Kenya","Ghana","Ethiopia","Egypt"].map((c, i, arr) => (
-            <span key={c} style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: 4,
-              padding: "0 10px",
-              borderRight: i < arr.length - 1 ? "0.5px solid var(--border)" : "none",
-            }}>
-              <span style={{
-                width: 4, height: 4, borderRadius: "50%",
-                background: "var(--gold)", flexShrink: 0, display: "inline-block",
-              }} />
-              <span style={{
-                fontFamily: "var(--font-sans, sans-serif)",
-                fontSize: 9, color: "var(--ink-muted)", fontWeight: 600,
-                letterSpacing: "0.06em",
-              }}>{c}</span>
-            </span>
-          ))}
+          {["Nigeria","South Africa","Kenya","Ghana","Ethiopia","Egypt"].map((c, i, arr) => {
+            const active = hasLiveFilms(c);
+            return (
+              <span key={c} style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 4,
+                padding: "0 10px",
+                borderRight: i < arr.length - 1 ? "0.5px solid var(--border)" : "none",
+              }}>
+                <span style={{
+                  width: 4, height: 4, borderRadius: "50%",
+                  background: active ? "var(--gold)" : "transparent",
+                  border: active ? "none" : "0.5px solid var(--border)",
+                  flexShrink: 0, display: "inline-block",
+                }} />
+                <span style={{
+                  fontFamily: "var(--font-sans, sans-serif)",
+                  fontSize: 9,
+                  color: active ? "var(--ink-muted)" : "var(--border)",
+                  fontWeight: active ? 600 : 400,
+                  letterSpacing: "0.06em",
+                }}>{c}</span>
+              </span>
+            );
+          })}
           {["Morocco","Cameroon","Tanzania","Senegal","Côte d'Ivoire"].map((c) => (
             <span key={c} style={{
               display: "inline-flex",
@@ -333,7 +364,7 @@ export default async function HomePage() {
             color: "var(--ink-faint)",
             textDecoration: "none",
           }}>
-            Nigeria · South Africa · Kenya · Ghana →
+            Nigeria · South Africa · Kenya · Ghana · Ethiopia · Egypt →
           </Link>
         </div>
         <BoxOfficeTable films={films} />
