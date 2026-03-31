@@ -13,20 +13,20 @@ export default function Nav() {
       right: 0,
       zIndex: 100,
       height: "68px",
-      background: "#0D0A02",
+      background: "#080600",
       display: "flex",
       alignItems: "center",
       justifyContent: "space-between",
       padding: "0 16px",
-      borderBottom: "1px solid rgba(212,168,50,0.25)",
+      borderBottom: "1px solid rgba(200,146,10,0.3)",
     }}>
       <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
         <Link href="/" style={{
           fontFamily: "var(--font-sans, 'Source Sans 3', sans-serif)",
-          fontSize: 16.5,
+          fontSize: 18,
           fontWeight: 700,
-          color: "#D4A832",
-          letterSpacing: "0.18em",
+          color: "#C8920A",
+          letterSpacing: "0.22em",
           textDecoration: "none",
         }}>
           M'BARI
@@ -43,7 +43,7 @@ export default function Nav() {
             <Link key={href} href={href} style={{
               fontFamily: "var(--font-sans, sans-serif)",
               fontSize: 15,
-              color: "rgba(255,255,255,0.78)",
+              color: "rgba(255,255,255,0.85)",
               textDecoration: "none",
               letterSpacing: "0.06em",
             }}>
@@ -56,7 +56,7 @@ export default function Nav() {
         <span style={{
           fontFamily: "var(--font-sans, sans-serif)",
           fontSize: 13.5,
-          color: "rgba(255,255,255,0.45)",
+          color: "rgba(255,255,255,0.55)",
           letterSpacing: "0.1em",
         }}>
           Where culture lives

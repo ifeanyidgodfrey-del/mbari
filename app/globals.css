@@ -5,21 +5,24 @@
 @import url('https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Source+Sans+3:wght@300;400;600;700&display=swap');
 
 :root {
-  --parch: #FAF8F2;
+  --parch: #FBF8F0;
   --parch-light: #FFFFFF;
   --parch-dark: #F2EDE0;
-  --ink: #110E04;
+  --ink: #0A0800;
   --ink-soft: #2E2410;
   --ink-muted: #3A2E18;
   --ink-faint: #7A6A4A;
-  --gold: #B87E20;
-  --gold-light: #D4A832;
+  --gold: #C8920A;
+  --gold-light: #E8B020;
+  --gold-dim: #8A6510;
+  --cinnabar: #C8391A;
   --green: #2D7A3A;
   --orange: #D4882A;
   --red: #B83232;
-  --border: #D8CDB4;
+  --border: #E0D8C4;
   --border-light: #EBE5D5;
-  --nav-bg: #0D0A02;
+  --nav-bg: #080600;
+  --hero-bg: #0A0800;
   --white: #FFFFFF;
   --font-serif: 'Libre Baskerville', Georgia, serif;
   --font-sans: 'Source Sans 3', system-ui, sans-serif;
@@ -47,7 +50,7 @@ body {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #2D7A3A;
+  background: #C8391A;
   animation: livepulse 2s ease-in-out infinite;
 }
 

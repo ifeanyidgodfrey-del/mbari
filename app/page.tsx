@@ -116,65 +116,74 @@ export default async function HomePage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
     <div style={{ background: "var(--parch)", minHeight: "100vh" }}>
-      {/* Masthead */}
+
+      {/* ─── MASTHEAD ─────────────────────────────────────────────── */}
       <header style={{
-        borderBottom: "2px solid var(--ink)",
-        padding: "16px 20px 10px",
+        borderBottom: "3px solid var(--ink)",
+        padding: "20px 20px 14px",
         textAlign: "center",
         background: "var(--parch-light)",
       }}>
         <h1 style={{
           fontFamily: "var(--font-serif, Georgia, serif)",
-          fontSize: "clamp(40px, 8vw, 72px)",
+          fontSize: "clamp(56px, 10vw, 96px)",
           fontWeight: 700,
           color: "var(--ink)",
-          margin: "0 0 4px",
+          margin: "0 0 6px",
           lineHeight: 1,
           letterSpacing: "-0.02em",
         }}>
           M&apos;Bari
         </h1>
+
+        {/* Positioning line */}
+        <div style={{
+          fontFamily: "var(--font-sans, sans-serif)",
+          fontSize: 11,
+          color: "var(--gold)",
+          letterSpacing: "0.22em",
+          fontVariant: "small-caps",
+          fontWeight: 700,
+          marginBottom: 6,
+        }}>
+          The African Cinema Record
+        </div>
+
         <div style={{
           fontSize: 10,
           fontFamily: "var(--font-sans, sans-serif)",
           color: "var(--ink-faint)",
           letterSpacing: "0.12em",
+          marginBottom: 12,
         }}>
           {today}
         </div>
-        {/* Country coverage strip */}
+
+        {/* Country coverage strip — active = gold filled pills */}
         <div style={{
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          gap: 0,
-          marginTop: 8,
+          gap: 6,
           flexWrap: "wrap",
-          rowGap: 4,
         }}>
-          {["Nigeria","South Africa","Kenya","Ghana","Ethiopia","Egypt"].map((c, i, arr) => {
+          {["Nigeria","South Africa","Kenya","Ghana","Ethiopia","Egypt"].map((c) => {
             const active = hasLiveFilms(c);
             return (
               <span key={c} style={{
                 display: "inline-flex",
                 alignItems: "center",
-                gap: 4,
-                padding: "0 10px",
-                borderRight: i < arr.length - 1 ? "0.5px solid var(--border)" : "none",
+                padding: active ? "4px 14px" : "3px 10px",
+                background: active ? "var(--gold)" : "transparent",
+                border: active ? "none" : "1px solid var(--border)",
+                borderRadius: 20,
+                fontFamily: "var(--font-sans, sans-serif)",
+                fontSize: active ? 11 : 9,
+                color: active ? "#fff" : "var(--border)",
+                fontWeight: active ? 700 : 400,
+                letterSpacing: "0.07em",
               }}>
-                <span style={{
-                  width: 4, height: 4, borderRadius: "50%",
-                  background: active ? "var(--gold)" : "transparent",
-                  border: active ? "none" : "0.5px solid var(--border)",
-                  flexShrink: 0, display: "inline-block",
-                }} />
-                <span style={{
-                  fontFamily: "var(--font-sans, sans-serif)",
-                  fontSize: 9,
-                  color: active ? "var(--ink-muted)" : "var(--border)",
-                  fontWeight: active ? 600 : 400,
-                  letterSpacing: "0.06em",
-                }}>{c}</span>
+                {c}
               </span>
             );
           })}
@@ -182,25 +191,24 @@ export default async function HomePage() {
             <span key={c} style={{
               display: "inline-flex",
               alignItems: "center",
-              gap: 4,
-              padding: "0 10px",
-              borderRight: "0.5px solid var(--border)",
+              padding: "2px 8px",
+              border: "1px solid var(--border)",
+              borderRadius: 20,
+              fontFamily: "var(--font-sans, sans-serif)",
+              fontSize: 8,
+              color: "var(--border)",
+              letterSpacing: "0.06em",
+              opacity: 0.6,
             }}>
-              <span style={{
-                width: 4, height: 4, borderRadius: "50%",
-                border: "0.5px solid var(--border)", flexShrink: 0, display: "inline-block",
-              }} />
-              <span style={{
-                fontFamily: "var(--font-sans, sans-serif)",
-                fontSize: 9, color: "var(--border)", letterSpacing: "0.06em",
-              }}>{c}</span>
+              {c}
             </span>
           ))}
         </div>
-        <div style={{ borderTop: "0.5px solid var(--border)", marginTop: 8 }} />
+
+        <div style={{ borderTop: "0.5px solid var(--border)", marginTop: 12 }} />
       </header>
 
-      {/* Broadsheet grid */}
+      {/* ─── BROADSHEET GRID ──────────────────────────────────────── */}
       <section style={{
         maxWidth: 1100,
         margin: "0 auto",
@@ -209,20 +217,25 @@ export default async function HomePage() {
         gridTemplateColumns: "1fr 280px",
         gap: 20,
       }}>
-        <div>
+        {/* Hero — dark ink container for cinematic weight */}
+        <div style={{
+          background: "var(--hero-bg)",
+          boxShadow: "0 4px 32px rgba(0,0,0,0.25)",
+        }}>
           <FlipHero films={films.slice(0, 5)} />
         </div>
 
         {/* Sidebar */}
         <aside style={{ borderLeft: "1px solid var(--border)", paddingLeft: 16 }}>
           <div style={{
-            fontSize: 9,
+            fontSize: 10,
             fontFamily: "var(--font-sans, sans-serif)",
             color: "var(--gold)",
-            letterSpacing: "0.14em",
-            marginBottom: 10,
-            borderBottom: "1px solid var(--border)",
-            paddingBottom: 6,
+            letterSpacing: "0.18em",
+            marginBottom: 12,
+            borderBottom: "2px solid var(--ink)",
+            paddingBottom: 7,
+            fontWeight: 700,
           }}>
             ALSO TRENDING
           </div>
@@ -230,16 +243,17 @@ export default async function HomePage() {
             <Link key={film.id} href={`/film/${film.slug}`} style={{ textDecoration: "none" }}>
               <div style={{
                 borderBottom: "0.5px solid var(--border-light)",
-                paddingBottom: 10,
-                marginBottom: 10,
+                paddingBottom: 12,
+                marginBottom: 12,
               }}>
-                <div style={{ display: "flex", gap: 8, alignItems: "flex-start" }}>
+                <div style={{ display: "flex", gap: 10, alignItems: "flex-start" }}>
                   <span style={{
-                    fontSize: 20,
+                    fontSize: 24,
                     fontFamily: "var(--font-serif, Georgia, serif)",
-                    color: "var(--border)",
+                    color: "var(--gold)",
                     lineHeight: 1,
                     fontWeight: 700,
+                    opacity: 0.5,
                   }}>
                     {i + 2}
                   </span>
@@ -271,16 +285,16 @@ export default async function HomePage() {
           {/* Condensed box office top 3 */}
           <div style={{
             marginTop: 8,
-            background: "var(--parch-dark)",
-            padding: "10px 12px",
-            border: "0.5px solid var(--border)",
+            background: "var(--ink)",
+            padding: "12px 14px",
           }}>
             <div style={{
-              fontSize: 9,
+              fontSize: 10,
               color: "var(--gold)",
-              letterSpacing: "0.14em",
-              marginBottom: 8,
+              letterSpacing: "0.18em",
+              marginBottom: 10,
               fontFamily: "var(--font-sans, sans-serif)",
+              fontWeight: 700,
             }}>
               BOX OFFICE TOP 3
             </div>
@@ -289,15 +303,20 @@ export default async function HomePage() {
                 display: "flex",
                 justifyContent: "space-between",
                 alignItems: "center",
-                marginBottom: 6,
+                marginBottom: 8,
               }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                  <span style={{ color: "var(--ink-faint)", fontFamily: "var(--font-sans, sans-serif)", fontSize: 10 }}>
-                    #{i + 1}
+                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                  <span style={{
+                    color: i === 0 ? "var(--gold)" : "rgba(255,255,255,0.35)",
+                    fontFamily: "var(--font-serif, Georgia, serif)",
+                    fontSize: i === 0 ? 16 : 12,
+                    fontWeight: 700,
+                  }}>
+                    {i + 1}
                   </span>
                   <Link href={`/film/${film.slug}`} style={{
                     fontFamily: "var(--font-serif, Georgia, serif)",
-                    color: "var(--ink)",
+                    color: "var(--parch)",
                     textDecoration: "none",
                     fontSize: 12,
                   }}>
@@ -308,8 +327,8 @@ export default async function HomePage() {
                 <span style={{
                   fontFamily: "var(--font-sans, sans-serif)",
                   fontSize: 10,
-                  color: "var(--ink-muted)",
-                  fontWeight: 600,
+                  color: "var(--gold-light)",
+                  fontWeight: 700,
                 }}>
                   {film.boxCumulative != null ? fmtDual(film.boxCumulative, film.country) : "—"}
                 </span>
@@ -319,12 +338,12 @@ export default async function HomePage() {
         </aside>
       </section>
 
-      {/* Full box office table */}
+      {/* ─── NOW IN CINEMAS ───────────────────────────────────────── */}
       <section style={{ maxWidth: 1100, margin: "0 auto", padding: "0 16px 30px" }}>
         <div style={{
-          borderTop: "2px solid var(--ink)",
-          borderBottom: "0.5px solid var(--border)",
-          padding: "6px 0",
+          borderTop: "4px solid var(--ink)",
+          borderBottom: "1px solid var(--border)",
+          padding: "8px 0",
           marginBottom: 16,
           display: "flex",
           justifyContent: "space-between",
@@ -332,16 +351,16 @@ export default async function HomePage() {
         }}>
           <span style={{
             fontFamily: "var(--font-sans, sans-serif)",
-            fontSize: 10,
+            fontSize: 12,
             color: "var(--gold)",
-            letterSpacing: "0.14em",
+            letterSpacing: "0.18em",
             fontWeight: 700,
           }}>
             NOW IN CINEMAS
           </span>
           <Link href="/films?live=1" style={{
             fontFamily: "var(--font-sans, sans-serif)",
-            fontSize: 9,
+            fontSize: 10,
             color: "var(--ink-faint)",
             textDecoration: "none",
           }}>
@@ -365,14 +384,17 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Critics picks */}
+      {/* ─── CRITICS' PICKS ───────────────────────────────────────── */}
       <section style={{ maxWidth: 1100, margin: "0 auto", padding: "0 16px 30px" }}>
-        <div style={{ borderTop: "2px solid var(--ink)", padding: "6px 0 16px" }}>
+        <div style={{
+          borderTop: "4px solid var(--ink)",
+          padding: "8px 0 18px",
+        }}>
           <span style={{
             fontFamily: "var(--font-sans, sans-serif)",
-            fontSize: 10,
+            fontSize: 12,
             color: "var(--gold)",
-            letterSpacing: "0.14em",
+            letterSpacing: "0.18em",
             fontWeight: 700,
           }}>
             CRITICS&apos; PICKS
@@ -382,18 +404,19 @@ export default async function HomePage() {
           {films.filter((f) => f.criticScore && f.criticScore >= 70).slice(0, 4).map((film) => (
             <Link key={film.id} href={`/film/${film.slug}`} style={{ textDecoration: "none" }}>
               <div style={{
-                border: "0.5px solid var(--border)",
-                padding: 14,
+                borderLeft: "3px solid var(--gold)",
+                padding: "16px 18px",
                 background: "var(--parch-light)",
+                boxShadow: "0 1px 4px rgba(0,0,0,0.06)",
               }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 6 }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 8 }}>
                   <div>
                     <div style={{
                       fontFamily: "var(--font-serif, Georgia, serif)",
-                      fontSize: 18,
+                      fontSize: 20,
                       fontWeight: 700,
                       color: "var(--ink)",
-                      lineHeight: 1.2,
+                      lineHeight: 1.15,
                     }}>
                       {film.title}
                     </div>
@@ -401,21 +424,23 @@ export default async function HomePage() {
                       fontFamily: "var(--font-sans, sans-serif)",
                       fontSize: 11,
                       color: "var(--ink-faint)",
-                      marginTop: 2,
+                      marginTop: 3,
                     }}>
                       {film.year} · {film.genres.join(", ")}
                     </div>
                   </div>
                   {film.criticScore && (
                     <div style={{
-                      background: "var(--green)",
-                      color: "#fff",
-                      padding: "4px 8px",
-                      fontSize: 16,
+                      background: "var(--gold)",
+                      color: "var(--ink)",
+                      padding: "6px 10px",
+                      fontSize: 20,
                       fontWeight: 700,
                       fontFamily: "var(--font-serif, Georgia, serif)",
-                      minWidth: 40,
+                      minWidth: 48,
                       textAlign: "center",
+                      flexShrink: 0,
+                      marginLeft: 12,
                     }}>
                       {film.criticScore}
                     </div>
@@ -425,7 +450,7 @@ export default async function HomePage() {
                   fontFamily: "var(--font-sans, sans-serif)",
                   fontSize: 12,
                   color: "var(--ink-muted)",
-                  lineHeight: 1.5,
+                  lineHeight: 1.55,
                   margin: 0,
                   overflow: "hidden",
                   display: "-webkit-box",
@@ -440,28 +465,28 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Upcoming / Announced */}
+      {/* ─── COMING SOON ──────────────────────────────────────────── */}
       {upcomingFilms.length > 0 && (
         <section style={{ maxWidth: 1100, margin: "0 auto", padding: "0 16px 30px" }}>
           <div style={{
-            borderTop: "2px solid var(--ink)",
-            padding: "6px 0 16px",
+            borderTop: "4px solid var(--ink)",
+            padding: "8px 0 18px",
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
           }}>
             <span style={{
               fontFamily: "var(--font-sans, sans-serif)",
-              fontSize: 10,
+              fontSize: 12,
               color: "var(--gold)",
-              letterSpacing: "0.14em",
+              letterSpacing: "0.18em",
               fontWeight: 700,
             }}>
               COMING SOON
             </span>
             <span style={{
               fontFamily: "var(--font-sans, sans-serif)",
-              fontSize: 9,
+              fontSize: 10,
               color: "var(--ink-faint)",
             }}>
               Announced &amp; in production
@@ -471,21 +496,22 @@ export default async function HomePage() {
             {upcomingFilms.map((film) => (
               <Link key={film.id} href={`/film/${film.slug}`} style={{ textDecoration: "none" }}>
                 <div style={{
-                  border: "0.5px solid var(--border)",
-                  padding: "12px 14px",
+                  border: "1px solid var(--border)",
+                  padding: "14px 16px",
                   background: "var(--parch-light)",
                   position: "relative",
                 }}>
                   <div style={{
                     position: "absolute",
-                    top: 8,
-                    right: 10,
-                    fontSize: 8,
+                    top: 10,
+                    right: 12,
+                    fontSize: 9,
                     fontFamily: "var(--font-sans, sans-serif)",
-                    color: "var(--gold)",
-                    letterSpacing: "0.12em",
-                    border: "0.5px solid var(--gold)",
-                    padding: "1px 5px",
+                    color: "var(--ink)",
+                    letterSpacing: "0.1em",
+                    fontWeight: 700,
+                    background: "var(--gold)",
+                    padding: "3px 7px",
                   }}>
                     {film.year}
                   </div>
@@ -496,7 +522,7 @@ export default async function HomePage() {
                     color: "var(--ink)",
                     lineHeight: 1.25,
                     marginBottom: 4,
-                    paddingRight: 40,
+                    paddingRight: 44,
                   }}>
                     {film.title}
                   </div>
@@ -533,51 +559,62 @@ export default async function HomePage() {
         </section>
       )}
 
-      {/* Language cinema */}
+      {/* ─── LANGUAGE CINEMA ──────────────────────────────────────── */}
       <section style={{ maxWidth: 1100, margin: "0 auto", padding: "0 16px 30px" }}>
-        <div style={{ borderTop: "2px solid var(--ink)", padding: "6px 0 16px" }}>
+        <div style={{ borderTop: "4px solid var(--ink)", padding: "8px 0 18px" }}>
           <span style={{
             fontFamily: "var(--font-sans, sans-serif)",
-            fontSize: 10,
+            fontSize: 12,
             color: "var(--gold)",
-            letterSpacing: "0.14em",
+            letterSpacing: "0.18em",
             fontWeight: 700,
           }}>
             LANGUAGE CINEMA
           </span>
         </div>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(140px, 1fr))", gap: 8 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(150px, 1fr))", gap: 10 }}>
           {[
-            { code: "yo", name: "Yorùbá", native: "Èdè Yorùbá" },
-            { code: "ig", name: "Igbo", native: "Asụsụ Igbo" },
-            { code: "ha", name: "Hausa", native: "Harshen Hausa" },
-            { code: "pcm", name: "Naijá Pidgin", native: "Naijá" },
-            { code: "zu", name: "Zulu", native: "isiZulu" },
-            { code: "sw", name: "Swahili", native: "Kiswahili" },
-            { code: "en", name: "English", native: "English" },
-            { code: "fr", name: "French", native: "Français" },
+            { code: "yo", name: "Yorùbá",       native: "Èdè Yorùbá",     family: "Niger-Congo" },
+            { code: "ig", name: "Igbo",          native: "Asụsụ Igbo",     family: "Niger-Congo" },
+            { code: "ha", name: "Hausa",         native: "Harshen Hausa",  family: "Afro-Asiatic" },
+            { code: "pcm", name: "Naijá Pidgin", native: "Naijá",          family: "Creole" },
+            { code: "zu", name: "Zulu",          native: "isiZulu",        family: "Bantu" },
+            { code: "sw", name: "Swahili",       native: "Kiswahili",      family: "Bantu" },
+            { code: "en", name: "English",       native: "English",        family: "Indo-European" },
+            { code: "fr", name: "French",        native: "Français",       family: "Indo-European" },
           ].map((lang) => (
             <Link key={lang.code} href={`/language/${lang.code}`} style={{ textDecoration: "none" }}>
               <div style={{
-                border: "0.5px solid var(--border)",
-                padding: "10px 12px",
+                border: "1px solid var(--border)",
+                padding: "12px 14px",
                 background: "var(--parch-light)",
+                borderLeft: "3px solid var(--gold-dim)",
               }}>
                 <div style={{
                   fontFamily: "var(--font-serif, Georgia, serif)",
-                  fontSize: 13,
+                  fontSize: 16,
                   fontWeight: 700,
                   color: "var(--ink)",
+                  marginBottom: 2,
+                }}>
+                  {lang.native}
+                </div>
+                <div style={{
+                  fontFamily: "var(--font-sans, sans-serif)",
+                  fontSize: 11,
+                  color: "var(--ink-faint)",
                 }}>
                   {lang.name}
                 </div>
                 <div style={{
                   fontFamily: "var(--font-sans, sans-serif)",
-                  fontSize: 10,
-                  color: "var(--ink-faint)",
-                  fontStyle: "italic",
+                  fontSize: 9,
+                  color: "var(--gold-dim)",
+                  letterSpacing: "0.1em",
+                  marginTop: 4,
+                  textTransform: "uppercase",
                 }}>
-                  {lang.native}
+                  {lang.family}
                 </div>
               </div>
             </Link>
@@ -585,27 +622,27 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Events */}
+      {/* ─── LIVE EVENTS ──────────────────────────────────────────── */}
       <section style={{ maxWidth: 1100, margin: "0 auto", padding: "0 16px 30px" }}>
         <div style={{
-          borderTop: "2px solid var(--ink)",
-          padding: "6px 0 16px",
+          borderTop: "4px solid var(--ink)",
+          padding: "8px 0 18px",
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
         }}>
           <span style={{
             fontFamily: "var(--font-sans, sans-serif)",
-            fontSize: 10,
+            fontSize: 12,
             color: "var(--gold)",
-            letterSpacing: "0.14em",
+            letterSpacing: "0.18em",
             fontWeight: 700,
           }}>
             LIVE EVENTS
           </span>
           <Link href="/events" style={{
             fontFamily: "var(--font-sans, sans-serif)",
-            fontSize: 9,
+            fontSize: 10,
             color: "var(--ink-faint)",
             textDecoration: "none",
           }}>
@@ -615,24 +652,23 @@ export default async function HomePage() {
         <EventsGrid events={events} />
       </section>
 
-      {/* Newsletter Signup */}
+      {/* ─── NEWSLETTER ───────────────────────────────────────────── */}
       <section style={{
         maxWidth: 1100,
         margin: "0 auto",
         padding: "0 16px 30px",
       }}>
         <div style={{
-          borderTop: "2px solid var(--ink)",
-          borderBottom: "0.5px solid var(--border)",
+          borderTop: "4px solid var(--ink)",
           background: "var(--parch-light)",
-          padding: "24px 32px",
+          padding: "28px 32px",
           textAlign: "center",
         }}>
           <div style={{
             fontFamily: "var(--font-sans, sans-serif)",
-            fontSize: 9,
+            fontSize: 10,
             color: "var(--gold)",
-            letterSpacing: "0.14em",
+            letterSpacing: "0.18em",
             fontWeight: 700,
             marginBottom: 10,
           }}>
@@ -640,19 +676,19 @@ export default async function HomePage() {
           </div>
           <div style={{
             fontFamily: "var(--font-serif, Georgia, serif)",
-            fontSize: 20,
+            fontSize: 22,
             fontWeight: 700,
             color: "var(--ink)",
-            marginBottom: 6,
+            marginBottom: 8,
           }}>
             Weekly Recap
           </div>
           <p style={{
             fontFamily: "var(--font-sans, sans-serif)",
-            fontSize: 12,
+            fontSize: 13,
             color: "var(--ink-muted)",
             lineHeight: 1.6,
-            margin: "0 auto 16px",
+            margin: "0 auto 18px",
             maxWidth: 420,
           }}>
             Box office numbers, new films, live events, and the week in African culture — delivered every Monday.
@@ -661,7 +697,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* CTAs */}
+      {/* ─── CTA ──────────────────────────────────────────────────── */}
       <section style={{
         maxWidth: 1100,
         margin: "0 auto",
@@ -685,35 +721,36 @@ export default async function HomePage() {
           },
         ].map((item) => (
           <div key={item.title} style={{
-            border: "1px solid var(--border)",
-            padding: "20px 24px",
-            background: "var(--parch-light)",
+            background: "var(--ink)",
+            padding: "24px 28px",
           }}>
             <div style={{
               fontFamily: "var(--font-serif, Georgia, serif)",
-              fontSize: 18,
+              fontSize: 20,
               fontWeight: 700,
-              color: "var(--ink)",
-              marginBottom: 8,
+              color: "var(--parch)",
+              marginBottom: 10,
             }}>
               {item.title}
             </div>
             <p style={{
               fontFamily: "var(--font-sans, sans-serif)",
               fontSize: 13,
-              color: "var(--ink-muted)",
-              lineHeight: 1.6,
-              margin: "0 0 14px",
+              color: "rgba(251,248,240,0.65)",
+              lineHeight: 1.65,
+              margin: "0 0 18px",
             }}>
               {item.body}
             </p>
             <Link href={item.href} style={{
               fontFamily: "var(--font-sans, sans-serif)",
-              fontSize: 11,
-              color: "var(--gold)",
+              fontSize: 12,
+              color: "var(--gold-light)",
               textDecoration: "none",
               fontWeight: 700,
-              letterSpacing: "0.06em",
+              letterSpacing: "0.08em",
+              borderBottom: "1px solid var(--gold)",
+              paddingBottom: 2,
             }}>
               {item.cta}
             </Link>
@@ -721,18 +758,42 @@ export default async function HomePage() {
         ))}
       </section>
 
+      {/* ─── POSITIONING STRIP ────────────────────────────────────── */}
+      <section style={{ background: "var(--ink)", padding: "48px 20px", textAlign: "center" }}>
+        <div style={{ maxWidth: 800, margin: "0 auto" }}>
+          <div style={{ fontSize: 11, color: "var(--gold)", letterSpacing: "0.2em", marginBottom: 14, fontWeight: 700 }}>
+            WHERE AFRICA WATCHES
+          </div>
+          <p style={{
+            fontFamily: "var(--font-serif)",
+            fontSize: "clamp(20px, 3vw, 32px)",
+            color: "var(--parch)",
+            lineHeight: 1.4,
+            margin: "0 0 18px",
+          }}>
+            Netflix hasn&apos;t built this. Prime hasn&apos;t built this.<br />
+            M&apos;Bari is the only verified box office record for African cinema.
+          </p>
+          <div style={{ fontSize: 12, color: "rgba(255,255,255,0.4)", letterSpacing: "0.12em" }}>
+            Nigeria · South Africa · Kenya · Ghana · Ethiopia · Egypt
+          </div>
+        </div>
+      </section>
+
+      {/* ─── FOOTER ───────────────────────────────────────────────── */}
       <footer style={{
-        borderTop: "2px solid var(--ink)",
-        padding: "16px 20px",
+        borderTop: "2px solid rgba(200,146,10,0.3)",
+        padding: "18px 20px",
         textAlign: "center",
         background: "var(--nav-bg)",
-        color: "rgba(255,255,255,0.3)",
         fontFamily: "var(--font-sans, sans-serif)",
-        fontSize: 10,
+        fontSize: 11,
         letterSpacing: "0.08em",
       }}>
-        M&apos;Bari — Where culture lives · mbari.art · © {new Date().getFullYear()}
+        <span style={{ color: "#C8920A", fontWeight: 700 }}>M&apos;BARI</span>
+        <span style={{ color: "rgba(255,255,255,0.5)" }}> — Where culture lives · mbari.art · © {new Date().getFullYear()}</span>
       </footer>
+
     </div>
     </>
   );

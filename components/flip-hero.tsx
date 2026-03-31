@@ -6,10 +6,12 @@ import Image from "next/image";
 
 const COUNTRY_NAME: Record<string, string> = {
   NG: "Nigeria", ZA: "South Africa", KE: "Kenya", GH: "Ghana",
+  ET: "Ethiopia", EG: "Egypt",
   FR: "France", GB: "UK", US: "USA", NZ: "New Zealand", IE: "Ireland",
 };
 const COUNTRY_COLOR: Record<string, string> = {
-  NG: "#2D7A3A", ZA: "#1A5C8A", KE: "#8B1A1A", GH: "#B8860B",
+  NG: "#1A6B30", ZA: "#0F4A7A", KE: "#7A1010", GH: "#A87800",
+  ET: "#005200", EG: "#B07A00",
 };
 
 type FilmWithRelations = {
@@ -22,6 +24,7 @@ type FilmWithRelations = {
   posterUrl: string | null;
   criticScore: number | null;
   boxLive: boolean;
+  boxCumulative?: bigint | null;
   crew: {
     role: string;
     crewMember: { name: string };
@@ -53,10 +56,9 @@ export default function FlipHero({ films }: { films: FilmWithRelations[] }) {
     <div
       style={{
         position: "relative",
-        maxHeight: 360,
         overflow: "hidden",
-        border: "0.5px solid #C4A862",
-        background: "#F5F0E4",
+        background: "#0A0800",
+        width: "100%",
       }}
     >
       <div
@@ -64,15 +66,15 @@ export default function FlipHero({ films }: { films: FilmWithRelations[] }) {
           opacity: visible ? 1 : 0,
           transition: "opacity 0.4s ease",
           display: "flex",
-          height: 360,
+          height: 480,
         }}
       >
         {/* Poster */}
         <div
           style={{
-            width: 200,
+            width: 260,
             flexShrink: 0,
-            background: "#E8E0CE",
+            background: "#181008",
             position: "relative",
             overflow: "hidden",
           }}
@@ -83,26 +85,28 @@ export default function FlipHero({ films }: { films: FilmWithRelations[] }) {
               alt={film.title}
               fill
               style={{ objectFit: "cover" }}
-              sizes="200px"
+              sizes="260px"
             />
           ) : (
             <div
               style={{
                 width: "100%",
                 height: "100%",
-                background: "#E8E0CE",
+                background: "linear-gradient(160deg, #1A1208 0%, #0A0800 100%)",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
+                padding: 24,
               }}
             >
               <span
                 style={{
                   fontFamily: "var(--font-serif, Georgia, serif)",
-                  fontSize: 11,
-                  color: "#8B7040",
+                  fontSize: "clamp(18px, 2.5vw, 28px)",
+                  color: "#C8920A",
                   textAlign: "center",
-                  padding: 16,
+                  lineHeight: 1.3,
+                  fontWeight: 700,
                 }}
               >
                 {film.title}
@@ -115,7 +119,7 @@ export default function FlipHero({ films }: { films: FilmWithRelations[] }) {
         <div
           style={{
             flex: 1,
-            padding: "24px 24px 20px",
+            padding: "32px 32px 24px",
             display: "flex",
             flexDirection: "column",
             justifyContent: "space-between",
@@ -123,12 +127,14 @@ export default function FlipHero({ films }: { films: FilmWithRelations[] }) {
           }}
         >
           <div>
+            {/* Badges row */}
             <div
               style={{
                 display: "flex",
                 alignItems: "center",
-                gap: 8,
-                marginBottom: 10,
+                gap: 10,
+                marginBottom: 16,
+                flexWrap: "wrap",
               }}
             >
               {film.boxLive && (
@@ -136,20 +142,20 @@ export default function FlipHero({ films }: { films: FilmWithRelations[] }) {
                   style={{
                     display: "inline-flex",
                     alignItems: "center",
-                    gap: 5,
-                    background: "#2D7A3A",
+                    gap: 6,
+                    background: "#C8391A",
                     color: "#fff",
-                    fontSize: 9,
+                    fontSize: 10,
                     fontFamily: "var(--font-sans, sans-serif)",
-                    letterSpacing: "0.12em",
-                    padding: "3px 8px",
+                    letterSpacing: "0.14em",
+                    padding: "4px 10px",
                     fontWeight: 700,
                   }}
                 >
                   <span
                     style={{
-                      width: 6,
-                      height: 6,
+                      width: 7,
+                      height: 7,
                       borderRadius: "50%",
                       background: "#fff",
                       display: "inline-block",
@@ -162,12 +168,13 @@ export default function FlipHero({ films }: { films: FilmWithRelations[] }) {
               {film.criticScore != null && (
                 <span
                   style={{
-                    background: "#2D7A3A",
-                    color: "#fff",
-                    fontSize: 13,
+                    background: "#C8920A",
+                    color: "#0A0800",
+                    fontSize: 18,
                     fontWeight: 700,
                     fontFamily: "var(--font-serif, Georgia, serif)",
-                    padding: "2px 8px",
+                    padding: "4px 12px",
+                    letterSpacing: "-0.01em",
                   }}
                 >
                   {film.criticScore}
@@ -175,38 +182,40 @@ export default function FlipHero({ films }: { films: FilmWithRelations[] }) {
               )}
               <span
                 style={{
-                  background: COUNTRY_COLOR[film.country] ?? "#8B7040",
+                  background: COUNTRY_COLOR[film.country] ?? "#5A4010",
                   color: "#fff",
-                  fontSize: 8,
+                  fontSize: 12,
                   fontWeight: 700,
                   fontFamily: "var(--font-sans, sans-serif)",
                   letterSpacing: "0.1em",
-                  padding: "2px 7px",
+                  padding: "4px 10px",
                 }}
               >
                 {COUNTRY_NAME[film.country] ?? film.country}
               </span>
             </div>
 
+            {/* Title */}
             <h2
               style={{
                 fontFamily: "var(--font-serif, Georgia, serif)",
-                fontSize: "clamp(22px, 3vw, 32px)",
+                fontSize: "clamp(32px, 4vw, 52px)",
                 fontWeight: 700,
-                color: "#1C1608",
-                lineHeight: 1.1,
-                margin: "0 0 6px",
+                color: "#FBF8F0",
+                lineHeight: 1.05,
+                margin: "0 0 10px",
               }}
             >
               {film.title}
             </h2>
 
+            {/* Director / year */}
             <div
               style={{
                 fontFamily: "var(--font-sans, sans-serif)",
-                fontSize: 11,
-                color: "#8B7040",
-                marginBottom: 10,
+                fontSize: 13,
+                color: "rgba(255,255,255,0.65)",
+                marginBottom: 14,
                 letterSpacing: "0.05em",
               }}
             >
@@ -214,22 +223,46 @@ export default function FlipHero({ films }: { films: FilmWithRelations[] }) {
               {director ? ` · A film by ${director.crewMember.name}` : ""}
             </div>
 
+            {/* Tagline */}
             {film.tagline && (
               <p
                 style={{
                   fontFamily: "var(--font-serif, Georgia, serif)",
-                  fontSize: 14,
-                  color: "#3A2E18",
+                  fontSize: 16,
+                  color: "rgba(251,248,240,0.9)",
                   fontStyle: "italic",
                   lineHeight: 1.5,
-                  margin: "0 0 16px",
+                  margin: "0 0 20px",
                 }}
               >
                 &ldquo;{film.tagline}&rdquo;
               </p>
             )}
+
+            {/* Box office hero stat */}
+            {film.boxCumulative != null && Number(film.boxCumulative) > 0 && (
+              <div
+                style={{
+                  marginBottom: 8,
+                  display: "flex",
+                  alignItems: "baseline",
+                  gap: 8,
+                }}
+              >
+                <span style={{
+                  fontFamily: "var(--font-sans, sans-serif)",
+                  fontSize: 10,
+                  color: "rgba(200,146,10,0.8)",
+                  letterSpacing: "0.18em",
+                  fontWeight: 700,
+                }}>
+                  TOTAL BOX OFFICE
+                </span>
+              </div>
+            )}
           </div>
 
+          {/* Bottom row: dots + read more */}
           <div
             style={{
               display: "flex",
@@ -240,7 +273,7 @@ export default function FlipHero({ films }: { films: FilmWithRelations[] }) {
             <div
               style={{
                 display: "flex",
-                gap: 4,
+                gap: 6,
                 alignItems: "center",
               }}
             >
@@ -255,13 +288,14 @@ export default function FlipHero({ films }: { films: FilmWithRelations[] }) {
                     }, 300);
                   }}
                   style={{
-                    width: i === current ? 18 : 6,
-                    height: 6,
-                    background: i === current ? "#8B7040" : "#C4A862",
+                    width: i === current ? 24 : 8,
+                    height: 8,
+                    background: i === current ? "#C8920A" : "rgba(200,146,10,0.35)",
                     border: "none",
                     cursor: "pointer",
                     padding: 0,
-                    transition: "width 0.3s",
+                    transition: "width 0.3s, background 0.3s",
+                    borderRadius: 4,
                   }}
                   aria-label={`Film ${i + 1}`}
                 />
@@ -272,13 +306,14 @@ export default function FlipHero({ films }: { films: FilmWithRelations[] }) {
               href={`/film/${film.slug}`}
               style={{
                 fontFamily: "var(--font-sans, sans-serif)",
-                fontSize: 11,
-                color: "#8B7040",
+                fontSize: 13,
+                color: "#FBF8F0",
                 textDecoration: "none",
                 fontWeight: 700,
-                letterSpacing: "0.06em",
-                borderBottom: "1px solid #C4A862",
-                paddingBottom: 1,
+                letterSpacing: "0.08em",
+                borderBottom: "2px solid #C8920A",
+                paddingBottom: 2,
+                display: "inline-block",
               }}
             >
               Read more →

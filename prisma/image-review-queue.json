@@ -1,0 +1,973 @@
+[
+  {
+    "type": "film",
+    "slug": "aba-blues",
+    "name": "Aba Blues",
+    "field": "posterUrl",
+    "currentUrl": "https://cdn.businessday.ng/wp-content/uploads/2026/02/Untitled-design-26-1.png",
+    "reason": "unverified-source:businessday.ng",
+    "candidates": [
+      {
+        "tmdbId": 674839,
+        "posterPath": "/96ss8qAZgVkrGamoEMADAGVmL8T.jpg",
+        "backdropPath": null,
+        "posterPreview": "https://image.tmdb.org/t/p/w185/96ss8qAZgVkrGamoEMADAGVmL8T.jpg",
+        "backdropPreview": null,
+        "title": "The Dragon Abas Blue",
+        "year": "2009",
+        "matchTitle": "Aba Blues",
+        "confidence": "fuzzy"
+      }
+    ],
+    "addedAt": "2026-03-17T08:39:03.859Z"
+  },
+  {
+    "type": "film",
+    "slug": "struggle",
+    "name": "Struggle",
+    "field": "posterUrl+backdropUrl",
+    "currentUrl": null,
+    "reason": "null",
+    "candidates": [
+      {
+        "tmdbId": 880659,
+        "posterPath": "/6Lq1guKtXllp7O3o3vsSXa0Wprr.jpg",
+        "backdropPath": null,
+        "posterPreview": "https://image.tmdb.org/t/p/w185/6Lq1guKtXllp7O3o3vsSXa0Wprr.jpg",
+        "backdropPreview": null,
+        "title": "struggle",
+        "year": "2021",
+        "matchTitle": "Struggle",
+        "confidence": "exact"
+      },
+      {
+        "tmdbId": 1096053,
+        "posterPath": "/u9pr559QhttgE4YCouvIxHcppKu.jpg",
+        "backdropPath": null,
+        "posterPreview": "https://image.tmdb.org/t/p/w185/u9pr559QhttgE4YCouvIxHcppKu.jpg",
+        "backdropPreview": null,
+        "title": "Struggle",
+        "year": "2018",
+        "matchTitle": "Struggle",
+        "confidence": "exact"
+      },
+      {
+        "tmdbId": 219447,
+        "posterPath": "/Xm8g6cq2ev2NMKzA8QScWadn6y.jpg",
+        "backdropPath": "/u6CwbgJZRd0ZFo9lDhvWGusQBYa.jpg",
+        "posterPreview": "https://image.tmdb.org/t/p/w185/Xm8g6cq2ev2NMKzA8QScWadn6y.jpg",
+        "backdropPreview": "https://image.tmdb.org/t/p/w300/u6CwbgJZRd0ZFo9lDhvWGusQBYa.jpg",
+        "title": "Struggle",
+        "year": "2010",
+        "matchTitle": "Struggle",
+        "confidence": "exact"
+      }
+    ],
+    "addedAt": "2026-03-17T08:39:03.859Z"
+  },
+  {
+    "type": "film",
+    "slug": "tsutsu",
+    "name": "Tsutsu",
+    "field": "posterUrl+backdropUrl",
+    "currentUrl": null,
+    "reason": "null",
+    "candidates": [
+      {
+        "tmdbId": 966616,
+        "posterPath": "/hOsX0qMjL6jkDmBZgOSL70JdvBD.jpg",
+        "backdropPath": null,
+        "posterPreview": "https://image.tmdb.org/t/p/w185/hOsX0qMjL6jkDmBZgOSL70JdvBD.jpg",
+        "backdropPreview": null,
+        "title": "Tsutsue",
+        "year": "2023",
+        "matchTitle": "Tsutsu",
+        "confidence": "fuzzy"
+      },
+      {
+        "tmdbId": 441484,
+        "posterPath": "/UuInw0Z7PlJQ3A1rcNLgVQwwZF.jpg",
+        "backdropPath": null,
+        "posterPreview": "https://image.tmdb.org/t/p/w185/UuInw0Z7PlJQ3A1rcNLgVQwwZF.jpg",
+        "backdropPreview": null,
+        "title": "HT - Sekido no Mashita de, Nabe wo Tsutsuku",
+        "year": "2011",
+        "matchTitle": "Tsutsu",
+        "confidence": "fuzzy"
+      },
+      {
+        "tmdbId": 442275,
+        "posterPath": "/bFpqtxwBNsHqPT7ZjHDVJVQ7bSY.jpg",
+        "backdropPath": null,
+        "posterPreview": "https://image.tmdb.org/t/p/w185/bFpqtxwBNsHqPT7ZjHDVJVQ7bSY.jpg",
+        "backdropPreview": null,
+        "title": "HT - NY no Chushin de, Nabe wo Tsutsuku",
+        "year": "2010",
+        "matchTitle": "Tsutsu",
+        "confidence": "fuzzy"
+      }
+    ],
+    "addedAt": "2026-03-17T08:39:03.859Z"
+  },
+  {
+    "type": "film",
+    "slug": "behind-the-scenes",
+    "name": "Behind the Scenes",
+    "field": "backdropUrl",
+    "currentUrl": null,
+    "reason": "null-backdrop",
+    "candidates": [
+      {
+        "tmdbId": 1266838,
+        "posterPath": "/39b80eNeAnUMyz1Vru0vijFroeK.jpg",
+        "backdropPath": "/czVGjhwI5UlsGKo0TQlS0LPi9kv.jpg",
+        "posterPreview": "https://image.tmdb.org/t/p/w185/39b80eNeAnUMyz1Vru0vijFroeK.jpg",
+        "backdropPreview": "https://image.tmdb.org/t/p/w300/czVGjhwI5UlsGKo0TQlS0LPi9kv.jpg",
+        "title": "Behind, Behind The Scenes: How To Take A Shoot?",
+        "year": "2024",
+        "matchTitle": "Behind the Scenes",
+        "confidence": "fuzzy"
+      },
+      {
+        "tmdbId": 1553444,
+        "posterPath": "/42bSt7mjvbn5QvYzwsCYT3RDju4.jpg",
+        "backdropPath": "/aFsnoSB5BCnotb4qU3C79eemwHh.jpg",
+        "posterPreview": "https://image.tmdb.org/t/p/w185/42bSt7mjvbn5QvYzwsCYT3RDju4.jpg",
+        "backdropPreview": "https://image.tmdb.org/t/p/w300/aFsnoSB5BCnotb4qU3C79eemwHh.jpg",
+        "title": "Behind the Scenes: Detective Conan",
+        "year": "2024",
+        "matchTitle": "Behind the Scenes",
+        "confidence": "fuzzy"
+      },
+      {
+        "tmdbId": 1312080,
+        "posterPath": "/nIfpmBWT5fFvqFKKo6yXE44B2c7.jpg",
+        "backdropPath": null,
+        "posterPreview": "https://image.tmdb.org/t/p/w185/nIfpmBWT5fFvqFKKo6yXE44B2c7.jpg",
+        "backdropPreview": null,
+        "title": "Death Behind the Scenes",
+        "year": "1992",
+        "matchTitle": "Behind the Scenes",
+        "confidence": "fuzzy"
+      }
+    ],
+    "addedAt": "2026-03-17T08:39:03.859Z"
+  },
+  {
+    "type": "film",
+    "slug": "country-queen",
+    "name": "Country Queen",
+    "field": "posterUrl+backdropUrl",
+    "currentUrl": null,
+    "reason": "null-tmdb-cleared",
+    "candidates": [
+      {
+        "tmdbId": 266084,
+        "posterPath": "/hgFgNutcHskZFwE3Cfu8McXWjGl.jpg",
+        "backdropPath": "/yGlO1l2hfWOGLiQk2oriI18WkYJ.jpg",
+        "posterPreview": "https://image.tmdb.org/t/p/w185/hgFgNutcHskZFwE3Cfu8McXWjGl.jpg",
+        "backdropPreview": "https://image.tmdb.org/t/p/w300/yGlO1l2hfWOGLiQk2oriI18WkYJ.jpg",
+        "title": "Queen & Country",
+        "year": "2015",
+        "matchTitle": "Country Queen",
+        "confidence": "fuzzy"
+      },
+      {
+        "tmdbId": 149126,
+        "posterPath": "/vD96t1z1Z843tyXvRjXXmEzKjK.jpg",
+        "backdropPath": null,
+        "posterPreview": "https://image.tmdb.org/t/p/w185/vD96t1z1Z843tyXvRjXXmEzKjK.jpg",
+        "backdropPreview": null,
+        "title": "Queens of Country",
+        "year": "2012",
+        "matchTitle": "Country Queen",
+        "confidence": "fuzzy"
+      },
+      {
+        "tmdbId": 42347,
+        "posterPath": "/rwiOZ5gT6dbRQVgpvrAmYvRoDFs.jpg",
+        "backdropPath": "/btweaFGLpU1kamkLt3iVYh0tlnn.jpg",
+        "posterPreview": "https://image.tmdb.org/t/p/w185/rwiOZ5gT6dbRQVgpvrAmYvRoDFs.jpg",
+        "backdropPreview": "https://image.tmdb.org/t/p/w300/btweaFGLpU1kamkLt3iVYh0tlnn.jpg",
+        "title": "For Queen & Country",
+        "year": "1988",
+        "matchTitle": "Country Queen",
+        "confidence": "fuzzy"
+      }
+    ],
+    "addedAt": "2026-03-17T08:39:03.859Z"
+  },
+  {
+    "type": "film",
+    "slug": "affini",
+    "name": "Affini",
+    "field": "posterUrl+backdropUrl",
+    "currentUrl": null,
+    "reason": "null",
+    "candidates": [
+      {
+        "tmdbId": 1480295,
+        "posterPath": "/WKwQOPh2mQPRL12jSu2yFHk4A7.jpg",
+        "backdropPath": "/ekpdjcuVVU2LIFM3EyePYykYZ4b.jpg",
+        "posterPreview": "https://image.tmdb.org/t/p/w185/WKwQOPh2mQPRL12jSu2yFHk4A7.jpg",
+        "backdropPreview": "https://image.tmdb.org/t/p/w300/ekpdjcuVVU2LIFM3EyePYykYZ4b.jpg",
+        "title": "Affinity",
+        "year": "2025",
+        "matchTitle": "Affini",
+        "confidence": "fuzzy"
+      },
+      {
+        "tmdbId": 47793,
+        "posterPath": "/sWhavLw5uzWRUDQip44D3wAOIR8.jpg",
+        "backdropPath": "/o2CN2AqSVbe61UqFzCtNOdYlGEA.jpg",
+        "posterPreview": "https://image.tmdb.org/t/p/w185/sWhavLw5uzWRUDQip44D3wAOIR8.jpg",
+        "backdropPreview": "https://image.tmdb.org/t/p/w300/o2CN2AqSVbe61UqFzCtNOdYlGEA.jpg",
+        "title": "Elective Affinities",
+        "year": "1996",
+        "matchTitle": "Affini",
+        "confidence": "fuzzy"
+      },
+      {
+        "tmdbId": 421031,
+        "posterPath": "/puhDt71t2TjYniZRNSQFnzKO5zU.jpg",
+        "backdropPath": null,
+        "posterPreview": "https://image.tmdb.org/t/p/w185/puhDt71t2TjYniZRNSQFnzKO5zU.jpg",
+        "backdropPreview": null,
+        "title": "Elective Affinities",
+        "year": "1978",
+        "matchTitle": "Affini",
+        "confidence": "fuzzy"
+      }
+    ],
+    "addedAt": "2026-03-17T08:39:03.859Z"
+  },
+  {
+    "type": "film",
+    "slug": "black-lions-roman-wolves",
+    "name": "Black Lions – Roman Wolves",
+    "field": "posterUrl+backdropUrl",
+    "currentUrl": null,
+    "reason": "null",
+    "candidates": [
+      {
+        "tmdbId": 1616906,
+        "posterPath": "/qFfRFpG2tDJD2GDLzElVjuqjCWF.jpg",
+        "backdropPath": null,
+        "posterPreview": "https://image.tmdb.org/t/p/w185/qFfRFpG2tDJD2GDLzElVjuqjCWF.jpg",
+        "backdropPreview": null,
+        "title": "Black Lions – Roman Wolves",
+        "year": "2026",
+        "matchTitle": "Black Lions – Roman Wolves",
+        "confidence": "exact"
+      }
+    ],
+    "addedAt": "2026-03-17T08:39:03.859Z"
+  },
+  {
+    "type": "film",
+    "slug": "the-stories",
+    "name": "The Stories",
+    "field": "posterUrl+backdropUrl",
+    "currentUrl": null,
+    "reason": "null",
+    "candidates": [
+      {
+        "tmdbId": 1404367,
+        "posterPath": "/u2p2M8dKJDov68jOphWdVAtOpdM.jpg",
+        "backdropPath": null,
+        "posterPreview": "https://image.tmdb.org/t/p/w185/u2p2M8dKJDov68jOphWdVAtOpdM.jpg",
+        "backdropPreview": null,
+        "title": "Stories from the Cellar",
+        "year": "2024",
+        "matchTitle": "The Stories",
+        "confidence": "fuzzy"
+      },
+      {
+        "tmdbId": 626481,
+        "posterPath": "/69BGlTWdFF1aamX4aOwwKNDy9wP.jpg",
+        "backdropPath": "/vNYcPgSoPxeNPavglIzhdHjtdqk.jpg",
+        "posterPreview": "https://image.tmdb.org/t/p/w185/69BGlTWdFF1aamX4aOwwKNDy9wP.jpg",
+        "backdropPreview": "https://image.tmdb.org/t/p/w300/vNYcPgSoPxeNPavglIzhdHjtdqk.jpg",
+        "title": "Stories of the Dead",
+        "year": "2019",
+        "matchTitle": "The Stories",
+        "confidence": "fuzzy"
+      },
+      {
+        "tmdbId": 468705,
+        "posterPath": "/eGjlNvYf41JJtX9R6vEkdwj6CsQ.jpg",
+        "backdropPath": "/xhkVppLJ8ZvoHAQT31niDqjuoA2.jpg",
+        "posterPreview": "https://image.tmdb.org/t/p/w185/eGjlNvYf41JJtX9R6vEkdwj6CsQ.jpg",
+        "backdropPreview": "https://image.tmdb.org/t/p/w300/xhkVppLJ8ZvoHAQT31niDqjuoA2.jpg",
+        "title": "The Medal of Honor: The Stories of Our Nation's Most Celebrated Heroes",
+        "year": "2012",
+        "matchTitle": "The Stories",
+        "confidence": "fuzzy"
+      }
+    ],
+    "addedAt": "2026-03-17T08:39:03.859Z"
+  },
+  {
+    "type": "film",
+    "slug": "gawaza-wla-ganaza",
+    "name": "Gawaza Wla Ganaza",
+    "field": "posterUrl+backdropUrl",
+    "currentUrl": null,
+    "reason": "null",
+    "candidates": [],
+    "addedAt": "2026-03-17T08:39:03.859Z"
+  },
+  {
+    "type": "film",
+    "slug": "al-sada-al-afadel",
+    "name": "Al-Sada Al-Afadel",
+    "field": "posterUrl+backdropUrl",
+    "currentUrl": null,
+    "reason": "null",
+    "candidates": [
+      {
+        "tmdbId": 1489674,
+        "posterPath": "/8LjhxTjblaE17VQSbKwNNvhXYc.jpg",
+        "backdropPath": "/ljBkqy6wnCvAzPY1BAEpGSIXDYN.jpg",
+        "posterPreview": "https://image.tmdb.org/t/p/w185/8LjhxTjblaE17VQSbKwNNvhXYc.jpg",
+        "backdropPreview": "https://image.tmdb.org/t/p/w300/ljBkqy6wnCvAzPY1BAEpGSIXDYN.jpg",
+        "title": "The Gentlemen",
+        "year": "2025",
+        "matchTitle": "Al-Sada Al-Afadel",
+        "confidence": "fuzzy"
+      }
+    ],
+    "addedAt": "2026-03-17T08:39:03.859Z"
+  },
+  {
+    "type": "film",
+    "slug": "old-righteous-blues",
+    "name": "Old Righteous Blues",
+    "field": "posterUrl+backdropUrl",
+    "currentUrl": null,
+    "reason": "null",
+    "candidates": [
+      {
+        "tmdbId": 1140794,
+        "posterPath": "/uSRiFcoLJj17olqOnb3DPVeopRk.jpg",
+        "backdropPath": "/hADRNEXBvS9pVcO2tRJCLVqeqyB.jpg",
+        "posterPreview": "https://image.tmdb.org/t/p/w185/uSRiFcoLJj17olqOnb3DPVeopRk.jpg",
+        "backdropPreview": "https://image.tmdb.org/t/p/w300/hADRNEXBvS9pVcO2tRJCLVqeqyB.jpg",
+        "title": "Old Righteous Blues",
+        "year": "2024",
+        "matchTitle": "Old Righteous Blues",
+        "confidence": "exact"
+      }
+    ],
+    "addedAt": "2026-03-17T08:39:03.859Z"
+  },
+  {
+    "type": "film",
+    "slug": "egy-best",
+    "name": "Egy Best",
+    "field": "posterUrl+backdropUrl",
+    "currentUrl": null,
+    "reason": "null",
+    "candidates": [
+      {
+        "tmdbId": 9487,
+        "posterPath": "/Ah3J9OJVc2CNCuH2zMydXy9fmIC.jpg",
+        "backdropPath": "/hwwFyowfcbLRVmRBOkvnABBNIOs.jpg",
+        "posterPreview": "https://image.tmdb.org/t/p/w185/Ah3J9OJVc2CNCuH2zMydXy9fmIC.jpg",
+        "backdropPreview": "https://image.tmdb.org/t/p/w300/hwwFyowfcbLRVmRBOkvnABBNIOs.jpg",
+        "title": "A Bug's Life",
+        "year": "1998",
+        "matchTitle": "Egy Best",
+        "confidence": "fuzzy"
+      },
+      {
+        "tmdbId": 4639,
+        "posterPath": "/gURIzutUWsQSed0jKodbRoeVVaR.jpg",
+        "backdropPath": "/eztBIRcRDz7zGpZiHeEORJX1aVP.jpg",
+        "posterPreview": "https://image.tmdb.org/t/p/w185/gURIzutUWsQSed0jKodbRoeVVaR.jpg",
+        "backdropPreview": "https://image.tmdb.org/t/p/w300/eztBIRcRDz7zGpZiHeEORJX1aVP.jpg",
+        "title": "Best Seller",
+        "year": "1987",
+        "matchTitle": "Egy Best",
+        "confidence": "fuzzy"
+      },
+      {
+        "tmdbId": 146404,
+        "posterPath": "/6D0PG5QqqgVQoSLzKTu0e33nu0B.jpg",
+        "backdropPath": "/gcW0IVfkbc71K9ao6r6dXTCTXRp.jpg",
+        "posterPreview": "https://image.tmdb.org/t/p/w185/6D0PG5QqqgVQoSLzKTu0e33nu0B.jpg",
+        "backdropPreview": "https://image.tmdb.org/t/p/w300/gcW0IVfkbc71K9ao6r6dXTCTXRp.jpg",
+        "title": "The Best of Men",
+        "year": "2012",
+        "matchTitle": "Egy Best",
+        "confidence": "fuzzy"
+      }
+    ],
+    "addedAt": "2026-03-17T08:39:03.859Z"
+  },
+  {
+    "type": "film",
+    "slug": "mothers-love",
+    "name": "Mother's Love",
+    "field": "posterUrl+backdropUrl",
+    "currentUrl": null,
+    "reason": "null",
+    "candidates": [
+      {
+        "tmdbId": 705559,
+        "posterPath": "/cc3pngmysXdQswutyxr7LZxr9Eq.jpg",
+        "backdropPath": "/cWtfEELkS8Ja2jrVGKx2kOZ8gGk.jpg",
+        "posterPreview": "https://image.tmdb.org/t/p/w185/cc3pngmysXdQswutyxr7LZxr9Eq.jpg",
+        "backdropPreview": "https://image.tmdb.org/t/p/w300/cWtfEELkS8Ja2jrVGKx2kOZ8gGk.jpg",
+        "title": "My Mother's Lovers",
+        "year": "2020",
+        "matchTitle": "Mother's Love",
+        "confidence": "fuzzy"
+      },
+      {
+        "tmdbId": 498888,
+        "posterPath": "/2F3zdl8w7RWA23ZAa6nlDYoi98e.jpg",
+        "backdropPath": "/m41F4kAXZU0KG6Y64tjBK0Cm1lg.jpg",
+        "posterPreview": "https://image.tmdb.org/t/p/w185/2F3zdl8w7RWA23ZAa6nlDYoi98e.jpg",
+        "backdropPreview": "https://image.tmdb.org/t/p/w300/m41F4kAXZU0KG6Y64tjBK0Cm1lg.jpg",
+        "title": "Mother's Lover",
+        "year": "2018",
+        "matchTitle": "Mother's Love",
+        "confidence": "fuzzy"
+      },
+      {
+        "tmdbId": 592936,
+        "posterPath": "/lgtg0D6jgTBmrJKYgC4PEhf6IHK.jpg",
+        "backdropPath": "/pdsbpIGSVF2l2cIIh6c0bh965KJ.jpg",
+        "posterPreview": "https://image.tmdb.org/t/p/w185/lgtg0D6jgTBmrJKYgC4PEhf6IHK.jpg",
+        "backdropPreview": "https://image.tmdb.org/t/p/w300/pdsbpIGSVF2l2cIIh6c0bh965KJ.jpg",
+        "title": "Mother's Lover 2",
+        "year": "2019",
+        "matchTitle": "Mother's Love",
+        "confidence": "fuzzy"
+      }
+    ],
+    "addedAt": "2026-03-17T08:39:03.859Z"
+  },
+  {
+    "type": "film",
+    "slug": "onobiren-a-womans-story",
+    "name": "Onobiren: A Woman's Story",
+    "field": "posterUrl+backdropUrl",
+    "currentUrl": null,
+    "reason": "null",
+    "candidates": [],
+    "addedAt": "2026-03-17T08:39:03.859Z"
+  },
+  {
+    "type": "film",
+    "slug": "headless",
+    "name": "Headless",
+    "field": "posterUrl+backdropUrl",
+    "currentUrl": null,
+    "reason": "null",
+    "candidates": [
+      {
+        "tmdbId": 326415,
+        "posterPath": "/smvVnia9KdW2x65aTIm6LWrYlO8.jpg",
+        "backdropPath": "/idPUsCppKdSfbeuCKG5122UNqNw.jpg",
+        "posterPreview": "https://image.tmdb.org/t/p/w185/smvVnia9KdW2x65aTIm6LWrYlO8.jpg",
+        "backdropPreview": "https://image.tmdb.org/t/p/w300/idPUsCppKdSfbeuCKG5122UNqNw.jpg",
+        "title": "Headless",
+        "year": "2015",
+        "matchTitle": "Headless",
+        "confidence": "exact"
+      },
+      {
+        "tmdbId": 295789,
+        "posterPath": "/emhjZLi1Lx4MM5I5q5ctYrD705O.jpg",
+        "backdropPath": null,
+        "posterPreview": "https://image.tmdb.org/t/p/w185/emhjZLi1Lx4MM5I5q5ctYrD705O.jpg",
+        "backdropPreview": null,
+        "title": "Headless",
+        "year": "2014",
+        "matchTitle": "Headless",
+        "confidence": "exact"
+      },
+      {
+        "tmdbId": 1480857,
+        "posterPath": "/q8qAVVGGNhJhyEzv9IqixMXF1YS.jpg",
+        "backdropPath": null,
+        "posterPreview": "https://image.tmdb.org/t/p/w185/q8qAVVGGNhJhyEzv9IqixMXF1YS.jpg",
+        "backdropPreview": null,
+        "title": "Headless",
+        "year": "",
+        "matchTitle": "Headless",
+        "confidence": "exact"
+      }
+    ],
+    "addedAt": "2026-03-17T08:39:03.859Z"
+  },
+  {
+    "type": "film",
+    "slug": "eleko-oba-esugbayi",
+    "name": "Eleko: Oba Esugbayi",
+    "field": "posterUrl+backdropUrl",
+    "currentUrl": null,
+    "reason": "null",
+    "candidates": [],
+    "addedAt": "2026-03-17T08:39:03.859Z"
+  },
+  {
+    "type": "film",
+    "slug": "evi",
+    "name": "Evi",
+    "field": "posterUrl+backdropUrl",
+    "currentUrl": null,
+    "reason": "null",
+    "candidates": [
+      {
+        "tmdbId": 1083862,
+        "posterPath": "/qayga07ICNDswm0cMJ8P3VwklFZ.jpg",
+        "backdropPath": "/7drO1kYgQ0PnnU87sAnBEphYrSM.jpg",
+        "posterPreview": "https://image.tmdb.org/t/p/w185/qayga07ICNDswm0cMJ8P3VwklFZ.jpg",
+        "backdropPreview": "https://image.tmdb.org/t/p/w300/7drO1kYgQ0PnnU87sAnBEphYrSM.jpg",
+        "title": "Resident Evil: Death Island",
+        "year": "2023",
+        "matchTitle": "Evi",
+        "confidence": "fuzzy"
+      },
+      {
+        "tmdbId": 400136,
+        "posterPath": "/kdiMtgjWXEH9QZ85hgmWaSwshjf.jpg",
+        "backdropPath": "/ijjRrrmQ4kVFkAqnpUNaWZ4h3yW.jpg",
+        "posterPreview": "https://image.tmdb.org/t/p/w185/kdiMtgjWXEH9QZ85hgmWaSwshjf.jpg",
+        "backdropPreview": "https://image.tmdb.org/t/p/w300/ijjRrrmQ4kVFkAqnpUNaWZ4h3yW.jpg",
+        "title": "Resident Evil: Vendetta",
+        "year": "2017",
+        "matchTitle": "Evi",
+        "confidence": "fuzzy"
+      },
+      {
+        "tmdbId": 133121,
+        "posterPath": "/zkHSURVCrt7rpvDDgUXO75CV1v4.jpg",
+        "backdropPath": "/xbjOkrAaT4CAIrNJ38oQSBomHvg.jpg",
+        "posterPreview": "https://image.tmdb.org/t/p/w185/zkHSURVCrt7rpvDDgUXO75CV1v4.jpg",
+        "backdropPreview": "https://image.tmdb.org/t/p/w300/xbjOkrAaT4CAIrNJ38oQSBomHvg.jpg",
+        "title": "Resident Evil: Damnation",
+        "year": "2012",
+        "matchTitle": "Evi",
+        "confidence": "fuzzy"
+      }
+    ],
+    "addedAt": "2026-03-17T08:39:03.859Z"
+  },
+  {
+    "type": "film",
+    "slug": "un-adult-erated",
+    "name": "Un-Adult-erated",
+    "field": "posterUrl+backdropUrl",
+    "currentUrl": null,
+    "reason": "null",
+    "candidates": [],
+    "addedAt": "2026-03-17T08:39:03.859Z"
+  },
+  {
+    "type": "film",
+    "slug": "beneath-the-tides",
+    "name": "Beneath The Tides",
+    "field": "posterUrl+backdropUrl",
+    "currentUrl": null,
+    "reason": "null",
+    "candidates": [
+      {
+        "tmdbId": 1534344,
+        "posterPath": "/sS2pez11CiSRa6bweZ09FAbVej9.jpg",
+        "backdropPath": null,
+        "posterPreview": "https://image.tmdb.org/t/p/w185/sS2pez11CiSRa6bweZ09FAbVej9.jpg",
+        "backdropPreview": null,
+        "title": "Beneath The Tides",
+        "year": "2024",
+        "matchTitle": "Beneath The Tides",
+        "confidence": "exact"
+      }
+    ],
+    "addedAt": "2026-03-17T08:39:03.859Z"
+  },
+  {
+    "type": "film",
+    "slug": "inside-job-ke",
+    "name": "Inside Job",
+    "field": "posterUrl+backdropUrl",
+    "currentUrl": null,
+    "reason": "null",
+    "candidates": [
+      {
+        "tmdbId": 44639,
+        "posterPath": "/7yXXIWec24htucjsZS1sDuPLqw8.jpg",
+        "backdropPath": "/1yFmxvVYgVrFKL2ksFzgX0MrWOM.jpg",
+        "posterPreview": "https://image.tmdb.org/t/p/w185/7yXXIWec24htucjsZS1sDuPLqw8.jpg",
+        "backdropPreview": "https://image.tmdb.org/t/p/w300/1yFmxvVYgVrFKL2ksFzgX0MrWOM.jpg",
+        "title": "Inside Job",
+        "year": "2010",
+        "matchTitle": "Inside Job",
+        "confidence": "exact"
+      },
+      {
+        "tmdbId": 26220,
+        "posterPath": "/bCW8OKost3dMWS1tmET6GjAlqHJ.jpg",
+        "backdropPath": "/aVCml2Y1wIaF1jYFKEoBoEoBLAw.jpg",
+        "posterPreview": "https://image.tmdb.org/t/p/w185/bCW8OKost3dMWS1tmET6GjAlqHJ.jpg",
+        "backdropPreview": "https://image.tmdb.org/t/p/w300/aVCml2Y1wIaF1jYFKEoBoEoBLAw.jpg",
+        "title": "Inside Job",
+        "year": "1946",
+        "matchTitle": "Inside Job",
+        "confidence": "exact"
+      },
+      {
+        "tmdbId": 49423,
+        "posterPath": "/xIGIez3ugqQQoW1oJMiVGUQqXZ8.jpg",
+        "backdropPath": "/868VVXFdgnHgDqRyh6dJ3pkxJm4.jpg",
+        "posterPreview": "https://image.tmdb.org/t/p/w185/xIGIez3ugqQQoW1oJMiVGUQqXZ8.jpg",
+        "backdropPreview": "https://image.tmdb.org/t/p/w300/868VVXFdgnHgDqRyh6dJ3pkxJm4.jpg",
+        "title": "Don Henley - Live Inside Job",
+        "year": "2000",
+        "matchTitle": "Inside Job",
+        "confidence": "fuzzy"
+      }
+    ],
+    "addedAt": "2026-03-17T08:39:03.859Z"
+  },
+  {
+    "type": "film",
+    "slug": "two-gh",
+    "name": "TWO",
+    "field": "posterUrl+backdropUrl",
+    "currentUrl": null,
+    "reason": "null",
+    "candidates": [
+      {
+        "tmdbId": 1399158,
+        "posterPath": "/lwIS5oOnfIHXivMPr7NPHVaYgtg.jpg",
+        "backdropPath": null,
+        "posterPreview": "https://image.tmdb.org/t/p/w185/lwIS5oOnfIHXivMPr7NPHVaYgtg.jpg",
+        "backdropPreview": null,
+        "title": "Two",
+        "year": "2024",
+        "matchTitle": "TWO",
+        "confidence": "exact"
+      },
+      {
+        "tmdbId": 1311050,
+        "posterPath": "/6sk5xLTkj0j8AR3S170dM55MX5Y.jpg",
+        "backdropPath": null,
+        "posterPreview": "https://image.tmdb.org/t/p/w185/6sk5xLTkj0j8AR3S170dM55MX5Y.jpg",
+        "backdropPreview": null,
+        "title": "TWO",
+        "year": "1969",
+        "matchTitle": "TWO",
+        "confidence": "exact"
+      },
+      {
+        "tmdbId": 264726,
+        "posterPath": "/qvJQzqziYgGrCvCkAhHKFRJEUJ0.jpg",
+        "backdropPath": null,
+        "posterPreview": "https://image.tmdb.org/t/p/w185/qvJQzqziYgGrCvCkAhHKFRJEUJ0.jpg",
+        "backdropPreview": null,
+        "title": "Two",
+        "year": "1974",
+        "matchTitle": "TWO",
+        "confidence": "exact"
+      }
+    ],
+    "addedAt": "2026-03-17T08:39:03.859Z"
+  },
+  {
+    "type": "film",
+    "slug": "the-fisherman-gh",
+    "name": "The Fisherman",
+    "field": "posterUrl+backdropUrl",
+    "currentUrl": null,
+    "reason": "null",
+    "candidates": [
+      {
+        "tmdbId": 456253,
+        "posterPath": "/46OxGBgbmEDMZs7SCLzseK7SCwb.jpg",
+        "backdropPath": "/5zgNZZAcAzkSCVFfV0u5m5sE4fC.jpg",
+        "posterPreview": "https://image.tmdb.org/t/p/w185/46OxGBgbmEDMZs7SCLzseK7SCwb.jpg",
+        "backdropPreview": "https://image.tmdb.org/t/p/w300/5zgNZZAcAzkSCVFfV0u5m5sE4fC.jpg",
+        "title": "The Fisherman",
+        "year": "2015",
+        "matchTitle": "The Fisherman",
+        "confidence": "exact"
+      },
+      {
+        "tmdbId": 314167,
+        "posterPath": null,
+        "backdropPath": null,
+        "posterPreview": null,
+        "backdropPreview": null,
+        "title": "The Fisherman",
+        "year": "1931",
+        "matchTitle": "The Fisherman",
+        "confidence": "exact"
+      },
+      {
+        "tmdbId": 688224,
+        "posterPath": "/2P1pWJYZXnnguHPiaPzR5SohqYO.jpg",
+        "backdropPath": "/1zQnK6Zu6fj006MK4PLGmaWOWDV.jpg",
+        "posterPreview": "https://image.tmdb.org/t/p/w185/2P1pWJYZXnnguHPiaPzR5SohqYO.jpg",
+        "backdropPreview": "https://image.tmdb.org/t/p/w300/1zQnK6Zu6fj006MK4PLGmaWOWDV.jpg",
+        "title": "The Fisherman",
+        "year": "2019",
+        "matchTitle": "The Fisherman",
+        "confidence": "exact"
+      }
+    ],
+    "addedAt": "2026-03-17T08:39:03.859Z"
+  },
+  {
+    "type": "film",
+    "slug": "citation",
+    "name": "Citation",
+    "field": "posterUrl+backdropUrl",
+    "currentUrl": null,
+    "reason": "null-no-tmdb",
+    "candidates": [
+      {
+        "tmdbId": 755340,
+        "posterPath": "/k8medyObgY0XTt2dL7BqjxXkqmw.jpg",
+        "backdropPath": "/vazIlxR1NEh3TS0Dsaz7Ipi14Gm.jpg",
+        "posterPreview": "https://image.tmdb.org/t/p/w185/k8medyObgY0XTt2dL7BqjxXkqmw.jpg",
+        "backdropPreview": "https://image.tmdb.org/t/p/w300/vazIlxR1NEh3TS0Dsaz7Ipi14Gm.jpg",
+        "title": "Citation",
+        "year": "2020",
+        "matchTitle": "Citation",
+        "confidence": "exact"
+      },
+      {
+        "tmdbId": 1417466,
+        "posterPath": "/9W8qqEX2ucMcJsqUKmHLr9MKkC2.jpg",
+        "backdropPath": null,
+        "posterPreview": "https://image.tmdb.org/t/p/w185/9W8qqEX2ucMcJsqUKmHLr9MKkC2.jpg",
+        "backdropPreview": null,
+        "title": "The Citation",
+        "year": "2009",
+        "matchTitle": "Citation",
+        "confidence": "fuzzy"
+      },
+      {
+        "tmdbId": 1545610,
+        "posterPath": null,
+        "backdropPath": null,
+        "posterPreview": null,
+        "backdropPreview": null,
+        "title": "Citation of Merit",
+        "year": "",
+        "matchTitle": "Citation",
+        "confidence": "fuzzy"
+      }
+    ],
+    "addedAt": "2026-03-17T08:39:03.859Z"
+  },
+  {
+    "type": "actor",
+    "name": "Adesua Etomi",
+    "field": "imageUrl",
+    "currentUrl": null,
+    "reason": "wikipedia-commons",
+    "candidates": [
+      {
+        "tmdbPersonId": 1746322,
+        "profilePath": null,
+        "profilePreview": null,
+        "name": "Adesua Etomi",
+        "knownFor": ""
+      },
+      {
+        "tmdbPersonId": 2442704,
+        "profilePath": null,
+        "profilePreview": null,
+        "name": "Adesua Etomi-Wellington",
+        "knownFor": "Gangs of Lagos, The Set Up"
+      }
+    ],
+    "addedAt": "2026-03-17T08:39:03.859Z"
+  },
+  {
+    "type": "actor",
+    "name": "Bimbo Ademoye",
+    "field": "imageUrl",
+    "currentUrl": null,
+    "reason": "wikipedia-commons",
+    "candidates": [
+      {
+        "tmdbPersonId": 2006411,
+        "profilePath": "/qRjPXsuTm0jDUOSeBnF1sdJ6g8H.jpg",
+        "profilePreview": "https://image.tmdb.org/t/p/w185/qRjPXsuTm0jDUOSeBnF1sdJ6g8H.jpg",
+        "name": "Bimbo Ademoye",
+        "knownFor": "Aníkúlápó, Nneka the Pretty Serpent"
+      },
+      {
+        "tmdbPersonId": 3766077,
+        "profilePath": null,
+        "profilePreview": null,
+        "name": "Bimbo Ademoye",
+        "knownFor": "Battle on Buka Street, The One for Sarah"
+      }
+    ],
+    "addedAt": "2026-03-17T08:39:03.859Z"
+  },
+  {
+    "type": "actor",
+    "name": "Eniola Badmus",
+    "field": "imageUrl",
+    "currentUrl": null,
+    "reason": "wikipedia-commons",
+    "candidates": [
+      {
+        "tmdbPersonId": 1281212,
+        "profilePath": null,
+        "profilePreview": null,
+        "name": "Eniola Badmus",
+        "knownFor": "Swallow, Omo Ghetto: The Saga"
+      }
+    ],
+    "addedAt": "2026-03-17T08:39:03.859Z"
+  },
+  {
+    "type": "actor",
+    "name": "Femi Adebayo",
+    "field": "imageUrl",
+    "currentUrl": null,
+    "reason": "wikipedia-commons",
+    "candidates": [
+      {
+        "tmdbPersonId": 1428023,
+        "profilePath": "/c1E2OtlgwSjx2cHEPHEY8wIDYjA.jpg",
+        "profilePreview": "https://image.tmdb.org/t/p/w185/c1E2OtlgwSjx2cHEPHEY8wIDYjA.jpg",
+        "name": "Femi Adebayo",
+        "knownFor": "Jagun Jagun, Seven Doors"
+      }
+    ],
+    "addedAt": "2026-03-17T08:39:03.859Z"
+  },
+  {
+    "type": "actor",
+    "name": "Funke Akindele",
+    "field": "imageUrl",
+    "currentUrl": null,
+    "reason": "wikipedia-commons",
+    "candidates": [
+      {
+        "tmdbPersonId": 1177552,
+        "profilePath": "/cjV3OUS14Mkbg6GILTZBSO2ovtD.jpg",
+        "profilePreview": "https://image.tmdb.org/t/p/w185/cjV3OUS14Mkbg6GILTZBSO2ovtD.jpg",
+        "name": "Funke Akindele",
+        "knownFor": "Far from Home, Chief Daddy 2: Going for Broke"
+      }
+    ],
+    "addedAt": "2026-03-17T08:39:03.859Z"
+  },
+  {
+    "type": "actor",
+    "name": "Mercy Johnson",
+    "field": "imageUrl",
+    "currentUrl": null,
+    "reason": "wikipedia-commons",
+    "candidates": [
+      {
+        "tmdbPersonId": 1751862,
+        "profilePath": null,
+        "profilePreview": null,
+        "name": "Mercy Johnson",
+        "knownFor": "Return Of The Snake Girl, Guilty Pleasures"
+      },
+      {
+        "tmdbPersonId": 1177551,
+        "profilePath": null,
+        "profilePreview": null,
+        "name": "Mercy Johnson",
+        "knownFor": "Hustlers, Bride Of Death"
+      }
+    ],
+    "addedAt": "2026-03-17T08:39:03.859Z"
+  },
+  {
+    "type": "actor",
+    "name": "Sola Sobowale",
+    "field": "imageUrl",
+    "currentUrl": null,
+    "reason": "wikipedia-commons",
+    "candidates": [
+      {
+        "tmdbPersonId": 1506328,
+        "profilePath": null,
+        "profilePreview": null,
+        "name": "Sola Sobowale",
+        "knownFor": "Shanty Town, King of Boys"
+      },
+      {
+        "tmdbPersonId": 3819876,
+        "profilePath": null,
+        "profilePreview": null,
+        "name": "Sola Sobowale",
+        "knownFor": ""
+      }
+    ],
+    "addedAt": "2026-03-17T08:39:03.859Z"
+  },
+  {
+    "type": "actor",
+    "name": "Timini Egbuson",
+    "field": "imageUrl",
+    "currentUrl": null,
+    "reason": "wikipedia-commons",
+    "candidates": [
+      {
+        "tmdbPersonId": 2271821,
+        "profilePath": "/cI1LWYIVu1CYVRkARjawktcFkL6.jpg",
+        "profilePreview": "https://image.tmdb.org/t/p/w185/cI1LWYIVu1CYVRkARjawktcFkL6.jpg",
+        "name": "Timini Egbuson",
+        "knownFor": "A Tribe Called Judah, Elevator Baby"
+      }
+    ],
+    "addedAt": "2026-03-17T08:39:03.859Z"
+  },
+  {
+    "type": "actor",
+    "name": "Tobi Bakre",
+    "field": "imageUrl",
+    "currentUrl": null,
+    "reason": "wikipedia-commons",
+    "candidates": [
+      {
+        "tmdbPersonId": 3591170,
+        "profilePath": "/3arGKAZff6W3JK9xhzwzBMiFJUb.jpg",
+        "profilePreview": "https://image.tmdb.org/t/p/w185/3arGKAZff6W3JK9xhzwzBMiFJUb.jpg",
+        "name": "Tobi Bakre",
+        "knownFor": "Gangs of Lagos, Postcards"
+      }
+    ],
+    "addedAt": "2026-03-17T08:39:03.859Z"
+  },
+  {
+    "type": "actor",
+    "name": "Toni Tones",
+    "field": "imageUrl",
+    "currentUrl": null,
+    "reason": "wikipedia-commons",
+    "candidates": [
+      {
+        "tmdbPersonId": 2201007,
+        "profilePath": null,
+        "profilePreview": null,
+        "name": "Toni Tones",
+        "knownFor": "King of Boys: The Return of the King, King of Boys"
+      },
+      {
+        "tmdbPersonId": 3766467,
+        "profilePath": null,
+        "profilePreview": null,
+        "name": "Toni Tones",
+        "knownFor": "SIN: Blackout, Brotherhood"
+      }
+    ],
+    "addedAt": "2026-03-17T08:39:03.859Z"
+  }
+]
