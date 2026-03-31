@@ -13,19 +13,19 @@ export default function Nav() {
       right: 0,
       zIndex: 100,
       height: "68px",
-      background: "#1C1608",
+      background: "#0D0A02",
       display: "flex",
       alignItems: "center",
       justifyContent: "space-between",
       padding: "0 16px",
-      borderBottom: "1px solid rgba(196,168,98,0.15)",
+      borderBottom: "1px solid rgba(212,168,50,0.25)",
     }}>
       <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
         <Link href="/" style={{
           fontFamily: "var(--font-sans, 'Source Sans 3', sans-serif)",
           fontSize: 16.5,
           fontWeight: 700,
-          color: "#C4A862",
+          color: "#D4A832",
           letterSpacing: "0.18em",
           textDecoration: "none",
         }}>
@@ -43,7 +43,7 @@ export default function Nav() {
             <Link key={href} href={href} style={{
               fontFamily: "var(--font-sans, sans-serif)",
               fontSize: 15,
-              color: "rgba(255,255,255,0.5)",
+              color: "rgba(255,255,255,0.78)",
               textDecoration: "none",
               letterSpacing: "0.06em",
             }}>
@@ -56,7 +56,7 @@ export default function Nav() {
         <span style={{
           fontFamily: "var(--font-sans, sans-serif)",
           fontSize: 13.5,
-          color: "rgba(255,255,255,0.3)",
+          color: "rgba(255,255,255,0.45)",
           letterSpacing: "0.1em",
         }}>
           Where culture lives
@@ -64,7 +64,7 @@ export default function Nav() {
         <Link href="/admin" style={{
           fontFamily: "var(--font-sans, sans-serif)",
           fontSize: 13.5,
-          color: "rgba(255,255,255,0.3)",
+          color: "rgba(255,255,255,0.45)",
           textDecoration: "none",
           letterSpacing: "0.06em",
         }}>

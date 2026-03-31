@@ -5,22 +5,22 @@
 @import url('https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Source+Sans+3:wght@300;400;600;700&display=swap');
 
 :root {
-  --parch: #F5F0E4;
-  --parch-light: #FAF6ED;
-  --parch-dark: #F0E8D4;
-  --ink: #1C1608;
-  --ink-soft: #3A2E18;
-  --ink-muted: #3D3425;
-  --ink-faint: #8B7A5E;
-  --gold: #8B7040;
-  --gold-light: #C4A862;
+  --parch: #FAF8F2;
+  --parch-light: #FFFFFF;
+  --parch-dark: #F2EDE0;
+  --ink: #110E04;
+  --ink-soft: #2E2410;
+  --ink-muted: #3A2E18;
+  --ink-faint: #7A6A4A;
+  --gold: #B87E20;
+  --gold-light: #D4A832;
   --green: #2D7A3A;
   --orange: #D4882A;
   --red: #B83232;
   --border: #D8CDB4;
-  --border-light: #E8DFCC;
-  --nav-bg: #1C1608;
-  --white: #FFFDF7;
+  --border-light: #EBE5D5;
+  --nav-bg: #0D0A02;
+  --white: #FFFFFF;
   --font-serif: 'Libre Baskerville', Georgia, serif;
   --font-sans: 'Source Sans 3', system-ui, sans-serif;
 }
