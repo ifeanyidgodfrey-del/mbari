@@ -1,6 +1,5 @@
 import { prisma } from "@/lib/prisma";
 import { fmtDual } from "@/lib/format";
-import { CITIES_DATELINE } from "@/lib/constants";
 import Link from "next/link";
 import FlipHero from "@/components/flip-hero";
 import BoxOfficeTable from "@/components/box-office-table";
@@ -124,15 +123,6 @@ export default async function HomePage() {
         textAlign: "center",
         background: "var(--parch-light)",
       }}>
-        <div style={{
-          fontSize: 10,
-          fontFamily: "var(--font-sans, sans-serif)",
-          color: "var(--ink-faint)",
-          letterSpacing: "0.14em",
-          marginBottom: 4,
-        }}>
-          {CITIES_DATELINE}
-        </div>
         <h1 style={{
           fontFamily: "var(--font-serif, Georgia, serif)",
           fontSize: "clamp(40px, 8vw, 72px)",
@@ -151,15 +141,6 @@ export default async function HomePage() {
           letterSpacing: "0.12em",
         }}>
           {today}
-        </div>
-        <div style={{
-          fontSize: 9,
-          fontFamily: "var(--font-sans, sans-serif)",
-          color: "var(--ink-faint)",
-          letterSpacing: "0.1em",
-          marginTop: 3,
-        }}>
-          Verified box office · Full crew credits · Four independent scores · African cinema of record
         </div>
         {/* Country coverage strip */}
         <div style={{
