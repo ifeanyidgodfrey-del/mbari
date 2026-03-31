@@ -744,27 +744,6 @@ export default async function HomePage() {
         ))}
       </section>
 
-      {/* ─── POSITIONING STRIP ────────────────────────────────────── */}
-      <section style={{ background: "var(--ink)", padding: "48px 20px", textAlign: "center" }}>
-        <div style={{ maxWidth: 800, margin: "0 auto" }}>
-          <div style={{ fontSize: 11, color: "var(--gold)", letterSpacing: "0.2em", marginBottom: 14, fontWeight: 700 }}>
-            WHERE AFRICA WATCHES
-          </div>
-          <p className="mbari-position-text" style={{
-            fontFamily: "var(--font-serif)",
-            fontSize: "clamp(20px, 3vw, 32px)",
-            color: "var(--parch)",
-            lineHeight: 1.4,
-            margin: "0 0 18px",
-          }}>
-            Netflix hasn&apos;t built this. Prime hasn&apos;t built this.<br />
-            M&apos;Bari is the only verified box office record for African cinema.
-          </p>
-          <div style={{ fontSize: 12, color: "rgba(255,255,255,0.4)", letterSpacing: "0.12em" }}>
-            Nigeria · South Africa · Kenya · Ghana · Ethiopia · Egypt
-          </div>
-        </div>
-      </section>
 
       {/* ─── FOOTER ───────────────────────────────────────────────── */}
       <footer style={{
