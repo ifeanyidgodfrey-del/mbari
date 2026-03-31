@@ -87,14 +87,26 @@ export default function BoxOfficeTable({ films }: { films: Film[] }) {
               <td style={{
                 padding: "10px",
                 textAlign: "center",
-                fontSize: i === 0 ? 28 : 20,
-                fontFamily: "var(--font-serif, Georgia, serif)",
+                width: 44,
+                fontFamily: "var(--font-sans, sans-serif)",
                 fontWeight: 700,
-                color: i === 0 ? gold : parch,
                 lineHeight: 1,
-                WebkitTextStroke: i === 0 ? "0" : `1px ${border}`,
               }}>
-                {i + 1}
+                <span style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  width: 28,
+                  height: 28,
+                  borderRadius: i === 0 ? 0 : "50%",
+                  background: i === 0 ? gold : i === 1 ? "#8B8B8B" : i === 2 ? "#A0845C" : "transparent",
+                  color: i < 3 ? "#fff" : ink,
+                  fontSize: i === 0 ? 15 : 13,
+                  fontWeight: 700,
+                  border: i >= 3 ? `1.5px solid ${border}` : "none",
+                }}>
+                  {i + 1}
+                </span>
               </td>
               <td style={{ padding: "10px" }}>
                 <Link

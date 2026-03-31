@@ -69,6 +69,7 @@ export default function EventsGrid({ events }: { events: Event[] }) {
                   src={event.imageUrl}
                   alt={event.title}
                   fill
+                  unoptimized
                   style={{ objectFit: "cover" }}
                   sizes="300px"
                 />
