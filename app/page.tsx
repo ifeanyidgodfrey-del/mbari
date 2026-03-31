@@ -160,7 +160,7 @@ export default async function HomePage() {
         </div>
 
         {/* Country coverage strip — active = gold filled pills */}
-        <div style={{
+        <div className="mbari-country-strip" style={{
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
@@ -209,14 +209,7 @@ export default async function HomePage() {
       </header>
 
       {/* ─── BROADSHEET GRID ──────────────────────────────────────── */}
-      <section style={{
-        maxWidth: 1100,
-        margin: "0 auto",
-        padding: "20px 16px",
-        display: "grid",
-        gridTemplateColumns: "1fr 280px",
-        gap: 20,
-      }}>
+      <section className="mbari-broadsheet">
         {/* Hero — dark ink container for cinematic weight */}
         <div style={{
           background: "var(--hero-bg)",
@@ -226,7 +219,7 @@ export default async function HomePage() {
         </div>
 
         {/* Sidebar */}
-        <aside style={{ borderLeft: "1px solid var(--border)", paddingLeft: 16 }}>
+        <aside className="mbari-sidebar" style={{ borderLeft: "1px solid var(--border)", paddingLeft: 16 }}>
           <div style={{
             fontSize: 10,
             fontFamily: "var(--font-sans, sans-serif)",
@@ -400,7 +393,7 @@ export default async function HomePage() {
             CRITICS&apos; PICKS
           </span>
         </div>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 16 }}>
+        <div className="mbari-critics-grid">
           {films.filter((f) => f.criticScore && f.criticScore >= 70).slice(0, 4).map((film) => (
             <Link key={film.id} href={`/film/${film.slug}`} style={{ textDecoration: "none" }}>
               <div style={{
@@ -698,14 +691,7 @@ export default async function HomePage() {
       </section>
 
       {/* ─── CTA ──────────────────────────────────────────────────── */}
-      <section style={{
-        maxWidth: 1100,
-        margin: "0 auto",
-        padding: "0 16px 40px",
-        display: "grid",
-        gridTemplateColumns: "1fr 1fr",
-        gap: 16,
-      }}>
+      <section className="mbari-cta-grid">
         {[
           {
             title: "Are you a filmmaker?",
@@ -764,7 +750,7 @@ export default async function HomePage() {
           <div style={{ fontSize: 11, color: "var(--gold)", letterSpacing: "0.2em", marginBottom: 14, fontWeight: 700 }}>
             WHERE AFRICA WATCHES
           </div>
-          <p style={{
+          <p className="mbari-position-text" style={{
             fontFamily: "var(--font-serif)",
             fontSize: "clamp(20px, 3vw, 32px)",
             color: "var(--parch)",

@@ -38,6 +38,7 @@ export default function BoxOfficeTable({ films }: { films: Film[] }) {
   });
 
   return (
+    <div className="mbari-table-wrap">
     <table
       style={{
         width: "100%",
@@ -140,5 +141,6 @@ export default function BoxOfficeTable({ films }: { films: Film[] }) {
         })}
       </tbody>
     </table>
+    </div>
   );
 }

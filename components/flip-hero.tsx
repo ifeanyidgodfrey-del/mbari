@@ -62,22 +62,15 @@ export default function FlipHero({ films }: { films: FilmWithRelations[] }) {
       }}
     >
       <div
+        className="mbari-hero-inner"
         style={{
           opacity: visible ? 1 : 0,
           transition: "opacity 0.4s ease",
-          display: "flex",
-          height: 480,
         }}
       >
         {/* Poster */}
         <div
-          style={{
-            width: 260,
-            flexShrink: 0,
-            background: "#181008",
-            position: "relative",
-            overflow: "hidden",
-          }}
+          className="mbari-hero-poster"
         >
           {film.posterUrl ? (
             <Image
@@ -117,14 +110,7 @@ export default function FlipHero({ films }: { films: FilmWithRelations[] }) {
 
         {/* Content */}
         <div
-          style={{
-            flex: 1,
-            padding: "32px 32px 24px",
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "space-between",
-            overflow: "hidden",
-          }}
+          className="mbari-hero-content"
         >
           <div>
             {/* Badges row */}

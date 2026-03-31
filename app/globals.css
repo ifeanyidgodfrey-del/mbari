@@ -62,3 +62,190 @@ body {
     font-family: var(--font-sans);
   }
 }
+
+/* ─── Responsive layout helpers ──────────────────────────────────── */
+
+/* Broadsheet two-column grid */
+.mbari-broadsheet {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 20px 16px;
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  gap: 20px;
+}
+
+/* Critics / upcoming two-up grid */
+.mbari-critics-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+/* CTA two-up grid */
+.mbari-cta-grid {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 16px 40px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+/* Hero inner layout */
+.mbari-hero-inner {
+  display: flex;
+  height: 480px;
+}
+.mbari-hero-poster {
+  width: 260px;
+  flex-shrink: 0;
+  background: #181008;
+  position: relative;
+  overflow: hidden;
+}
+.mbari-hero-content {
+  flex: 1;
+  padding: 32px 32px 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+}
+
+/* Box office table responsive wrapper */
+.mbari-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Nav hamburger — hidden on desktop */
+.mbari-hamburger {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px 4px;
+  flex-direction: column;
+  gap: 5px;
+  align-items: center;
+  justify-content: center;
+}
+.mbari-hamburger span {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.85);
+  border-radius: 1px;
+  transition: all 0.25s;
+}
+.mbari-hamburger.open span:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+.mbari-hamburger.open span:nth-child(2) {
+  opacity: 0;
+}
+.mbari-hamburger.open span:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+/* Mobile menu dropdown — hidden by default */
+.mbari-mobile-menu {
+  display: none;
+}
+
+/* ─── Mobile breakpoints ─────────────────────────────────────────── */
+@media (max-width: 768px) {
+  /* Broadsheet: single column */
+  .mbari-broadsheet {
+    grid-template-columns: 1fr;
+    padding: 12px 12px 16px;
+    gap: 16px;
+  }
+
+  /* Sidebar loses its left border on mobile */
+  .mbari-sidebar {
+    border-left: none !important;
+    border-top: 1px solid var(--border) !important;
+    padding-left: 0 !important;
+    padding-top: 16px;
+  }
+
+  /* Critics: single column */
+  .mbari-critics-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* CTA: single column */
+  .mbari-cta-grid {
+    grid-template-columns: 1fr;
+    padding: 0 12px 30px;
+  }
+
+  /* Hero: stack poster on top, content below */
+  .mbari-hero-inner {
+    flex-direction: column;
+    height: auto;
+  }
+  .mbari-hero-poster {
+    width: 100%;
+    height: 210px;
+    flex-shrink: 0;
+  }
+  .mbari-hero-content {
+    padding: 20px 18px 16px;
+  }
+
+  /* Nav: show hamburger, hide desktop links row */
+  .mbari-nav-links {
+    display: none !important;
+  }
+  .mbari-hamburger {
+    display: flex;
+  }
+
+  /* Mobile nav dropdown */
+  .mbari-mobile-menu {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 68px;
+    left: 0;
+    right: 0;
+    background: #080600;
+    padding: 16px 20px 20px;
+    gap: 0;
+    border-bottom: 1px solid rgba(200, 146, 10, 0.3);
+    z-index: 99;
+  }
+  .mbari-mobile-menu a {
+    color: rgba(255, 255, 255, 0.85);
+    text-decoration: none;
+    font-family: var(--font-sans);
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    padding: 12px 0;
+    border-bottom: 0.5px solid rgba(200, 146, 10, 0.15);
+  }
+  .mbari-mobile-menu a:last-child {
+    border-bottom: none;
+  }
+
+  /* Masthead adjustments */
+  .mbari-country-strip {
+    gap: 4px !important;
+  }
+
+  /* Positioning strip text scaling */
+  .mbari-position-text {
+    font-size: clamp(16px, 4vw, 24px) !important;
+  }
+
+  /* Box office table: hide WK column on small screens */
+  .mbari-table-wrap th:last-child,
+  .mbari-table-wrap td:last-child {
+    display: none;
+  }
+}

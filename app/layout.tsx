@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import Nav from "@/components/nav";
 
@@ -33,6 +33,12 @@ export const metadata: Metadata = {
     description:
       "Live Nigerian box office charts, Nollywood film scores, and events across Africa.",
   },
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
 };
 
 export default function RootLayout({
