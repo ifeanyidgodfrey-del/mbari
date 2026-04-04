@@ -1,15 +1,15 @@
 /**
- * scripts/enrich-crew-photos.ts
+ * scripts/enrich-actor-photos.ts
  *
- * Searches TMDb for crew headshots and writes candidates to a REVIEW QUEUE file.
- * Does NOT update the database — run approve-crew-photos.ts after reviewing.
+ * Searches TMDb for actor headshots and writes candidates to a REVIEW QUEUE file.
+ * Does NOT update the database — run approve-actor-photos.ts after reviewing.
  *
  * Usage:
- *   npx tsx scripts/enrich-crew-photos.ts
- *   npx tsx scripts/enrich-crew-photos.ts --force   (re-check members that already have a photo)
- *   npx tsx scripts/enrich-crew-photos.ts --limit=50
+ *   npx tsx scripts/enrich-actor-photos.ts
+ *   npx tsx scripts/enrich-actor-photos.ts --force
+ *   npx tsx scripts/enrich-actor-photos.ts --limit=50
  *
- * Output: crew-photo-review-queue.json
+ * Output: QUEUE_FILE env var (default: actor-photo-review-queue.json)
  */
 
 import { Client } from "pg";
@@ -27,15 +27,15 @@ const LIMIT = (() => {
   return l ? parseInt(l.split("=")[1], 10) : 9999;
 })();
 
-const QUEUE_FILE = process.env.QUEUE_FILE ?? path.resolve(process.cwd(), "crew-photo-review-queue.json");
+const QUEUE_FILE = process.env.QUEUE_FILE ?? path.resolve(process.cwd(), "actor-photo-review-queue.json");
 
-type Crew = { id: string; slug: string; name: string; roles: string[]; imageUrl: string | null };
+type Actor = { id: string; slug: string; name: string; nationality: string | null; imageUrl: string | null };
 
 type QueueEntry = {
   id: string;
   slug: string;
   name: string;
-  roles: string[];
+  nationality: string | null;
   currentImageUrl: string | null;
   tmdbId: number;
   tmdbName: string;
@@ -58,62 +58,57 @@ async function main() {
   const db = new Client({ connectionString: process.env.DATABASE_URL });
   await db.connect();
 
-  const { rows } = await db.query<Crew>(
-    `SELECT id, slug, name, roles, "imageUrl"
-     FROM "CrewMember"
+  const { rows } = await db.query<Actor>(
+    `SELECT id, slug, name, nationality, "imageUrl"
+     FROM "Actor"
      ${FORCE ? "" : `WHERE "imageUrl" IS NULL`}
      ORDER BY name
      LIMIT $1`,
     [LIMIT]
   );
 
-  console.log(`\nSearching TMDb for ${rows.length} crew members...\n`);
+  console.log(`\nSearching TMDb for ${rows.length} actors...\n`);
 
-  // Load existing queue to avoid duplicate work
   let existing: QueueEntry[] = [];
   if (fs.existsSync(QUEUE_FILE)) {
-    try {
-      existing = JSON.parse(fs.readFileSync(QUEUE_FILE, "utf-8"));
-    } catch { existing = []; }
+    try { existing = JSON.parse(fs.readFileSync(QUEUE_FILE, "utf-8")); } catch { existing = []; }
   }
   const existingIds = new Set(existing.map(e => e.id));
 
   const newEntries: QueueEntry[] = [];
   let found = 0, missed = 0;
 
-  for (const crew of rows) {
-    if (existingIds.has(crew.id) && !FORCE) {
-      console.log(`  SKIP  ${crew.name} — already in queue`);
+  for (const actor of rows) {
+    if (existingIds.has(actor.id) && !FORCE) {
+      console.log(`  SKIP  ${actor.name} — already in queue`);
       continue;
     }
 
     try {
-      const person = await tmdbSearchPerson(crew.name);
+      const person = await tmdbSearchPerson(actor.name);
       if (!person || !person.profile_path) {
-        console.log(`  MISS  ${crew.name} — no result on TMDb`);
+        console.log(`  MISS  ${actor.name} — no result on TMDb`);
         missed++;
         await new Promise(r => setTimeout(r, 100));
         continue;
       }
 
-      const entry: QueueEntry = {
-        id: crew.id,
-        slug: crew.slug,
-        name: crew.name,
-        roles: crew.roles,
-        currentImageUrl: crew.imageUrl,
+      newEntries.push({
+        id: actor.id,
+        slug: actor.slug,
+        name: actor.name,
+        nationality: actor.nationality,
+        currentImageUrl: actor.imageUrl,
         tmdbId: person.id,
         tmdbName: person.name,
         tmdbImageUrl: `${TMDB_IMG}${person.profile_path}`,
         tmdbProfilePage: `https://www.themoviedb.org/person/${person.id}`,
         approved: null,
-      };
-
-      newEntries.push(entry);
-      console.log(`  FOUND ${crew.name} → TMDb: ${person.name} (${entry.tmdbProfilePage})`);
+      });
+      console.log(`  FOUND ${actor.name} → TMDb: ${person.name}`);
       found++;
     } catch (err) {
-      console.error(`  FAIL  ${crew.name}:`, err instanceof Error ? err.message : err);
+      console.error(`  FAIL  ${actor.name}:`, err instanceof Error ? err.message : err);
       missed++;
     }
 
@@ -122,12 +117,10 @@ async function main() {
 
   await db.end();
 
-  // Merge with existing, replacing any re-fetched entries
   const merged = [
     ...existing.filter(e => !newEntries.some(n => n.id === e.id)),
     ...newEntries,
   ];
-
   fs.writeFileSync(QUEUE_FILE, JSON.stringify(merged, null, 2));
 
   console.log(`\n── Done ──`);
@@ -135,7 +128,7 @@ async function main() {
   console.log(`  Not found: ${missed}`);
   console.log(`  Queue    : ${merged.length} total entries`);
   console.log(`\nReview ${QUEUE_FILE}`);
-  console.log(`Then run: npx tsx scripts/approve-crew-photos.ts`);
+  console.log(`Then run: QUEUE_FILE=/tmp/actor-photo-review-queue.json npx tsx scripts/approve-actor-photos.ts --approve-all`);
 }
 
 main().catch(console.error);
