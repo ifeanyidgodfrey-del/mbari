@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 
 const ink = "#1C1608";
 const gold = "#8B7040";
-const inkFaint = "#9C8B6E";
+const inkFaint = "#6B5D3F";
 
 export default async function EventsPage() {
   const events = await prisma.event.findMany({
@@ -71,7 +71,7 @@ export default async function EventsPage() {
         <span
           style={{
             fontFamily: "var(--font-sans, sans-serif)",
-            fontSize: 9,
+            fontSize: 12,
             color: inkFaint,
           }}
         >
@@ -84,8 +84,8 @@ export default async function EventsPage() {
           style={{
             textAlign: "center",
             fontFamily: "var(--font-sans, sans-serif)",
-            fontSize: 13,
-            color: inkFaint,
+            fontSize: 15,
+            color: "#3A2E18",
             padding: 60,
           }}
         >

@@ -1,0 +1,27 @@
+{
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '{\"additionalContext\": \"M'\\''Bari deploys to a Hetzner VPS at 116.203.228.127 via SSH — there is no local dev server. All code changes are verified after deploy to mbari.art. Do not call preview_start or run verification_workflow for this project.\"}'",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit|NotebookEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '{\"additionalContext\": \"M'\\''Bari has no local dev server. Do NOT run preview_start or verification_workflow. Deploy to VPS to verify: ssh root@116.203.228.127 cd /opt/mbari && git pull && docker compose build app && docker compose up -d app\"}'",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  }
+}

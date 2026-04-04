@@ -155,6 +155,28 @@ body {
   display: none;
 }
 
+/* ─── Film detail hero ───────────────────────────────────────────── */
+.mbari-film-hero {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 88vh;
+}
+
+/* ─── Events grid ────────────────────────────────────────────────── */
+.mbari-events-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
+  gap: 16px;
+}
+
+/* ─── Pill / filter touch targets ────────────────────────────────── */
+.mbari-pill {
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  padding: 6px 12px;
+}
+
 /* ─── Mobile breakpoints ─────────────────────────────────────────── */
 @media (max-width: 768px) {
   /* Broadsheet: single column */
@@ -195,6 +217,17 @@ body {
   }
   .mbari-hero-content {
     padding: 20px 18px 16px;
+  }
+
+  /* Film detail hero: single column on mobile */
+  .mbari-film-hero {
+    grid-template-columns: 1fr;
+    min-height: auto;
+  }
+
+  /* Events grid: ensure responsive */
+  .mbari-events-grid {
+    grid-template-columns: 1fr;
   }
 
   /* Nav: show hamburger, hide desktop links row */

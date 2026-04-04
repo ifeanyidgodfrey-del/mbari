@@ -135,9 +135,9 @@ function PosterGrid({ films }: { films: Film[] }) {
 
               {/* Title strip */}
               <div style={{
-                padding: "5px 4px 2px",
+                padding: "6px 4px 4px",
                 fontFamily: "var(--font-serif, Georgia, serif)",
-                fontSize: 11,
+                fontSize: 12,
                 fontWeight: 700,
                 color: ink,
                 lineHeight: 1.25,
@@ -245,8 +245,9 @@ export default function BoxOfficeTable({ films }: { films: Film[] }) {
               color: view === v ? "#fff" : inkMuted,
               border: `1px solid ${view === v ? ink : border}`,
               borderRadius: 2,
-              padding: "3px 10px",
-              fontSize: 10,
+              padding: "8px 14px",
+              minHeight: 36,
+              fontSize: 11,
               fontWeight: 700,
               letterSpacing: "0.12em",
               textTransform: "uppercase",

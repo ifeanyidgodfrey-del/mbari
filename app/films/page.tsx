@@ -182,17 +182,18 @@ export default async function FilmsPage({
                     gap: 4,
                     whiteSpace: "nowrap",
                     textDecoration: "none",
-                    padding: "3px 8px",
+                    padding: "6px 12px",
                     borderRadius: 2,
                     marginRight: 4,
+                    minHeight: 36,
                     background: !country ? "var(--ink)" : "transparent",
                     border: !country ? "none" : "1px solid transparent",
                   }}
                 >
                   <span style={{
                     fontFamily: "var(--font-sans, sans-serif)",
-                    fontSize: 10,
-                    color: !country ? "var(--parch)" : "var(--ink-faint)",
+                    fontSize: 12,
+                    color: !country ? "var(--parch)" : "var(--ink-muted)",
                     fontWeight: 700,
                     letterSpacing: "0.04em",
                   }}>All</span>
@@ -210,7 +211,8 @@ export default async function FilmsPage({
                         gap: 5,
                         whiteSpace: "nowrap",
                         textDecoration: "none",
-                        padding: "3px 9px",
+                        padding: "6px 12px",
+                        minHeight: 36,
                         borderRadius: 2,
                         background: isActive ? "var(--gold)" : "transparent",
                         border: isActive ? "none" : "1px solid transparent",
@@ -218,8 +220,8 @@ export default async function FilmsPage({
                       }}
                     >
                       <span style={{
-                        width: 5,
-                        height: 5,
+                        width: 6,
+                        height: 6,
                         borderRadius: "50%",
                         background: isActive ? "rgba(255,255,255,0.7)" : "var(--gold)",
                         flexShrink: 0,
@@ -227,7 +229,7 @@ export default async function FilmsPage({
                       }} />
                       <span style={{
                         fontFamily: "var(--font-sans, sans-serif)",
-                        fontSize: 10,
+                        fontSize: 12,
                         color: isActive ? "#fff" : "var(--ink-muted)",
                         fontWeight: isActive ? 700 : 600,
                       }}>{label}</span>
@@ -366,7 +368,7 @@ export default async function FilmsPage({
           <div
             style={{
               display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))",
+              gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 175px), 1fr))",
               gap: 14,
             }}
           >
@@ -496,9 +498,9 @@ export default async function FilmsPage({
                       <div
                         style={{
                           fontFamily: "var(--font-sans, sans-serif)",
-                          fontSize: 9,
-                          color: "var(--ink-faint)",
-                          marginBottom: 4,
+                          fontSize: 11,
+                          color: "var(--ink-muted)",
+                          marginBottom: 5,
                         }}
                       >
                         {film.year} · {COUNTRY_NAME[film.country] ?? film.country}
@@ -515,10 +517,10 @@ export default async function FilmsPage({
                             key={g}
                             style={{
                               fontFamily: "var(--font-sans, sans-serif)",
-                              fontSize: 8,
+                              fontSize: 10,
                               color: "var(--ink-muted)",
                               border: "0.5px solid var(--border)",
-                              padding: "1px 5px",
+                              padding: "2px 6px",
                             }}
                           >
                             {g}

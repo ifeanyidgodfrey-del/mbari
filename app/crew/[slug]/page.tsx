@@ -165,8 +165,8 @@ export default async function CrewPage({ params }: Props) {
         ].map(({ label, value, sub }, i) => (
           <div key={label} style={{ flex:1, display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", padding:"1.4rem 1rem", borderRight:i<2?`1px solid ${D.borderF}`:"none" }}>
             <div style={{ fontFamily:"var(--font-serif, Georgia, serif)", fontSize:i===2?"1rem":"1.35rem", color:D.hero, marginBottom:"0.15rem" }}>{value}</div>
-            <div style={{ fontSize:"0.52rem", letterSpacing:"0.16em", textTransform:"uppercase", color:D.muted }}>{label}</div>
-            <div style={{ fontSize:"0.48rem", color:D.dim, fontStyle:"italic", marginTop:"0.1rem" }}>{sub}</div>
+            <div style={{ fontSize:"0.65rem", letterSpacing:"0.12em", textTransform:"uppercase", color:D.muted }}>{label}</div>
+            <div style={{ fontSize:"0.6rem", color:D.dim, fontStyle:"italic", marginTop:"0.1rem" }}>{sub}</div>
           </div>
         ))}
       </div>
@@ -322,12 +322,12 @@ export default async function CrewPage({ params }: Props) {
 
       <footer style={{ borderTop:`1px solid ${D.borderF}`, padding:"2.2rem 3rem", display:"flex", justifyContent:"space-between", alignItems:"center", maxWidth:940, margin:"0 auto" }}>
         <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
-          <div style={{ fontSize:"0.58rem", letterSpacing:"0.14em", textTransform:"uppercase", color:D.dim }}>M&apos;Bari Film Archive — {new Date().getFullYear()}</div>
+          <div style={{ fontSize:"0.72rem", letterSpacing:"0.1em", textTransform:"uppercase", color:D.muted }}>M&apos;Bari Film Archive — {new Date().getFullYear()}</div>
           <ReportModal entityType="crew" entitySlug={crew.slug} entityName={crew.name} />
         </div>
-        <div style={{ display:"flex", gap:"1.4rem" }}>
+        <div style={{ display:"flex", gap:"1.4rem", flexWrap:"wrap" }}>
           {[["Films","/films"],["Cast","/cast"],["Crew","/crew"],["Events","/events"]].map(([label, href]) => (
-            <Link key={href} href={href} style={{ fontSize:"0.58rem", color:D.muted, textDecoration:"none", letterSpacing:"0.06em" }}>{label}</Link>
+            <Link key={href} href={href} style={{ fontSize:"0.78rem", color:D.secondary, textDecoration:"none", letterSpacing:"0.06em", padding:"4px 0" }}>{label}</Link>
           ))}
         </div>
       </footer>

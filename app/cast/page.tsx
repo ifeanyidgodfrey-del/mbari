@@ -198,7 +198,7 @@ export default async function CastDirectoryPage() {
 
               <div style={{
                 display: "grid",
-                gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))",
+                gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 160px), 1fr))",
                 gap: 24,
               }}>
                 {members.map((actor) => {

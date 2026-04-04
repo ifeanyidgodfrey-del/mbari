@@ -174,11 +174,7 @@ export default async function FilmPage({ params, searchParams }: Props) {
       <div className="film-grain">
 
       {/* ── Hero: 2-column split ───────────────────────────────────────────── */}
-      <section style={{
-        display: "grid",
-        gridTemplateColumns: "1fr 1fr",
-        minHeight: "88vh",
-      }}>
+      <section className="mbari-film-hero">
 
         {/* Left: metadata */}
         <div style={{
@@ -425,8 +421,8 @@ export default async function FilmPage({ params, searchParams }: Props) {
             }}>
               {value != null ? value : <span style={{ display: "inline-block", width: 18, height: 2, background: D.dim, borderRadius: 1, verticalAlign: "middle" }} />}
             </div>
-            <div style={{ fontSize: "0.52rem", letterSpacing: "0.16em", textTransform: "uppercase", color: D.muted }}>{label}</div>
-            <div style={{ fontSize: "0.48rem", color: D.dim, fontStyle: "italic", marginTop: "0.1rem" }}>{sub}</div>
+            <div style={{ fontSize: "0.65rem", letterSpacing: "0.12em", textTransform: "uppercase", color: D.muted }}>{label}</div>
+            <div style={{ fontSize: "0.6rem", color: D.dim, fontStyle: "italic", marginTop: "0.1rem" }}>{sub}</div>
           </div>
         ))}
         {/* Box office cell */}
@@ -447,8 +443,8 @@ export default async function FilmPage({ params, searchParams }: Props) {
             }}>
               {fmtDual(film.boxCumulative, film.country)}
             </div>
-            <div style={{ fontSize: "0.52rem", letterSpacing: "0.16em", textTransform: "uppercase", color: D.muted }}>Box Office</div>
-            <div style={{ fontSize: "0.48rem", color: D.dim, fontStyle: "italic", marginTop: "0.1rem" }}>
+            <div style={{ fontSize: "0.65rem", letterSpacing: "0.12em", textTransform: "uppercase", color: D.muted }}>Box Office</div>
+            <div style={{ fontSize: "0.6rem", color: D.dim, fontStyle: "italic", marginTop: "0.1rem" }}>
               {film.boxLive ? "in cinemas" : "cumulative"}
               {film.boxWeek ? ` · wk ${film.boxWeek}` : ""}
             </div>
@@ -870,14 +866,14 @@ export default async function FilmPage({ params, searchParams }: Props) {
         margin: "0 auto",
       }}>
         <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-          <div style={{ fontSize: "0.58rem", letterSpacing: "0.14em", textTransform: "uppercase", color: D.dim }}>
+          <div style={{ fontSize: "0.72rem", letterSpacing: "0.1em", textTransform: "uppercase", color: D.muted }}>
             M&apos;Bari Film Archive — {new Date().getFullYear()}
           </div>
           <ReportModal entityType="film" entitySlug={film.slug} entityName={`${film.title} (${film.year})`} />
         </div>
-        <div style={{ display: "flex", gap: "1.4rem" }}>
+        <div style={{ display: "flex", gap: "1.4rem", flexWrap: "wrap" }}>
           {[["Films", "/films"], ["Cast", "/cast"], ["Crew", "/crew"], ["Events", "/events"]].map(([label, href]) => (
-            <Link key={href} href={href} style={{ fontSize: "0.58rem", color: D.muted, textDecoration: "none", letterSpacing: "0.06em" }}>
+            <Link key={href} href={href} style={{ fontSize: "0.78rem", color: D.secondary, textDecoration: "none", letterSpacing: "0.06em", padding: "4px 0" }}>
               {label}
             </Link>
           ))}
