@@ -186,6 +186,7 @@ async function findTrailer(film: Film): Promise<{ videoId: string; views: number
         console.error("\n  ⚠️  YouTube quota exceeded for today. Run again tomorrow or use --limit.");
         process.exit(1);
       }
+      console.log(`        ✗ error: ${msg.slice(0, 200)}`);
       // Other errors: try next query
     }
 
