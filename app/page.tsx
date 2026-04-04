@@ -1,5 +1,4 @@
 import { prisma } from "@/lib/prisma";
-import { fmtDual } from "@/lib/format";
 import Link from "next/link";
 import FlipHero from "@/components/flip-hero";
 import BoxOfficeTable from "@/components/box-office-table";
@@ -46,7 +45,7 @@ export default async function HomePage() {
   const [films, events, upcomingFilms] = await Promise.all([
     prisma.film.findMany({
       where: { boxLive: true },
-      orderBy: [{ country: "asc" }, { boxCumulative: "desc" }],
+      orderBy: [{ country: "asc" }, { boxWeek: "desc" }],
       include: {
         languages: { include: { language: true } },
         crew: { include: { crewMember: true }, take: 1 },
@@ -267,7 +266,7 @@ export default async function HomePage() {
                       marginTop: 2,
                     }}>
                       {film.year} · {film.country}
-                      {film.boxCumulative != null ? ` · ${fmtDual(film.boxCumulative, film.country)}` : ""}
+                      {film.boxWeek != null ? ` · Wk ${film.boxWeek}` : ""}
                     </div>
                   </div>
                 </div>
@@ -323,7 +322,7 @@ export default async function HomePage() {
                   color: "var(--gold-light)",
                   fontWeight: 700,
                 }}>
-                  {film.boxCumulative != null ? fmtDual(film.boxCumulative, film.country) : "—"}
+                  {film.boxWeek != null ? `Wk ${film.boxWeek}` : "—"}
                 </span>
               </div>
             ))}
