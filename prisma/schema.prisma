@@ -257,6 +257,7 @@ model Submission {
   designHtml String?  @db.Text
   filmId     String?
   film       Film?    @relation(fields: [filmId], references: [id])
+  metadata   Json?
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 }

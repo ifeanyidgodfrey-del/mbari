@@ -21,7 +21,8 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const submission = await prisma.submission.create({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const submission = await (prisma.submission.create as any)({
     data: {
       type: body.type ?? "film",
       title: body.title,
@@ -32,6 +33,7 @@ export async function POST(req: NextRequest) {
       designHtml: body.designHtml ?? null,
       filmId: body.filmId ?? null,
       status: "pending",
+      metadata: body.metadata ?? null,
     },
   });
 
