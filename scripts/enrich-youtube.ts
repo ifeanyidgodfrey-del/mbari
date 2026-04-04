@@ -33,6 +33,7 @@ const LIMIT = (() => {
   return l ? parseInt(l.split("=")[1], 10) : 999;
 })();
 const FORCE = args.includes("--force");
+const DEBUG = args.includes("--debug");
 
 type Film = {
   id: string;
@@ -144,22 +145,29 @@ async function findTrailer(film: Film): Promise<{ videoId: string; views: number
         part: "snippet",
         q,
         type: "video",
-        maxResults: "5",
-        videoCategoryId: "1", // Film & Animation
-        relevanceLanguage: "en",
+        maxResults: "8",
       });
 
-      if (!data.items?.length) continue;
+      if (!data.items?.length) {
+        if (DEBUG) console.log(`        no results for: ${q}`);
+        continue;
+      }
 
       // Score and pick best result
       const scored = data.items
-        .map((item) => ({ item, score: scoreResult(item, film) }))
-        .filter(({ score }) => score > 10) // must have some match
-        .sort((a, b) => b.score - a.score);
+        .map((item) => ({ item, score: scoreResult(item, film) }));
 
-      if (!scored.length) continue;
+      if (DEBUG) {
+        scored.forEach(({ item, score }) =>
+          console.log(`        [${score}] "${item.snippet.title}" — ${item.snippet.channelTitle}`)
+        );
+      }
 
-      const best = scored[0].item;
+      const passing = scored.filter(({ score }) => score > 0).sort((a, b) => b.score - a.score);
+
+      if (!passing.length) continue;
+
+      const best = passing[0].item;
       const videoId = best.id.videoId;
 
       // Fetch view stats
