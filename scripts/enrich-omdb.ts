@@ -102,7 +102,7 @@ async function main() {
 
       // Only update fields that are currently empty
       const updates: string[] = [];
-      const vals: (number | string[] | null)[] = [];
+      const vals: (number | string | string[] | null)[] = [];
       let idx = 1;
 
       if (film.criticScore == null && newScore != null) {
