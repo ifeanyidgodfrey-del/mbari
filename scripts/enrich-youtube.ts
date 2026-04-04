@@ -75,11 +75,11 @@ async function ytFetch<T>(path: string, params: Record<string, string>): Promise
   if (!key) throw new Error("YOUTUBE_API_KEY not set");
   const qs = new URLSearchParams({ ...params, key }).toString();
   const res = await fetch(`${YT_BASE}${path}?${qs}`);
+  const body = await res.text();
   if (!res.ok) {
-    const body = await res.text();
-    throw new Error(`YouTube API ${res.status}: ${body.slice(0, 200)}`);
+    throw new Error(`YouTube API ${res.status}: ${body.slice(0, 300)}`);
   }
-  return res.json() as Promise<T>;
+  return JSON.parse(body) as T;
 }
 
 /** Build search queries in priority order */
@@ -148,10 +148,8 @@ async function findTrailer(film: Film): Promise<{ videoId: string; views: number
         maxResults: "8",
       });
 
-      if (!data.items?.length) {
-        if (DEBUG) console.log(`        no results for: ${q}`);
-        continue;
-      }
+      if (DEBUG) console.log(`        query: ${q} → ${data.items?.length ?? 0} results`);
+      if (!data.items?.length) continue;
 
       // Score and pick best result
       const scored = data.items
