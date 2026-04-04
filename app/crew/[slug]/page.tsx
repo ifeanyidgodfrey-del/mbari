@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { fmtDual } from "@/lib/format";
 import Link from "next/link";
 import Image from "next/image";
+import ReportModal from "@/components/report-modal";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 
@@ -320,7 +321,10 @@ export default async function CrewPage({ params }: Props) {
       </div>
 
       <footer style={{ borderTop:`1px solid ${D.borderF}`, padding:"2.2rem 3rem", display:"flex", justifyContent:"space-between", alignItems:"center", maxWidth:940, margin:"0 auto" }}>
-        <div style={{ fontSize:"0.58rem", letterSpacing:"0.14em", textTransform:"uppercase", color:D.dim }}>M&apos;Bari Film Archive — {new Date().getFullYear()}</div>
+        <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
+          <div style={{ fontSize:"0.58rem", letterSpacing:"0.14em", textTransform:"uppercase", color:D.dim }}>M&apos;Bari Film Archive — {new Date().getFullYear()}</div>
+          <ReportModal entityType="crew" entitySlug={crew.slug} entityName={crew.name} />
+        </div>
         <div style={{ display:"flex", gap:"1.4rem" }}>
           {[["Films","/films"],["Cast","/cast"],["Crew","/crew"],["Events","/events"]].map(([label, href]) => (
             <Link key={href} href={href} style={{ fontSize:"0.58rem", color:D.muted, textDecoration:"none", letterSpacing:"0.06em" }}>{label}</Link>

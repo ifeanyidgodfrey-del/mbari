@@ -3,6 +3,7 @@ import { fmtDual } from "@/lib/format";
 import Link from "next/link";
 import Image from "next/image";
 import FilmHeroImage from "@/components/film-hero-image";
+import ReportModal from "@/components/report-modal";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 
@@ -868,8 +869,11 @@ export default async function FilmPage({ params, searchParams }: Props) {
         maxWidth: 940,
         margin: "0 auto",
       }}>
-        <div style={{ fontSize: "0.58rem", letterSpacing: "0.14em", textTransform: "uppercase", color: D.dim }}>
-          M&apos;Bari Film Archive — {new Date().getFullYear()}
+        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+          <div style={{ fontSize: "0.58rem", letterSpacing: "0.14em", textTransform: "uppercase", color: D.dim }}>
+            M&apos;Bari Film Archive — {new Date().getFullYear()}
+          </div>
+          <ReportModal entityType="film" entitySlug={film.slug} entityName={`${film.title} (${film.year})`} />
         </div>
         <div style={{ display: "flex", gap: "1.4rem" }}>
           {[["Films", "/films"], ["Cast", "/cast"], ["Crew", "/crew"], ["Events", "/events"]].map(([label, href]) => (
